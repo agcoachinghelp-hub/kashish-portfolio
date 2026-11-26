@@ -1,0 +1,27 @@
+/* Decap CMS preview pane: a plain reading view in the site's type and colours.
+   Owner: Agent R. Tokens come from ../css/tokens.css (generated). */
+html, body { background: var(--bg, #CFC8BA); color: var(--ink, #2A2A26); }
+body {
+  margin: 0;
+  padding: 32px clamp(16px, 4vw, 48px) 64px;
+  font-family: var(--font-display, 'Archivo'), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+}
+h1, h2, h3 {
+  font-stretch: 125%;
+  font-weight: 900;
+  line-height: .95;
+  text-transform: uppercase;
+  letter-spacing: -.01em;
+}
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+img { max-width: 100%; height: auto; display: block; background: #F4F0E6; }
+p, li { max-width: 40em; }
+a { color: inherit; }
+code, kbd, small, label, dt {
+  font-family: var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,48 @@
+{
+  "name": "Kashish Khera",
+  "title": "Architecture Portfolio",
+  "edition": "UNSW 2024-2026",
+  "about": "Final-year Bachelor of Architectural Studies student at UNSW Sydney with over four years of experience across construction project support, real estate administration, tutoring and retail leadership. A client-focused problem solver who learns best through hands-on work, equally at home collaborating in a team or working independently.",
+  "university": "UNSW Sydney",
+  "degree": "Bachelor of Architectural Studies",
+  "years": "2024-2026",
+  "location": "Sydney",
+  "email": "kashish.khera@outlook.com",
+  "phone": "",
+  "hero": {
+    "image": "assets/site/hero.webp",
+    "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
+    "width": 760,
+    "height": 1180
+  },
+  "outro": {
+    "image": "",
+    "alt": ""
+  },
+  "cvPdf": "assets/cv.pdf",
+  "socials": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/kashishkhera"
+    },
+    {
+      "label": "Instagram @formbykash",
+      "url": "https://www.instagram.com/formbykash/"
+    }
+  ],
+  "contactIntro": "For opportunities, collaborations or a copy of my portfolio, get in touch.",
+  "colours": {
+    "background": "#CFC8BA",
+    "ink": "#2A2A26",
+    "cream": "#E9E2D2",
+    "slate": "#7E8CA3",
+    "kraft": "#B08A5B",
+    "charcoal": "#1E1E1C",
+    "olive": "#4A5240",
+    "gold": "#B89B5E"
+  },
+  "fonts": {
+    "display": "Archivo",
+    "mono": "JetBrains Mono"
+  }
+}

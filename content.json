@@ -1,0 +1,303 @@
+{
+  "site": {
+    "name": "Kashish Khera",
+    "title": "Architecture Portfolio",
+    "edition": "UNSW 2024-2026",
+    "about": "Final-year Bachelor of Architectural Studies student at UNSW Sydney with over four years of experience across construction project support, real estate administration, tutoring and retail leadership. A client-focused problem solver who learns best through hands-on work, equally at home collaborating in a team or working independently.",
+    "university": "UNSW Sydney",
+    "degree": "Bachelor of Architectural Studies",
+    "years": "2024-2026",
+    "location": "Sydney",
+    "email": "kashish.khera@outlook.com",
+    "phone": "",
+    "hero": {
+      "src": "assets/site/hero.webp",
+      "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
+      "caption": "",
+      "blend": "multiply",
+      "width": 760,
+      "height": 1180
+    },
+    "outro": null,
+    "cvPdf": "assets/cv.pdf",
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/kashishkhera"
+      },
+      {
+        "label": "Instagram @formbykash",
+        "url": "https://www.instagram.com/formbykash/"
+      }
+    ],
+    "contactIntro": "For opportunities, collaborations or a copy of my portfolio, get in touch.",
+    "colours": {
+      "background": "#CFC8BA",
+      "ink": "#2A2A26",
+      "cream": "#E9E2D2",
+      "slate": "#7E8CA3",
+      "kraft": "#B08A5B",
+      "charcoal": "#1E1E1C",
+      "olive": "#4A5240",
+      "gold": "#B89B5E"
+    },
+    "fonts": {
+      "display": "Archivo",
+      "mono": "JetBrains Mono"
+    }
+  },
+  "projects": [
+    {
+      "slug": "contents",
+      "order": 0,
+      "index": true,
+      "status": "published",
+      "code": "",
+      "title": "CONTENTS",
+      "subtitle": "",
+      "colour": "#E9E2D2",
+      "accent": "#6E6656",
+      "ink": "#2A2A26",
+      "year": "",
+      "cover": {
+        "src": "assets/projects/contents/01.webp",
+        "alt": "Hand-drawn precedent sketches: a fan window, a glasshouse elevation, a Vitruvian figure, a structural frame, a domed structure, a temple, a radiating ceiling and a column capital",
+        "caption": "",
+        "blend": "multiply",
+        "width": 2000,
+        "height": 560
+      },
+      "meta": [],
+      "statement": "",
+      "blocks": [
+        {
+          "type": "image",
+          "src": "assets/projects/contents/02.webp",
+          "alt": "Sketches of a triumphal arch with columns, the Art Gallery of New South Wales portico, a Gothic interior and a brick room",
+          "caption": "Precedent sketches",
+          "blend": "multiply",
+          "width": 1460,
+          "height": 309,
+          "layout": "wide",
+          "align": "left",
+          "size": "wide"
+        },
+        {
+          "type": "image",
+          "src": "assets/projects/contents/03.webp",
+          "alt": "Collage of sepia drawings on kraft paper: a grand interior staircase between columns and a civic building elevation with a clock tower, with handwritten notes",
+          "caption": "Interior and elevation studies",
+          "blend": "multiply",
+          "width": 910,
+          "height": 1372,
+          "layout": "half",
+          "align": "right",
+          "size": "half"
+        }
+      ]
+    },
+    {
+      "slug": "burra-pod",
+      "order": 1,
+      "index": false,
+      "status": "published",
+      "code": "CODE_001",
+      "title": "BURRA POD",
+      "subtitle": "Community centre · Fleet Street, North Parramatta, NSW",
+      "colour": "#9AA287",
+      "accent": "#6B3A2A",
+      "ink": "#22261C",
+      "year": "",
+      "cover": {
+        "src": "assets/projects/burra-pod/01.webp",
+        "alt": "Burra Pod concept collage: angled strips of river landscapes, eels and site photographs with material samples in blue, dark timber, pale timber, stone and red",
+        "caption": "",
+        "blend": "multiply",
+        "maxWidth": 400,
+        "width": 472,
+        "height": 702
+      },
+      "meta": [
+        {
+          "label": "Site",
+          "value": "Fleet Street, North Parramatta, NSW"
+        },
+        {
+          "label": "Country",
+          "value": "Durug Country"
+        },
+        {
+          "label": "Type",
+          "value": "Community centre"
+        }
+      ],
+      "statement": "<p>Burra Pod is a community centre shaped by movement, adaptation and connection to place. Inspired by Indigenous understandings that the best journeys in life are almost never linear or straightforward, this design incorporates flowing pathways which invite exploration and encounter. Located on Durug Country in North Parramatta, the building concept takes inspiration from the fluid movements of eels and their enduring relationship with the river, translating these qualities into organic forms and a continuous spatial flow through the spaces of the building.</p>\n<p>Water is carried through the project as both a spatial and sensory element, reinforcing ideas of movement, inspiring learning and connection to Country. A water feature within the building and public space strengthens the relationship, creating moments of immersive experiences, reflection and curiosity.</p>\n<p>The program supports gathering, learning in a central courtyard that forms the heart of the project. The spatial journey reflects a process of becoming, guiding individuals from identity, discovery and application, towards exploration and contribution. Spaces for making, storytelling, exhibition and intergenerational exchange allow personal experience and knowledge to develop into collective understanding. Native planting, water and interpretive landscape elements strengthen engagement with Country, encouraging visitors to learn from the ecological and cultural history of the area.</p>\n",
+      "blocks": []
+    },
+    {
+      "slug": "axis-city-centre",
+      "order": 2,
+      "index": false,
+      "status": "published",
+      "code": "CODE_002",
+      "title": "AXIS CITY CENTRE",
+      "subtitle": "Waterloo Estate Redevelopment",
+      "colour": "#2E2E2B",
+      "accent": "#121211",
+      "ink": "#E9E2D2",
+      "year": "",
+      "cover": {
+        "src": "assets/projects/axis-city-centre/01.webp",
+        "alt": "Axis City Centre title sheet: AXIS in tall white capitals with City Centre, Waterloo Estate Redevelopment and the line Aligning movement, people and space, on charcoal paper",
+        "caption": "",
+        "blend": "none",
+        "width": 760,
+        "height": 600
+      },
+      "meta": [],
+      "statement": "<p><em>Aligning movement, people &amp; space.</em></p>\n",
+      "blocks": []
+    },
+    {
+      "slug": "oasis",
+      "order": 3,
+      "index": false,
+      "status": "coming-soon",
+      "code": "CODE_003",
+      "title": "OASIS",
+      "subtitle": "",
+      "colour": "#7E8CA3",
+      "accent": "#3B4659",
+      "ink": "#1E2330",
+      "year": "",
+      "cover": null,
+      "meta": [],
+      "statement": "",
+      "blocks": []
+    },
+    {
+      "slug": "common-grounds",
+      "order": 4,
+      "index": false,
+      "status": "published",
+      "code": "CODE_004",
+      "title": "COMMON GROUNDS",
+      "subtitle": "",
+      "colour": "#E8C76A",
+      "accent": "#6B5420",
+      "ink": "#2A2A26",
+      "year": "",
+      "cover": {
+        "src": "assets/projects/common-grounds/01.webp",
+        "alt": "Common Grounds aerial site plan showing the site between Kent Street, High Street, High Lane and the Cahill Expressway, with surrounding building heights",
+        "caption": "",
+        "blend": "multiply",
+        "width": 864,
+        "height": 675
+      },
+      "meta": [],
+      "statement": "",
+      "blocks": [
+        {
+          "type": "image",
+          "src": "assets/projects/common-grounds/03.webp",
+          "alt": "Ground floor plan with gym, bedrooms, entrance, outdoor kitchen, street library, stage and art gallery",
+          "caption": "Ground Floor Plan // 1:100",
+          "blend": "multiply",
+          "width": 1824,
+          "height": 1155,
+          "layout": "bleed",
+          "align": "left",
+          "size": "bleed"
+        },
+        {
+          "type": "image",
+          "src": "assets/projects/common-grounds/02.webp",
+          "alt": "Basement plan with rumpus and lounge",
+          "caption": "Basement Plan // 1:100",
+          "blend": "multiply",
+          "width": 722,
+          "height": 1190,
+          "layout": "half",
+          "align": "left",
+          "size": "half"
+        },
+        {
+          "type": "image",
+          "src": "assets/projects/common-grounds/04.webp",
+          "alt": "First floor plan with dining, kitchen and living, and stairs",
+          "caption": "First Floor Plan // 1:100",
+          "blend": "multiply",
+          "width": 1950,
+          "height": 588,
+          "layout": "wide",
+          "align": "right",
+          "size": "wide"
+        },
+        {
+          "type": "image",
+          "src": "assets/projects/common-grounds/05.webp",
+          "alt": "Second floor plan with studio, rooftop terrace, balconies, laundry, toilet and study",
+          "caption": "Second Floor Plan // 1:100",
+          "blend": "multiply",
+          "width": 880,
+          "height": 1170,
+          "layout": "half",
+          "align": "right",
+          "size": "half"
+        }
+      ]
+    },
+    {
+      "slug": "stacked",
+      "order": 5,
+      "index": false,
+      "status": "coming-soon",
+      "code": "CODE_005",
+      "title": "STACKED",
+      "subtitle": "",
+      "colour": "#B08A5B",
+      "accent": "#5A4126",
+      "ink": "#2B1F12",
+      "year": "",
+      "cover": null,
+      "meta": [],
+      "statement": "",
+      "blocks": []
+    },
+    {
+      "slug": "terrace-house",
+      "order": 6,
+      "index": false,
+      "status": "coming-soon",
+      "code": "CODE_006",
+      "title": "TERRACE HOUSE",
+      "subtitle": "",
+      "colour": "#4A5240",
+      "accent": "#252A1F",
+      "ink": "#E4E0CF",
+      "year": "",
+      "cover": null,
+      "meta": [],
+      "statement": "",
+      "blocks": []
+    },
+    {
+      "slug": "pavilion",
+      "order": 7,
+      "index": false,
+      "status": "coming-soon",
+      "code": "CODE_007",
+      "title": "PAVILION",
+      "subtitle": "",
+      "colour": "#BBA585",
+      "accent": "#4E4232",
+      "ink": "#2A2A26",
+      "year": "",
+      "cover": null,
+      "meta": [],
+      "statement": "",
+      "blocks": []
+    }
+  ]
+}

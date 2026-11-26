@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+/her-drive/
+/her-portfolio-pages/
+/her-cv/
+# Private working material (client chat history, internal briefs)
+/brief/

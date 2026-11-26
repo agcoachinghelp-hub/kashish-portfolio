@@ -1,0 +1,307 @@
+# Decap CMS configuration: the editor at yoursite/admin.
+# Owner: Agent R. Field names mirror content/site.json and the front-matter of
+# content/projects/*.md exactly (see CONTRACT.md). If you rename a field here,
+# the site will stop reading it.
+
+# ---------------------------------------------------------------------------
+# WHERE YOUR CONTENT LIVES
+# Saving in the editor commits straight to the GitHub repository below; Netlify
+# sees the commit, runs `npm run build` and republishes the site (about a minute).
+#
+# ONE-TIME SETUP (see EDITING_GUIDE.md, "One-time setup"):
+#   1. Create the repository in Kashish's own GitHub account and push this site.
+#   2. Replace [HER-GITHUB-USERNAME] below with her GitHub username,
+#      e.g.  repo: kashishkhera/kashish-portfolio
+#   3. In Netlify: Site configuration -> Access & security -> OAuth ->
+#      Install provider -> GitHub (Client ID + Secret from a GitHub OAuth App
+#      whose callback URL is https://api.netlify.com/auth/done).
+#   Netlify is only the login go-between (base_url below); her content stays in
+#   her GitHub repository. Log in from the live Netlify address (or a custom
+#   domain added to the same Netlify site), not from localhost.
+# ---------------------------------------------------------------------------
+backend:
+  name: github
+  repo: "[HER-GITHUB-USERNAME]/kashish-portfolio"
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+  commit_messages:
+    create: "Add {{collection}} “{{slug}}”"
+    update: "Update {{collection}} “{{slug}}”"
+    delete: "Delete {{collection}} “{{slug}}”"
+    uploadMedia: "Upload “{{path}}”"
+    deleteMedia: "Delete “{{path}}”"
+
+# Local editing without logging in: run `npx decap-server` in the site folder,
+# serve the site (e.g. `npm run dev`), then open http://localhost:8000/admin/.
+# Ignored on the live site.
+local_backend: true
+
+# Saving publishes straight away (no draft/review workflow).
+publish_mode: simple
+
+# Default place for uploads (e.g. the CV PDF). Project images go to
+# assets/projects/<slug>/ and landing images to assets/site/ (set below).
+# The build strips the leading "/" so the site also works from a sub-folder.
+media_folder: assets/uploads
+public_folder: /assets/uploads
+
+# site_url: https://your-site.netlify.app   # optional: adds a "View site" link
+
+collections:
+  # =========================================================================
+  # SITE SETTINGS: one file, content/site.json
+  # =========================================================================
+  - name: settings
+    label: Site settings
+    description: "Your name, the landing page text, hero image, contact details, CV and colours."
+    editor: { preview: false }
+    files:
+      - name: site
+        label: Site settings
+        file: content/site.json
+        fields:
+          # --- Landing page ---------------------------------------------------
+          - { name: name, label: "Your name", widget: string,
+              hint: "Shown huge on the landing page (one word per line), in the menu bar and in the footer." }
+          - { name: title, label: "Line under your name", widget: string, default: "Architecture Portfolio",
+              hint: "The second line on the landing page, e.g. Architecture Portfolio. The last word is set in script." }
+          - { name: edition, label: "Edition line", widget: string,
+              hint: "Small line at the top of the landing page, e.g. UNSW 2024-2026." }
+          - { name: about, label: "About (one paragraph)", widget: text, required: false,
+              hint: "Two to four sentences about you and what you care about in architecture. Leave empty to hide it." }
+          - { name: university, label: "University", widget: string, hint: "e.g. UNSW Sydney" }
+          - { name: degree, label: "Degree", widget: string, hint: "e.g. Bachelor of Architectural Studies" }
+          - { name: years, label: "Years of study", widget: string, hint: "e.g. 2024-2026" }
+          - name: hero
+            label: "Hero image (landing page)"
+            widget: object
+            collapsed: false
+            hint: "The big image beside your name. Until you add one, an empty outlined frame holds its place."
+            fields:
+              - { name: image, label: "Image", widget: image, required: false, choose_url: false,
+                  media_folder: /assets/site, public_folder: /assets/site,
+                  hint: "A JPG or WebP about 2000px wide is ideal." }
+              - { name: blend, label: "Look", widget: select, default: multiply, required: false, options: [ { label: "Drawing on paper (blend into page)", value: multiply }, { label: "Photo or dark image (no blend)", value: none } ], hint: "Drawing on paper makes the white of a scan disappear into the page colour." }
+              - { name: alt, label: "Describe the image (for screen readers)", widget: string, required: false,
+                  hint: "One plain sentence, e.g. Pencil sketch of a curved concrete pavilion." }
+              - { name: caption, label: "Caption", widget: string, required: false }
+          - name: outro
+            label: "Closing image"
+            widget: object
+            collapsed: true
+            required: false
+            fields:
+              - { name: image, label: "Image", widget: image, required: false, choose_url: false,
+                  media_folder: /assets/site, public_folder: /assets/site }
+              - { name: alt, label: "Describe the image", widget: string, required: false }
+              - { name: caption, label: "Caption", widget: string, required: false }
+
+          # --- Get in Touch and footer -----------------------------------------
+          - { name: contactIntro, label: "Get in Touch: intro sentence", widget: text,
+              hint: "Shown above your email address." }
+          - { name: email, label: "Email", widget: string,
+              hint: "Shown large in Get in Touch, and used if the contact form fails." }
+          - { name: phone, label: "Phone", widget: string, required: false,
+              hint: "Leave empty to hide it." }
+          - { name: location, label: "Location", widget: string, required: false,
+              hint: "Shown in the footer, e.g. Sydney, Australia." }
+          - name: socials
+            label: "Social links"
+            label_singular: "link"
+            widget: list
+            summary: "{{fields.label}}: {{fields.url}}"
+            hint: "Shown in Get in Touch and the footer. Drag to reorder."
+            fields:
+              - { name: label, label: "Name", widget: string, hint: "e.g. LinkedIn" }
+              - { name: url, label: "Full web address", widget: string,
+                  hint: "Starts with https://, e.g. https://www.linkedin.com/in/your-name" }
+          - { name: cvPdf, label: "CV (PDF)", widget: file, required: false, choose_url: false,
+              hint: "Upload your latest CV as a PDF. The footer's Download CV link uses it." }
+
+          # --- Colours and fonts -------------------------------------------------
+          - name: colours
+            label: "Colours"
+            widget: object
+            collapsed: true
+            hint: "The site-wide palette. Folder colours are set on each project."
+            fields:
+              - { name: background, label: "Page background", widget: color, allowInput: true }
+              - { name: ink, label: "Text (ink)", widget: color, allowInput: true }
+              - { name: cream, label: "Cream (paper)", widget: color, allowInput: true }
+              - { name: slate, label: "Slate blue", widget: color, allowInput: true }
+              - { name: kraft, label: "Kraft (also the Get in Touch tab)", widget: color, allowInput: true }
+              - { name: charcoal, label: "Charcoal", widget: color, allowInput: true }
+              - { name: olive, label: "Olive", widget: color, allowInput: true }
+              - { name: gold, label: "Gold (one thin accent line)", widget: color, allowInput: true }
+          - name: fonts
+            label: "Fonts"
+            widget: object
+            collapsed: true
+            hint: "Advanced. Only change these if the new font is also loaded in index.html."
+            fields:
+              - { name: display, label: "Display font", widget: string, default: "Archivo" }
+              - { name: mono, label: "Mono font (labels and codes)", widget: string, default: "JetBrains Mono" }
+
+  # =========================================================================
+  # PROJECTS: one Markdown file per folder, content/projects/<slug>.md
+  # =========================================================================
+  - name: projects
+    label: Projects
+    label_singular: Project
+    description: "Each project is one folder on the site. The Order number sets the folder order (0 = Archive Log, then 1, 2, 3…)."
+    folder: content/projects
+    # Each project's images live in their own folder, assets/projects/<slug>/
+    # (the same place the import script writes them).
+    media_folder: "/assets/projects/{{slug}}"
+    public_folder: "/assets/projects/{{slug}}"
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{order}} · {{code}} // {{title}} ({{status}})"
+    sortable_fields: ["order", "title"]
+    view_filters:
+      - { label: "Published", field: status, pattern: "^published$" }
+      - { label: "Coming soon", field: status, pattern: "coming-soon" }
+    fields:
+      # --- The folder --------------------------------------------------------
+      - { name: title, label: "Title", widget: string,
+          hint: "The project name on the folder, e.g. BURRA POD. Capitals look best." }
+      - { name: subtitle, label: "Subtitle", widget: string, required: false,
+          hint: "e.g. Waterloo Estate Redevelopment" }
+      - { name: code, label: "Folder code", widget: string, default: "CODE_00",
+          hint: "The tab label, e.g. CODE_008. Keep the same style as the others." }
+      - { name: order, label: "Order", widget: number, value_type: int, min: 0, default: 10,
+          hint: "Folder position, left to right (top to bottom on phones). 0 is the Archive Log; projects use 1, 2, 3… To move a folder, change its number and the numbers of the folders around it." }
+      - name: status
+        label: "Status"
+        widget: select
+        default: published
+        options:
+          - { label: "Published (opens as a full project page)", value: published }
+          - { label: "Coming soon (folder shows, but marked coming soon)", value: coming-soon }
+        hint: "Use Coming soon while the images aren't ready yet."
+      - { name: year, label: "Year", widget: string, required: false, hint: "e.g. 2025" }
+      - { name: colour, label: "Folder colour", widget: color, allowInput: true, default: "#E9E2D2",
+          hint: "The colour of the folder card." }
+      - { name: accent, label: "Open page background", widget: color, allowInput: true, default: "#3A3A35",
+          hint: "A darker shade of the folder colour. It fills the screen behind an open project." }
+      - { name: ink, label: "Text colour on the folder", widget: color, allowInput: true, default: "#2A2A26",
+          hint: "Dark (#2A2A26) on light folders, cream (#E9E2D2) on dark ones. Check it is easy to read." }
+      - name: cover
+        label: "Cover image"
+        widget: object
+        required: false
+        collapsed: false
+        hint: "Shown on the folder and at the top of the project page."
+        fields:
+          - { name: image, label: "Image", widget: image, required: false, choose_url: false }
+          - { name: alt, label: "Describe the image (for screen readers)", widget: string, required: false,
+              hint: "One plain sentence, e.g. Site plan of the Burra Pod on the riverbank." }
+          - { name: caption, label: "Caption", widget: string, required: false }
+          - { name: blend, label: "Look", widget: select, default: multiply, required: false, options: [ { label: "Drawing on paper (blend into page)", value: multiply }, { label: "Photo or dark image (no blend)", value: none } ], hint: "Drawing on paper makes the white of a scan disappear into the page colour." }
+          - { name: maxWidth, label: "Maximum width (px)", widget: number, value_type: int, min: 100, required: false, hint: "Limit display width in pixels for low-resolution images" }
+
+      # --- Project page ------------------------------------------------------
+      - name: meta
+        label: "Project facts"
+        label_singular: "fact"
+        widget: list
+        required: false
+        summary: "{{fields.label}}: {{fields.value}}"
+        hint: "The small facts row at the top of the project page, e.g. Site, Type, Year, Studio / Tutor."
+        fields:
+          - { name: label, label: "Label", widget: string, hint: "e.g. Site" }
+          - { name: value, label: "Value", widget: string, hint: "e.g. Burra, South Australia" }
+      - { name: body, label: "Statement", widget: markdown, required: false,
+          buttons: [bold, italic, link, heading-three, quote, bulleted-list, numbered-list],
+          editor_components: [],
+          hint: "The project statement, in your own words. Shown under the title on the project page." }
+      - name: gallery
+        label: "Gallery"
+        label_singular: "section"
+        widget: list
+        required: false
+        typeKey: type
+        hint: "The rest of the project page, top to bottom: images, drawing sets, text and PDFs. Click Add section and pick a type. Drag the ═ handle to reorder."
+        types:
+          - name: image
+            label: "Image"
+            widget: object
+            summary: "Image: {{fields.caption}}"
+            fields:
+              - { name: image, label: "Image", widget: image, choose_url: false,
+                  hint: "Export renders and drawings at 2400px wide or more." }
+              - { name: alt, label: "Describe the image (for screen readers)", widget: string }
+              - { name: caption, label: "Caption", widget: string, required: false,
+                  hint: "e.g. A // Ground floor plan, 1:200" }
+              - name: layout
+                label: "Size"
+                widget: select
+                default: full
+                options:
+                  - { label: "Full (inside the page margins)", value: full }
+                  - { label: "Bleed (edge to edge)", value: bleed }
+                  - { label: "Two-thirds", value: wide }
+                  - { label: "Half (two side by side)", value: half }
+              - name: align
+                label: "Align"
+                widget: select
+                default: left
+                required: false
+                options:
+                  - { label: "Left", value: left }
+                  - { label: "Right", value: right }
+                hint: "Which side a Two-thirds or Half image sits on."
+              - { name: blend, label: "Look", widget: select, default: multiply, required: false, options: [ { label: "Drawing on paper (blend into page)", value: multiply }, { label: "Photo or dark image (no blend)", value: none } ], hint: "Drawing on paper makes the white of a scan disappear into the page colour." }
+              - { name: maxWidth, label: "Maximum width (px)", widget: number, value_type: int, min: 100, required: false, hint: "Limit display width in pixels for low-resolution images" }
+          - name: drawings
+            label: "Drawing set"
+            widget: object
+            summary: "Drawings: {{fields.title}}"
+            fields:
+              - { name: title, label: "Title", widget: string, required: false, hint: "e.g. Floor plans" }
+              - name: columns
+                label: "Columns"
+                widget: select
+                default: 2
+                options:
+                  - { label: "1 (one per row)", value: 1 }
+                  - { label: "2", value: 2 }
+                  - { label: "3", value: 3 }
+              - name: items
+                label: "Drawings"
+                label_singular: "drawing"
+                widget: list
+                summary: "{{fields.caption}}"
+                fields:
+                  - { name: image, label: "Image", widget: image, choose_url: false }
+                  - { name: alt, label: "Describe the drawing", widget: string }
+                  - { name: caption, label: "Caption", widget: string, required: false }
+                  - { name: blend, label: "Look", widget: select, default: multiply, required: false, options: [ { label: "Drawing on paper (blend into page)", value: multiply }, { label: "Photo or dark image (no blend)", value: none } ], hint: "Drawing on paper makes the white of a scan disappear into the page colour." }
+                  - { name: maxWidth, label: "Maximum width (px)", widget: number, value_type: int, min: 100, required: false, hint: "Limit display width in pixels for low-resolution images" }
+          - name: text
+            label: "Text"
+            widget: object
+            summary: "Text: {{fields.heading}}"
+            fields:
+              - { name: heading, label: "Heading", widget: string, required: false, hint: "e.g. Process" }
+              - { name: body, label: "Text", widget: markdown,
+                  buttons: [bold, italic, link, bulleted-list, numbered-list], editor_components: [] }
+          - name: pdf
+            label: "PDF"
+            widget: object
+            summary: "PDF: {{fields.title}}"
+            fields:
+              - { name: file, label: "PDF file", widget: file, choose_url: false }
+              - { name: title, label: "Title", widget: string, required: false, default: "Process document" }
+              - { name: caption, label: "Caption", widget: string, required: false }
+
+      # --- Advanced ----------------------------------------------------------
+      - { name: index, label: "This is the Archive Log folder (advanced)", widget: boolean, required: false, default: false,
+          hint: "Only ON for the Archive Log. Leave OFF for normal projects." }
+      - { name: source, label: "Notes to self (not shown on the site)", widget: text, required: false,
+          hint: "Where this project's content comes from, what's still missing, etc." }
