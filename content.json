@@ -15,9 +15,9 @@
       "caption": "",
       "blend": "multiply",
       "thumb": "assets/site/hero-480.webp",
-      "width": 760,
-      "height": 1180,
-      "srcset": "assets/site/hero-480.webp 480w, assets/site/hero.webp 760w",
+      "width": 850,
+      "height": 1265,
+      "srcset": "assets/site/hero-480.webp 480w, assets/site/hero.webp 850w",
       "mobile": {
         "src": "assets/site/hero-mobile.webp",
         "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
@@ -132,8 +132,8 @@
         "caption": "",
         "blend": "multiply",
         "maxWidth": 400,
-        "width": 530,
-        "height": 706
+        "width": 511,
+        "height": 697
       },
       "meta": [
         {
@@ -154,7 +154,7 @@
           "height": 211,
           "layout": "half",
           "align": "left",
-          "after": 2,
+          "after": 1,
           "size": "half"
         }
       ]
@@ -229,7 +229,7 @@
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/02-480.webp",
           "width": 680,
-          "height": 830,
+          "height": 852,
           "srcset": "assets/projects/common-grounds/02-480.webp 480w, assets/projects/common-grounds/02.webp 680w",
           "layout": "half",
           "align": "left",
@@ -257,7 +257,7 @@
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/04-480.webp",
           "width": 800,
-          "height": 1154,
+          "height": 578,
           "srcset": "assets/projects/common-grounds/04-480.webp 480w, assets/projects/common-grounds/04.webp 800w",
           "layout": "half",
           "align": "left",
@@ -270,9 +270,9 @@
           "caption": "Second Floor Plan // 1:100",
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/05-480.webp",
-          "width": 780,
-          "height": 1100,
-          "srcset": "assets/projects/common-grounds/05-480.webp 480w, assets/projects/common-grounds/05.webp 780w",
+          "width": 460,
+          "height": 1010,
+          "srcset": "assets/projects/common-grounds/05-480.webp 480w, assets/projects/common-grounds/05.webp 460w",
           "layout": "half",
           "align": "left",
           "size": "half"

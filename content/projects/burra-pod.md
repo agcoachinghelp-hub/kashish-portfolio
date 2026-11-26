@@ -7,11 +7,11 @@ status: published
 colour: "#9AA287"
 accent: "#6B3A2A"
 ink: "#22261C"
-cover: { image: "assets/projects/burra-pod/01.webp", alt: "Burra Pod concept collage: angled strips of historic river landscapes and eels, material swatches in pale blue, dark timber, pale timber, stone and red, and strips of site photographs", width: 530, height: 706, maxWidth: 400 }
+cover: { image: "assets/projects/burra-pod/01.webp", alt: "Burra Pod concept collage: angled strips of historic river landscapes and eels, material swatches in pale blue, dark timber, pale timber, stone and red, and strips of site photographs", width: 511, height: 697, maxWidth: 400 }
 meta:
   - { label: "Country", value: "Durug Country" }
 gallery:
-  - { type: image, layout: half, align: left, after: 2, image: "assets/projects/burra-pod/02.webp", alt: "Detail of the Burra Pod collage: material swatches in pale blue, dark timber, pale timber, stone and red", width: 515, height: 211 }
+  - { type: image, layout: half, align: left, after: 1, image: "assets/projects/burra-pod/02.webp", alt: "Detail of the Burra Pod collage: material swatches in pale blue, dark timber, pale timber, stone and red", width: 515, height: 211 }
 ---
 
 Burra Pod is a community centre shaped by movement, adaptation and connection to place. Inspired by Indigenous understandings that the best journeys in life are almost never linear or straightforward, this design incorporates flowing pathways which invite exploration and encounter. Located on Durug Country in North Parramatta, the building concept takes inspiration from the fluid movements of eels and their enduring relationship with the river, translating these qualities into organic forms and a continuous spatial flow through the spaces of the building.

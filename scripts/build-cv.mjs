@@ -34,7 +34,7 @@ function section(id, n, title, body, extraClass = '') {
   if (!has(body)) return '';
   return `
     <section class="cv-section ${extraClass}" id="${id}" aria-labelledby="${id}-h">
-      <h2 class="cv-h" id="${id}-h"><span class="cv-h__no" aria-hidden="true">${String(n).padStart(2, '0')} </span>${esc(title)}</h2>
+      <h2 class="cv-h" id="${id}-h">${esc(title)}</h2>
       <div class="cv-body">${body}</div>
     </section>`;
 }
@@ -88,10 +88,10 @@ function render(d, { paper }) {
   const ex = d.experience || {};
   const group = (label, list) => (list || []).length ? `
         <h3 class="cv-sub">${esc(label)}</h3>${list.map((e) => entry({ when: e.dates, title: roleOrg(e.role, e.org), sub: e.location, bullets: e.bullets })).join('')}` : '';
-  out.push(section('experience', ++n, 'Experience', group('Architecture & Design', ex.architecture) + group('Other Experience', ex.other)));
+  out.push(section('experience', ++n, 'Experience', group('', ex.architecture) + group('', ex.other)));
 
   // Exhibitions & awards
-  out.push(section('exhibitions', ++n, 'Exhibitions & Awards', dated((d.honours || []).filter((x) => has(x.kind) || has(x.title)).map((x) => ({
+  out.push(section('exhibitions', ++n, 'Awards', dated((d.honours || []).filter((x) => has(x.kind) || has(x.title)).map((x) => ({
     when: x.date,
     html: `${t(has(x.title) ? x.title : x.kind)}${has(x.note) ? `<span class="cv-muted"><span class="sep">, </span>${t(x.note)}</span>` : ''}`,
   })))));

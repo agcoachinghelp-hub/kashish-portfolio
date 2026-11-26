@@ -28,12 +28,12 @@ async function whiteSheetBox(n, minX = 0) {
 const JOBS = [
   // [page, output, box | 'sheet', drawing?]
   // Hero: tighter on the hands; the right edge is the page edge (bleeds off).
-  ['01', 'assets/site/hero.webp', { left: 1240, top: 150, width: 760, height: 1180 }, false],
+  ['01', 'assets/site/hero.webp', { left: 1150, top: 70, width: 850, height: 1265 }, false, 'tone'],
   // Phone hero: 4:5, the whole figure (clasped hands + raised arm), 1000px native
   // (full sketch width, page edge on the right), between the perforation rows.
   // Phone hero: the whole figure, upper clasp to the clasped hands, between the
   // perforation rows and right of her printed date (no padding, nothing added).
-  ['01', 'assets/site/hero-mobile.webp', { left: 1150, top: 70, width: 850, height: 1265 }, false],
+  ['01', 'assets/site/hero-mobile.webp', { left: 1150, top: 70, width: 850, height: 1265 }, false, 'tone'],
   // Page 02 sketches: the perforation line slopes from y~45 (left) to y~125 (right).
   // 'dots' lifts the scan paper to white, then paints the band above that sloped line
   // white too, so both multiply away into the page cream; no sketch lies above it.
@@ -50,13 +50,24 @@ const JOBS = [
   // Plans: labels ("X Plan 1:100") cropped off and moved to captions; edges cut
   // through grid lines, clear of grid bubbles.
   // Basement: tight to the building and courtyard; bottom edge cuts through hatching, clear of bubbles.
-  ['09', 'assets/projects/common-grounds/02.webp', { left: 110, top: 145, width: 680, height: 830 }, true],
+  ['09', 'assets/projects/common-grounds/02.webp', { left: 110, top: 145, width: 680, height: 852 }, true],
   ['10', 'assets/projects/common-grounds/03.webp', { left: 48, top: 145, width: 1824, height: 1155 }, true],
-  // First floor: the whole plan, top section marker to the bottom wall. Her faint
-  // "COMMON GROUNDS / CITY CENTRE" overlay is part of her page and stays.
-  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 146, width: 800, height: 1154 }, true],
-  ['12', 'assets/projects/common-grounds/05.webp', { left: 40, top: 180, width: 780, height: 1100 }, true],
+  // First floor: starts on the wall line at y~724, below her "COMMON GROUNDS / CITY CENTRE"
+  // title overlay (which repeats the page heading and hides the top rooms).
+  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 722, width: 800, height: 578 }, true],
+  ['12', 'assets/projects/common-grounds/05.webp', { left: 290, top: 262, width: 460, height: 1010 }, true],
 ];
+
+// Snap near-white, low-chroma pixels (lifted paper mottle) to pure white so multiply
+// leaves no tint; coloured or darker pixels (her work) are untouched.
+async function whitenPaper(buf) {
+  const { data, info } = await sharp(buf).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  for (let i = 0; i < data.length; i += 3) {
+    const mx = Math.max(data[i], data[i + 1], data[i + 2]), mn = Math.min(data[i], data[i + 1], data[i + 2]);
+    if (mn >= 236 && mx - mn <= 14) { data[i] = 255; data[i + 1] = 255; data[i + 2] = 255; }
+  }
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: 3 } }).png().toBuffer();
+}
 
 async function paperColour(n) {
   const { channels } = await sharp(page(n)).extract({ left: 1300, top: 700, width: 400, height: 200 }).stats();
@@ -90,7 +101,7 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><path fill-rule="evenodd" fill="rgb(${r},${g},${b})" d="M0 0H${W}V${H}H0Z M${pts.split(' ').join(' L')} Z"/></svg>`;
     const buf = await sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]).png().toBuffer();
     // Lift paper (and the matching fill) to white so the multiply leaves no box.
-    const lifted = await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer();
+    const lifted = await whitenPaper(await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer());
     img = sharp(lifted).trim({ background: '#ffffff', threshold: 10 });
   }
   if (fix === 'collage') {
@@ -101,7 +112,14 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     // her "BURRA POD / CONCEPT" title letters reach x~1027 on the left: paint that strip as paper
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="0" y="0" width="${1030 - region.left}" height="${300 - region.top}" fill="rgb(${r},${g},${b})"/></svg>`;
     const buf = await sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]).png().toBuffer();
-    img = sharp(await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()).trim({ background: '#ffffff', threshold: 10 });
+    img = sharp(await whitenPaper(await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer())).trim({ background: '#ffffff', threshold: 10 });
+  }
+  if (fix === 'tone') {
+    const pr = await sharp(page(n)).extract({ left: 1200, top: 300, width: 300, height: 400 }).removeAlpha().raw().toBuffer();
+    const pix = []; for (let i = 0; i < pr.length; i += 3) pix.push([pr[i], pr[i + 1], pr[i + 2]]);
+    pix.sort((a, c) => a[0] + a[1] + a[2] - (c[0] + c[1] + c[2]));
+    const [r, g, b] = pix[Math.floor(pix.length * 0.85)];
+    img = sharp(await whitenPaper(await img.modulate({ saturation: 0.85 }).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()));
   }
   if (fix === 'lift') {
     const { channels } = await sharp(page(n)).extract({ left: 1300, top: 700, width: 400, height: 200 }).stats();
@@ -132,7 +150,7 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${region.height}"><polygon points="0,0 ${w},0 ${w},${y1} 0,${y0}" fill="#ffffff"/></svg>`;
     img = sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]);
   }
-  await (drawing ? img.webp({ quality: 90, nearLossless: true }) : img.webp({ quality: 82 }))
+  await (drawing ? img.webp({ quality: 90, nearLossless: true }) : img.webp({ quality: 92 }))
     .toFile(path.join(ROOT, out));
   const meta = await sharp(path.join(ROOT, out)).metadata();
   for (const w of [480, 960]) {

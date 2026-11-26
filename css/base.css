@@ -473,12 +473,10 @@ html.project-open body { overflow: hidden; }
     linear-gradient(to bottom, transparent, #000 12%, #000 82%, transparent);
   mask-composite: intersect;
   mix-blend-mode: multiply;
-  /* The scan's paper is ~#D8D9D4 (85% white), so plain multiply leaves a grey
-     box. Lifting it to white first lets it vanish into the page; the pencil
-     keeps its tone. Tune --paper-lift per scan (1 = off). */
-  filter: saturate(.85) brightness(var(--paper-lift, 1.2)) contrast(1.1);
+  /* The tone (saturate .85, paper lifted to white) is baked into the image
+     files, so multiply alone makes the paper vanish into the page. */
 }
-.cover__img--plain { mix-blend-mode: normal; filter: saturate(.85); }   /* photo or dark image */
+.cover__img--plain { mix-blend-mode: normal; }   /* photo or dark image */
 .cover__caption { color: var(--muted); padding-right: var(--gutter); }
 /* No hero yet: a plain ruled frame keeps its place (inside the gutter) */
 .cover__figure--empty { margin-right: 0; }
@@ -526,12 +524,8 @@ html.project-open body { overflow: hidden; }
        scroll), but on phones the bottom cut is on screen from the start, so
        it is already faded from 86% (the tween ends where phones begin). A
        deeper fade would wash out the clasped hands at the bottom. */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
-    /* No contrast boost, so her light pencil highlights keep their tone. The
-       scan's paper is about #D5D7D0; 1.23 is the lowest lift that leaves no
-       visible box (1.1 leaves a grey band, 21 levels darker than the page). */
-    filter: saturate(.85) brightness(var(--paper-lift-phone, 1.23));
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
   }
   .cover__h1 { order: 0; }
   .cover__figure { order: 1; }
@@ -549,16 +543,24 @@ html.project-open body { overflow: hidden; }
   .cover__title-script { font-size: 1.85em; }
 }
 
-/* Opening on phones: the name rises, then the title, then the drawing fades
-   in, then the about text. Pure CSS with backwards fill, so it runs without
-   JS, ends fully visible, and leaves the scroll fade (inline styles) in charge
-   afterwards. */
+/* Opening on phones: the drawing fades in from page load; once the fonts are
+   in, the name rises, then the title and the about text. CSS animations with
+   backwards fill end fully visible and then leave the scroll fade (inline
+   styles) in charge. */
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  .cover__name { animation: cover-rise .7s var(--ease-out) backwards; }
-  .cover__title { animation: cover-rise .7s var(--ease-out) .15s backwards; }
+  .fonts-ready .cover__name { animation: cover-rise .7s var(--ease-out) backwards; }
+  .fonts-ready .cover__title { animation: cover-rise .7s var(--ease-out) .15s backwards; }
   .cover__img { animation: cover-in .8s var(--ease-out) .35s backwards; }
-  .cover__about { animation: cover-rise .7s var(--ease-out) .6s backwards; }
+  .fonts-ready .cover__about { animation: cover-rise .7s var(--ease-out) .3s backwards; }
 }
+/* Wider screens: the name and title simply fade in once the fonts are in. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .fonts-ready .cover__h1 { animation: cover-in .4s var(--ease-out) backwards; }
+}
+/* Until the display fonts arrive (an inline script in index.html adds and
+   removes this class, 1.5s at most), the name and title stay hidden so they
+   never flash in a stand-in font. Without JS the class never appears. */
+.fonts-wait .cover__h1 { opacity: 0; }
 @keyframes cover-in { from { opacity: 0; } }
 @keyframes cover-rise { from { opacity: 0; transform: translateY(12px); } }
 
@@ -632,13 +634,14 @@ html.project-open body { overflow: hidden; }
   .cover__frame { flex: 1 1 auto; }
   .cover__img {
     position: absolute;
-    top: 0;
     right: 0;
+    bottom: 0;                     /* sits on the bottom edge of the first screen */
     height: 100%;
-    max-width: 100%;
-    max-height: none;
+    /* at most half the image's 850 x 1265 pixels, so it stays sharp on 2x */
+    max-width: min(100%, 425px);
+    max-height: 632px;
     object-fit: cover;             /* only crops if the column is unusually narrow */
-    object-position: right center;
+    object-position: right bottom;
     /* Runs off the right and bottom; fade only the left and top cut edges.
        The bottom edge only shows once you scroll (above the folders), so
        cover.js eases --hero-cut from 100% (no fade) to 86% over the first
@@ -741,8 +744,6 @@ a.contact__email:hover { background-size: 0 2px; background-position: 100% 100%;
   letter-spacing: .04em;
   line-height: 1.5;
 }
-.contact__phone { font-size: var(--text-lg); }
-a.contact__phone:hover { text-decoration: underline; text-underline-offset: .2em; }
 
 .contact__social-list { display: flex; flex-direction: column; gap: var(--space-2); }
 .contact__social-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); }

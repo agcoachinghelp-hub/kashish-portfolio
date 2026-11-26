@@ -63,7 +63,7 @@ function heroHTML(hero) {
           <div class="cover__frame">
             <picture class="cover__picture">
               ${mobile ? `<source media="(max-width: 1023px)" srcset="${esc(mobile.srcset || mobile.src)}" sizes="${SIZES}"${dims(mobile)}>` : ''}
-              <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims(hero)} fetchpriority="high" decoding="async">
+              <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}"${hero.srcset ? ` srcset="${esc(hero.srcset)}" sizes="425px"` : ''} alt="${esc(hero.alt)}"${dims(hero)} fetchpriority="high" decoding="async">
             </picture>
           </div>
           ${hasValue(hero.caption) ? `<figcaption class="cover__caption t-code">${esc(hero.caption)}</figcaption>` : ''}
@@ -112,6 +112,8 @@ function syncHero(cover, site) {
     return;
   }
   setAttr(img, 'src', hero.src);
+  setAttr(img, 'srcset', hero.srcset);
+  setAttr(img, 'sizes', hero.srcset ? '425px' : '');
   setAttr(img, 'alt', hero.alt || '');
   setAttr(img, 'width', hero.width);
   setAttr(img, 'height', hero.height);

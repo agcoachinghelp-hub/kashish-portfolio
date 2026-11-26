@@ -326,34 +326,6 @@ function renderProject(p, projects, site) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Paper lift                                                          */
-/* ------------------------------------------------------------------ */
-
-// Her scans sit on grey-ish paper (~#D8D9D4); multiply alone would leave a grey
-// sheet on the cream. Measure each image's paper tone (the brightest 8% of a
-// tiny copy) and lift it to white with a brightness filter on the img itself.
-// White-paper plans measure ~1.0 and are left alone.
-let liftCanvas = null;
-function liftPaper(img) {
-  if (!img.classList.contains('is-multiply') || img.dataset.lift || !img.naturalWidth) return;
-  try {
-    const n = 48;
-    liftCanvas ||= document.createElement('canvas');
-    liftCanvas.width = n; liftCanvas.height = n;
-    const c = liftCanvas.getContext('2d', { willReadFrequently: true });
-    c.drawImage(img, 0, 0, n, n);
-    const d = c.getImageData(0, 0, n, n).data;
-    const lum = [];
-    for (let i = 0; i < d.length; i += 4) lum.push(0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]);
-    lum.sort((a, b) => a - b);
-    const paper = lum[Math.floor(lum.length * 0.92)] || 255;
-    const lift = Math.min(1.3, Math.max(1, 250 / paper));
-    img.style.setProperty('--lift', lift.toFixed(3));
-    img.dataset.lift = lift.toFixed(3);
-  } catch { /* cross-origin or decode issue: leave the image as it is */ }
-}
-
-/* ------------------------------------------------------------------ */
 /* Controller                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -398,7 +370,6 @@ export function initProjectView(projects, site) {
   const scroller = view.querySelector('[data-pv-scroll]');
   const skin = view.querySelector('[data-pv-skin]');
   const lb = view.querySelector('[data-lb]');
-  scroller.addEventListener('load', (e) => { if (e.target.tagName === 'IMG') liftPaper(e.target); }, true);
   const lbImg = lb.querySelector('[data-lb-img]');
   const lbStage = lb.querySelector('[data-lb-stage]');
   const lbZoom = lb.querySelector('[data-lb-zoom]');
@@ -433,7 +404,6 @@ export function initProjectView(projects, site) {
     const out = renderProject(p, projects, site);
     scroller.innerHTML = out.html;
     gallery = out.gallery;
-    scroller.querySelectorAll('img.is-multiply').forEach((img) => { if (img.complete) liftPaper(img); });
     scroller.scrollTop = 0;
   }
 
@@ -629,7 +599,15 @@ export function initProjectView(projects, site) {
       const back = returnFocus && document.contains(returnFocus) ? returnFocus : document.getElementById('projects');
       if (back) {
         if (back.id === 'projects' && !back.hasAttribute('tabindex')) back.setAttribute('tabindex', '-1');
-        back.focus({ preventScroll: true });
+        // Focus goes back to the folder without a visible ring (the closed
+        // folder must not look outlined). The next key press brings the ring
+        // back for keyboard users. focusVisible is honoured by Chromium; the
+        // class covers the rest.
+        back.classList.add('is-quiet-focus');
+        const loud = () => back.classList.remove('is-quiet-focus');
+        window.addEventListener('keydown', loud, { once: true, capture: true });
+        back.addEventListener('blur', loud, { once: true });
+        back.focus({ preventScroll: true, focusVisible: false });
       }
       returnFocus = null;
       flush();

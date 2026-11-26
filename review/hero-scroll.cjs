@@ -30,7 +30,7 @@ const DEVICES = [{ id: 'iphone15', w: 393, h: 852 }, { id: 'iphoneSE', w: 375, h
     const frames = path.join(OUT, `${d.id}-frames`); fs.mkdirSync(frames, { recursive: true });
     const c2 = await b.newContext({ viewport: { width: d.w, height: d.h }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const q = await c2.newPage();
-    await q.goto(BASE, { waitUntil: 'commit' });
+    await q.goto(BASE, { waitUntil: 'domcontentloaded' });
     let i = 0;
     const grab = async () => q.screenshot({ path: path.join(frames, `f${String(i++).padStart(3, '0')}.png`) });
     for (let t = 0; t < 22; t++) { await grab(); await q.waitForTimeout(90); } // ~2s of load animation

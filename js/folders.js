@@ -239,7 +239,9 @@ function expander(container) {
     const it = el?.closest?.('.folder-item');
     return it && interactive.includes(it) ? items.indexOf(it) : -1;
   };
+  let hovered = -1;
   const rest = () => {
+    hovered = -1;
     const f = indexOf(document.activeElement);
     set(f >= 0 ? f : fallback);
   };
@@ -249,7 +251,7 @@ function expander(container) {
   container.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch' || document.documentElement.classList.contains('project-open')) return;
     const i = indexOf(e.target);
-    if (i >= 0) set(i);
+    if (i >= 0) { hovered = i; set(i); }
   });
   container.addEventListener('pointerleave', rest);
   container.addEventListener('focusin', (e) => {
@@ -257,7 +259,8 @@ function expander(container) {
     if (i >= 0) set(i);
   });
   container.addEventListener('focusout', (e) => {
-    if (!container.contains(e.relatedTarget) && !container.matches(':hover')) set(fallback);
+    // focus left the drawer: follow the pointer if it is over a folder
+    if (!container.contains(e.relatedTarget)) set(hovered >= 0 && container.matches(':hover') ? hovered : fallback);
   });
   set(fallback);
 }

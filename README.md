@@ -76,12 +76,11 @@ This converts any size or format into web-ready WebP at 2400, 1600 and 800 px, s
 
 The CV source is `cv/cv-data.json`. Run `npm run cv` to regenerate `cv/cv.html` and the PDF; it also copies the PDF to `assets/cv.pdf`, which is the site's download link. See `cv/README.md`.
 
-## Deploy (Netlify, free)
+## Deploy
 
-1. Push this folder to a GitHub repo in **Kashish's own account**.
-2. In Netlify, choose "Add new site", then "Import from Git", and pick the repo. The build settings come from `netlify.toml`.
-3. To turn on the editor: Netlify → Site configuration → Access & security → OAuth → install the GitHub provider. Then set `repo:` in `admin/config.yml` to `<her-username>/kashish-portfolio`.
-4. Contact form messages arrive in Netlify → Forms. Set up an email notification there.
+**GitHub Pages (current):** the workflow in `.github/workflows/pages.yml` builds the site and publishes only `dist/`. In the repo, set **Settings → Pages → Source: GitHub Actions**. Do not use "Deploy from a branch", which would serve the whole repository.
+
+**Netlify (for the editor and the contact form):** import the repo in Netlify; `netlify.toml` builds and publishes `dist/`. Then enable GitHub login (Site configuration → Access & security → OAuth) to use `/admin`, and switch on "Contact form (Netlify only)" in Site settings if wanted.
 
 ## Files
 

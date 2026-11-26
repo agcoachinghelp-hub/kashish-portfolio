@@ -90,9 +90,9 @@
         "dates": "Jan 2025 - Jul 2026",
         "bullets": [
           "Prepared building cost estimates for 3 new multi-million-dollar commercial projects and multiple ongoing renovation projects, supporting budgeting, tender preparation and financial planning.",
-          "Tendered and compared 40+ supplier and contractor quotations per project across each stage of the build, analysing them in Excel to reduce procurement costs.",
+          "Tendered and compared 40+ supplier and contractor quotations per project across each stage of the build, collating and analysing them in Excel to identify lower-cost options and reduce procurement costs.",
           "Drafted architectural and construction plans and technical drawings in AutoCAD and Revit for selected renovation projects, supporting council review and development approval.",
-          "Coordinated clients, contractors, consultants and suppliers to track project requirements and progress across multiple concurrent construction projects."
+          "Coordinated clients, contractors, consultants and suppliers to track project requirements and progress across multiple concurrent construction projects. Receptionist &"
         ]
       },
       {
@@ -110,8 +110,7 @@
         "org": "Art of Smart",
         "dates": "Aug 2025 - Present",
         "bullets": [
-          "Deliver personalised tutoring across multiple subjects, adapting teaching methods to individual learning needs.",
-          "Build lasting relationships with students and parents, mentoring students in goal setting, independent thinking and problem-solving."
+          "Deliver personalised tutoring across multiple subjects, adapting teaching methods to individual learning needs to strengthen understanding and academic confidence."
         ]
       },
       {
@@ -119,9 +118,7 @@
         "org": "Wiseberry Real Estate",
         "dates": "Jul 2024 - Dec 2024",
         "bullets": [
-          "Developed and implemented a structured records management process for 60+ property files.",
-          "Coordinated appointments, documentation and presentation materials for open homes and client meetings.",
-          "Designed promotional banners, property advertisements and marketing materials."
+          "Developed and implemented a structured records management process for 60+ property files, improving document organisation, accessibility and workflow efficiency."
         ]
       },
       {
@@ -129,8 +126,7 @@
         "org": "Domino’s",
         "dates": "May 2021 - Oct 2023",
         "bullets": [
-          "Promoted from Team Member to Shift Manager, assuming responsibility for store operations, team performance and customer service.",
-          "Led teams of up to six employees, delegating responsibilities and coordinating operations during peak trading periods."
+          "Promoted from Team Member to Shift Manager, assuming responsibility for store operations, team performance and customer service."
         ]
       }
     ]
@@ -145,40 +141,70 @@
   ],
   "skills": [
     {
-      "group": "Design",
+      "group": "Technical Skills",
       "items": [
         "AutoCAD",
         "Revit",
-        "Rhino"
-      ]
-    },
-    {
-      "group": "Adobe",
-      "items": [
+        "Rhino",
         "Photoshop",
         "Illustrator",
         "InDesign",
-        "Fresco"
-      ]
-    },
-    {
-      "group": "Fabrication",
-      "items": [
+        "Fresco",
+        "Microsoft Excel",
+        "Microsoft 365 (Word, PowerPoint, Outlook)",
+        "Microsoft Project",
+        "Google Workspace (Docs, Sheets, Slides, Calendar, Drive)",
         "Laser Cutting (Tetro, Ruby)",
         "3D Printing (Bambu Lab)",
+        "Canva",
+        "OpenAI Codex",
+        "Claude Code",
         "Physical Model Making"
       ]
     },
     {
-      "group": "Other",
+      "group": "Design & Creative",
       "items": [
-        "Microsoft Excel",
-        "Microsoft 365 (Word, PowerPoint, Outlook)",
-        "Microsoft Project",
-        "Google Workspace",
-        "Canva",
-        "OpenAI Codex",
-        "Claude Code"
+        "Drafting",
+        "Graphic Design",
+        "Visual Communication",
+        "Construction Detailing",
+        "Mixed-Media Art"
+      ]
+    },
+    {
+      "group": "Project & Commercial",
+      "items": [
+        "Building Cost Estimation",
+        "Tendering",
+        "Procurement",
+        "Sourcing",
+        "Project Coordination"
+      ]
+    },
+    {
+      "group": "Business & Administration",
+      "items": [
+        "Records Management",
+        "Process Improvement",
+        "Stakeholder Coordination"
+      ]
+    },
+    {
+      "group": "Sales & Customer Service",
+      "items": [
+        "Client Relationship Management",
+        "Sales & Customer Support",
+        "Conflict Resolution"
+      ]
+    },
+    {
+      "group": "Leadership & Development",
+      "items": [
+        "Team Leadership",
+        "Staff Training",
+        "Mentoring",
+        "Coaching"
       ]
     }
   ],
@@ -254,5 +280,5 @@
       "level": "Fluent, spoken only"
     }
   ],
-  "references": "Available on request"
+  "references": ""
 }

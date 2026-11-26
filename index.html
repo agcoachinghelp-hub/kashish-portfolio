@@ -9,12 +9,29 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='22' rx='2' fill='%23B08A5B'/%3E%3Crect x='3' y='3' width='11' height='6' rx='1.5' fill='%23B08A5B'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Fonts load without blocking the first paint -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Fonts load without blocking the first paint. Until the display fonts
+       are in (or 1.5s pass), the landing name stays hidden so it never flashes
+       in a stand-in font; without JS nothing is hidden. -->
+  <script>
+    (function (d, h) {
+      h.classList.add('fonts-wait');
+      var shown = false;
+      function show() {
+        if (shown) return; shown = true;
+        h.classList.remove('fonts-wait'); h.classList.add('fonts-ready');
+      }
+      setTimeout(show, 1500);
+      window.__fontsCssLoaded = function () {
+        if (!d.fonts || !d.fonts.load) return show();
+        Promise.all([d.fonts.load('900 100px Archivo'), d.fonts.load('400 40px "Pinyon Script"')]).then(show, show);
+      };
+    })(document, document.documentElement);
+  </script>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap" onload="this.onload=null;this.rel='stylesheet';window.__fontsCssLoaded&&window.__fontsCssLoaded()">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap"></noscript>
   <!-- The landing hero is the largest paint: fetch the right crop straight away -->
   <link rel="preload" as="image" href="assets/site/hero-mobile.webp" imagesrcset="assets/site/hero-mobile-480.webp 480w, assets/site/hero-mobile.webp 850w" imagesizes="(max-width: 767px) 100vw, 425px" media="(max-width: 1023px)" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/site/hero.webp" media="(min-width: 1024px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/site/hero.webp" imagesrcset="assets/site/hero-480.webp 480w, assets/site/hero.webp 850w" imagesizes="425px" media="(min-width: 1024px)" fetchpriority="high">
   <link rel="preload" as="fetch" href="content.json" crossorigin>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
@@ -48,7 +65,7 @@
             <div class="cover__frame">
               <picture class="cover__picture">
                 <source media="(max-width: 1023px)" srcset="assets/site/hero-mobile-480.webp 480w, assets/site/hero-mobile.webp 850w" sizes="(max-width: 767px) 100vw, 425px" width="850" height="1265">
-                <img class="cover__img" src="assets/site/hero.webp" alt="Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio" width="760" height="1180" fetchpriority="high" decoding="async">
+                <img class="cover__img" src="assets/site/hero.webp" srcset="assets/site/hero-480.webp 480w, assets/site/hero.webp 850w" sizes="425px" alt="Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio" width="850" height="1265" fetchpriority="high" decoding="async">
               </picture>
             </div>
           </figure>

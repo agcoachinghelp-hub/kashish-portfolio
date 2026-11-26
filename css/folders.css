@@ -211,7 +211,10 @@ a.folder { will-change: transform; }
 
 /* ---------- interaction ---------- */
 /* focus: one outline around the whole folder, none on its parts */
-a.folder:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+/* keyboard only, drawn inside the folder's own shape (no overhang) */
+a.folder:focus:not(:focus-visible),
+a.folder.is-quiet-focus:focus-visible { outline: none; }
+a.folder:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; }
 a.folder:focus-visible .folder__tab::after { opacity: .22; }
 a.folder:active { transition-duration: .2s; }
 
