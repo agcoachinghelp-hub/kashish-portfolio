@@ -128,8 +128,10 @@ async function scroller(page) {
     await page.goto(BASE + '#projects', { waitUntil: 'networkidle' }); await wait(page, 1200);
     // Click a point of the folder that is actually visible (stacked folders overlap).
     const clickFolder = async (slug) => {
+      await page.evaluate((slug) => document.querySelector(`.folder[data-slug="${slug}"]`).scrollIntoView({ block: 'center', behavior: 'instant' }), slug);
+      await wait(page, 900);
       const pt = await page.evaluate((slug) => {
-        const el = document.querySelector(`.folder[data-slug="${slug}"]`); el.scrollIntoView({ block: 'center' });
+        const el = document.querySelector(`.folder[data-slug="${slug}"]`);
         const r = el.getBoundingClientRect();
         for (let y = r.top + 4; y < r.bottom; y += 6) for (let x = r.left + 4; x < r.right; x += 12) {
           const hit = document.elementFromPoint(x, y); if (hit && hit.closest('.folder') === el) return [x, y];
