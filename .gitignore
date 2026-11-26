@@ -5,3 +5,6 @@ node_modules/
 /her-cv/
 # Private working material (client chat history, internal briefs)
 /brief/
+/dist/
+# Review screenshots are large; keep only the written notes in git
+/review/**/*.png
