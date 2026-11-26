@@ -8,6 +8,7 @@ colour: "#9AA287"
 accent: "#6B3A2A"
 ink: "#22261C"
 cover: { image: "assets/projects/burra-pod/01.webp", alt: "Burra Pod concept collage: angled strips of river landscapes, eels and site photographs with material samples in blue, dark timber, pale timber, stone and red", width: 472, height: 702, maxWidth: 400 }
+pullquote: "The best journeys in life are almost never linear or straightforward."
 meta:
   - { label: "Site", value: "Fleet Street, North Parramatta, NSW" }
   - { label: "Country", value: "Durug Country" }

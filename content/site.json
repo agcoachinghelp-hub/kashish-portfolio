@@ -13,7 +13,12 @@
     "image": "assets/site/hero.webp",
     "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
     "width": 760,
-    "height": 1180
+    "height": 1180,
+    "mobile": {
+      "image": "assets/site/hero-mobile.webp",
+      "width": 680,
+      "height": 680
+    }
   },
   "outro": {
     "image": "",
@@ -22,7 +27,7 @@
   "cvPdf": "assets/cv.pdf",
   "socials": [
     {
-      "label": "LinkedIn",
+      "label": "LinkedIn /kashishkhera",
       "url": "https://www.linkedin.com/in/kashishkhera"
     },
     {

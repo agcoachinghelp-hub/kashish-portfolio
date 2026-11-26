@@ -89,7 +89,9 @@ function block(b, ctx) {
 
 async function main() {
   const site = JSON.parse(await readFile(rel('content/site.json'), 'utf8'));
+  const heroMobile = site.hero && site.hero.mobile ? image({ alt: site.hero.alt, ...site.hero.mobile }, 'site.json hero.mobile') : null;
   site.hero = image(site.hero, 'site.json hero') || null;
+  if (site.hero && heroMobile) site.hero.mobile = heroMobile;
   site.outro = image(site.outro, 'site.json outro') || null;
   site.cvPdf = asset(site.cvPdf);
   site.socials = (site.socials || []).filter((s) => s && s.label);
@@ -118,6 +120,9 @@ async function main() {
       cover: image(d.cover, ctx),
       meta: (d.meta || []).filter((m) => m && m.label).map((m) => ({ label: str(m.label), value: str(m.value) })),
       statement: marked.parse(body.trim()),
+      // Optional pull-quote: one of her own sentences from the statement, shown large
+      // between paragraphs to break up long text on phones.
+      pullquote: str(d.pullquote),
       blocks: (d.gallery || []).map((b) => block(b, ctx)).filter(Boolean),
     });
   }
