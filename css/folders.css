@@ -95,7 +95,7 @@ a.folder { will-change: transform; }
 .folder__tab-text {
   position: relative;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .14em;
   line-height: 1;
@@ -199,7 +199,7 @@ a.folder { will-change: transform; }
   flex-direction: column;
   gap: 8px;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .14em;
   line-height: 1.2;
@@ -361,7 +361,8 @@ a.folder:active { transition-duration: .2s; }
    STACKED - phones and iPad portrait
    ========================================================================== */
 @media (max-width: 1023.98px) {
-  .projects { padding-top: clamp(28px, 6vw, 56px); }
+  /* phones: half the old gap; no background of its own, so the paper runs on from the landing */
+  .projects { padding-top: clamp(14px, 3vw, 28px); }
   .folders {
     --tab-h: 30px;
     --tab-len: clamp(110px, 26%, 200px);

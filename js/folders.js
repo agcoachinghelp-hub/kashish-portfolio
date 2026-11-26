@@ -263,7 +263,11 @@ function track(el) {
   if ('ResizeObserver' in window) new ResizeObserver(set).observe(el);
   else window.addEventListener('resize', set);
   UPRIGHT.addEventListener?.('change', set);
+  // Refit once the display face has really loaded: fonts.ready can resolve
+  // before the title font is even requested.
   document.fonts?.ready.then(set);
+  document.fonts?.addEventListener?.('loadingdone', set);
+  window.addEventListener('load', set, { once: true });
 }
 
 function reveal(container) {

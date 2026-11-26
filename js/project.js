@@ -197,14 +197,30 @@ function renderIndex(projects, self) {
     </section>`;
 }
 
-// Next published file after p (coming-soon files are skipped).
+// "Next file" runs through the published projects only (never CONTENTS or a
+// coming-soon file) and loops from the last back to the first. CONTENTS's own
+// next file is the first published project.
 function nextFile(p, projects) {
-  const idx = projects.indexOf(p);
-  for (let k = 1; k < projects.length; k += 1) {
-    const q = projects[(idx + k) % projects.length];
-    if (!isSoon(q)) return q === p ? null : q;
+  const chain = projects.filter((q) => !isSoon(q) && !q.index);
+  if (!chain.length) return null;
+  if (p.index) return chain[0];
+  const i = chain.indexOf(p);
+  const q = chain[(i + 1) % chain.length];
+  return q === p ? null : q;
+}
+
+// Her statement, with the pull-quote (her own words, exactly) set after the
+// first paragraph.
+function statementHTML(p) {
+  if (!p.statement || !textOf(p.statement) || isPlaceholder(textOf(p.statement))) return '';
+  let html = String(p.statement);
+  const quote = clean(p.pullquote).replace(/^["\u201C\u2018']+|["\u201D\u2019']+$/g, '').trim();
+  if (quote) {
+    const bq = `<blockquote class="pv-pullquote"><p>\u201C${esc(quote)}\u201D</p></blockquote>`;
+    const end = html.indexOf('</p>');
+    html = end >= 0 ? html.slice(0, end + 4) + bq + html.slice(end + 4) : html + bq;
   }
-  return null;
+  return `<div class="pv-statement" data-pv-rise>${html}</div>`;
 }
 
 // A plain empty frame where an image will go: a thin rule, no text.
@@ -228,12 +244,11 @@ function renderProject(p, projects, site) {
     ? figureHTML(p.cover, ctx, { layout: 'full', align: 'left', eager: true, cls: ' pv-hero', rise: true })
     : '';
 
-  const statement = p.statement && textOf(p.statement) && !isPlaceholder(textOf(p.statement))
-    ? `<div class="pv-statement" data-pv-rise>${p.statement}</div>` : '';
+  const statement = statementHTML(p);
   const blocks = renderBlocks(p, ctx);
 
   // Nothing to show yet: keep the page intentional with plain empty frames.
-  const empty = !p.index && !hero && !blocks
+  const empty = !p.index && !hero && !blocks && !statement
     ? `<div class="pv-empties" data-pv-rise>${emptyFrame(' pv-empty--wide')}<div class="pv-empty-pair">${emptyFrame()}${emptyFrame()}</div></div>`
     : '';
 
@@ -257,8 +272,8 @@ function renderProject(p, projects, site) {
         ${subtitle ? `<p class="pv-subtitle">${esc(subtitle)}</p>` : ''}
       </div>
       ${meta ? `<dl class="pv-meta" data-pv-rise>${meta}</dl>` : ''}
-      ${statement}
       ${hero}
+      ${statement}
       ${p.index ? renderIndex(projects, p) : ''}
       ${blocks ? `<div class="pv-blocks">${blocks}</div>` : ''}
       ${empty}
