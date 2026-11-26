@@ -1,5 +1,7 @@
 # STUCK: review loop stopped at the round limit (6)
 
+**Update:** the owner approved a round 7. Its fixes (kraft drawing levelled, phone bleed clipping, stale plan variant, iPhone SE whole-figure hero, paper whitening, duplicate swatch removed, Burra Pod text runs, CV order and stray fragment, Esc hash, In Progress affordance, tap-hint wrapping) are in commit 26fd636. Round 7 automated checks were clean on all 5 devices (no console errors, no overflow, no text under 12px, no tap target under 44px, navigation correct; Lighthouse mobile 98/100/100/100). The owner then froze the site for presentation before the round 7 review returned, so no gate verdict exists for round 7 and READY.json was not written. Remaining source-limited items below still apply.
+
 The final independent review (round 6) still failed three gates. READY.json was not written.
 
 | Gate | Round 6 | History (rounds 1-6) |
