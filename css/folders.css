@@ -495,3 +495,7 @@ a.folder:active { transition-duration: .2s; }
   .folder-item,
   .folder__tab::after { transition: none !important; }
 }
+
+/* The desktop drawer can extend past the viewport edge; clip it so the page
+   never scrolls sideways (overflow-x: clip does not create a scroll container). */
+.projects { overflow-x: clip; }

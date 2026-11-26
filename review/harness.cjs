@@ -126,11 +126,25 @@ async function scroller(page) {
     // 6. Esc and back from an open project
     const first = published.find((p) => !p.index) || published[0];
     await page.goto(BASE + '#projects', { waitUntil: 'networkidle' }); await wait(page, 1200);
-    await page.click(`.folder[data-slug="${first.slug}"]`, { force: true }).catch(() => {}); await wait(page, 1600);
+    // Click a point of the folder that is actually visible (stacked folders overlap).
+    const clickFolder = async (slug) => {
+      const pt = await page.evaluate((slug) => {
+        const el = document.querySelector(`.folder[data-slug="${slug}"]`); el.scrollIntoView({ block: 'center' });
+        const r = el.getBoundingClientRect();
+        for (let y = r.top + 4; y < r.bottom; y += 6) for (let x = r.left + 4; x < r.right; x += 12) {
+          const hit = document.elementFromPoint(x, y); if (hit && hit.closest('.folder') === el) return [x, y];
+        }
+        return null;
+      }, slug);
+      await wait(page, 400);
+      if (pt) await page.mouse.click(pt[0], pt[1]); else r.notes.push(`no visible point on folder ${slug}`);
+    };
+    await clickFolder(first.slug); await wait(page, 1600);
     await page.keyboard.press('Escape'); await wait(page, 1600);
     await shot('06-after-esc');
     r.notes.push('After Esc: ' + JSON.stringify(await page.evaluate(() => ({ hash: location.hash, open: !document.querySelector('[data-project-view]').hidden }))));
-    await page.click(`.folder[data-slug="${first.slug}"]`, { force: true }).catch(() => {}); await wait(page, 1600);
+    await clickFolder(first.slug); await wait(page, 1600);
+    r.notes.push('Opened before back: ' + (await page.evaluate(() => location.hash)));
     await page.goBack(); await wait(page, 1600);
     await shot('07-after-back');
     r.notes.push('After back: ' + JSON.stringify(await page.evaluate(() => ({ hash: location.hash, open: !document.querySelector('[data-project-view]').hidden }))));
