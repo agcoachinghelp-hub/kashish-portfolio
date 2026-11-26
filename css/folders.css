@@ -95,7 +95,7 @@ a.folder { will-change: transform; }
 .folder__tab-text {
   position: relative;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .14em;
   line-height: 1;
@@ -139,8 +139,9 @@ a.folder { will-change: transform; }
 .folder__sub,
 .folder__list { display: block; }
 
-/* Her work, cropped and tinted with the folder colour (duotone). Only rendered
-   when the project has an image; the title never sits on it. */
+/* Her work, cropped into the face (her colours, fading into the folder colour
+   through the mask). Only rendered when the project has an image; the title
+   never sits on it. No border, no shadow. */
 .folder__photo {
   position: absolute;
   z-index: -1;
@@ -153,11 +154,10 @@ a.folder { will-change: transform; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.08);
+  /* her own colours; white paper drops into the folder colour */
   mix-blend-mode: multiply;
-  opacity: .92;
 }
-.folder--dark .folder__photo img { mix-blend-mode: screen; opacity: .5; }
+.folder--dark .folder__photo img { mix-blend-mode: normal; opacity: .72; }
 
 .folder__strip {
   position: absolute;
@@ -199,7 +199,7 @@ a.folder { will-change: transform; }
   flex-direction: column;
   gap: 8px;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .14em;
   line-height: 1.2;
@@ -207,17 +207,7 @@ a.folder { will-change: transform; }
 }
 .folder__list > span { display: block; }
 
-/* One gold outline, CONTENTS folder only */
-.folder--index .folder__face::after {
-  content: "";
-  position: absolute;
-  inset: 10px;
-  border: 1px solid var(--gold, #B89B5E);
-  border-radius: 1px;
-  pointer-events: none;
-}
-/* The last card needs its own edge against the page background. */
-.folder--last .folder__face { outline: 1px solid rgba(42, 42, 38, .2); outline-offset: -1px; }
+/* No borders on closed folders: the last card separates by colour and shadow. */
 
 /* ---------- interaction ---------- */
 a.folder:focus-visible .folder__tab::after { opacity: .22; }
@@ -249,14 +239,16 @@ a.folder:active { transition-duration: .2s; }
    ========================================================================== */
 @media (min-width: 1024px) {
   .folders {
-    --tab-w: 28px;
-    --tab-reach: calc(var(--tab-w) + 4px); /* how far a tab sticks out over the previous folder */
+    /* No edge tabs on the upright drawer: a tab on the previous folder's edge
+       read as belonging to it. The spines carry the titles. */
+    --tab-reach: 0px;
     --cw: calc(100vw - 2 * var(--gutter) - 16px); /* JS sets the real value */
-    --face: clamp(300px, calc(var(--cw) * .3), 460px);
+    /* fewer folders, wider faces: 0.44 of the drawer for 4 folders, ~0.3 for 9 */
+    --face: clamp(300px, calc(var(--cw) * (.56 - var(--n, 6) * .03)), 640px);
     /* reach + (n-2)·step + 2·face = cw: the expanded face + the last face */
     --step: calc((var(--cw) - var(--tab-reach) - 2 * var(--face)) / var(--gaps, 3));
     /* strip chrome: 14 pad + reach + 8 */
-    --title-fs: clamp(24px, min(calc((var(--step) - 22px - var(--tab-reach)) / .86), 7.4vh), 76px);
+    --title-fs: clamp(24px, min(calc((var(--step) - 30px - var(--tab-reach)) / .86), 7.4vh), 76px);
     --photo-h: 40%;
     --sheen-dir: 90deg;
     max-width: 1480px;
@@ -287,6 +279,23 @@ a.folder:active { transition-duration: .2s; }
 
   .folder__leaf { left: -5px; top: 4px; bottom: 4px; }
 
+  .folders--group {
+    /* last folder is the narrow IN PROGRESS spine: reach + (n-1)·step + face = cw */
+    --step: calc((var(--cw) - var(--tab-reach) - var(--face)) / var(--gaps, 3));
+  }
+  .folders--group .folder-item--group { width: var(--step); }
+  /* The narrow last spine cannot hide the full face of the folder before it:
+     clip the drawer at its right edge only (room left for lift, reveal, shadow). */
+  .folders--group { clip-path: inset(-80px 0 -180px -80px); }
+  .folder--group .folder__strip {
+    width: auto;
+    right: 0;
+    flex-direction: column;
+    padding: 24px 16px 20px;
+  }
+  .folder--group .folder__list { position: static; margin-bottom: 20px; }
+
+  .folder__tab { display: none; }
   .folder__tab {
     left: calc(-1 * var(--tab-reach));
     width: calc(var(--tab-reach) + 2px);
@@ -329,12 +338,11 @@ a.folder:active { transition-duration: .2s; }
     bottom: 0;
     left: 0;
     width: var(--strip-w);
-    padding: 20px calc(var(--tab-reach) + 8px) 20px 14px;
+    padding: 20px calc(var(--tab-reach) + 14px) 20px 16px;
     align-items: stretch;
   }
   .folder--photo .folder__strip { top: var(--photo-h); }
-  .folder--last .folder__strip { padding-right: 14px; }
-  .folder--index .folder__strip { padding: 26px calc(var(--tab-reach) + 12px) 26px 26px; }
+  .folder--index .folder__strip { padding: 26px calc(var(--tab-reach) + 14px) 26px 22px; }
 
   .folder__title {
     writing-mode: vertical-rl;
@@ -361,12 +369,15 @@ a.folder:active { transition-duration: .2s; }
    STACKED - phones and iPad portrait
    ========================================================================== */
 @media (max-width: 1023.98px) {
-  .projects { padding-top: clamp(28px, 6vw, 56px); }
+  /* phones/tablets: about half the old gap (with the landing's 16px bottom padding,
+     ~60px from the landing content to the CONTENTS tab at 393x852). No background
+     of its own, so the paper runs on from the landing. */
+  .projects { padding-top: clamp(44px, 6vh, 64px); }
   .folders {
     --tab-h: 30px;
     --tab-len: clamp(110px, 26%, 200px);
     --fh: clamp(240px, 64vw, 480px);
-    --strip: clamp(92px, 16vw, 132px);
+    --strip: clamp(80px, 13vw, 116px);
     --title-fs: clamp(22px, min(calc(var(--strip) * .34), 7.4vw), 48px);
     /* one extra title line, for spines whose title breaks onto two lines */
     --line: calc(var(--title-fs) * .86);
@@ -374,7 +385,7 @@ a.folder:active { transition-duration: .2s; }
     display: flex;
     flex-direction: column;
     max-width: 760px;
-    padding-top: var(--tab-h);
+    padding-top: 8px; /* the first tab rises 8px above its folder */
   }
 
   .folder-item {
@@ -383,27 +394,28 @@ a.folder:active { transition-duration: .2s; }
     height: var(--fh);
     --strip-h: var(--strip);
   }
-  .folder-item--last { --strip-h: calc(var(--strip) - var(--tab-h) + 6px); }
   .folder-item--2l { --strip-h: calc(var(--strip) + var(--line)); }
-  .folder-item--2l.folder-item--last { --strip-h: calc(var(--strip) - var(--tab-h) + 6px + var(--line)); }
   .folder-item + .folder-item { margin-top: calc(var(--strip) - var(--fh)); }
   .folder-item--2l + .folder-item { margin-top: calc(var(--strip) + var(--line) - var(--fh)); }
   .folder { position: relative; height: 100%; }
 
   .folder__leaf { top: -5px; left: 4px; right: 4px; }
 
+  /* Each tab sits on the top edge of its OWN folder and rises only 8px over
+     the folder above, so it reads with the folder below it. */
   .folder__tab {
-    top: calc(-1 * var(--tab-h) - 4px);
-    height: calc(var(--tab-h) + 6px);
+    z-index: 3;
+    top: -8px;
+    height: var(--tab-h);
     min-width: var(--tab-len);
     padding-inline: 20px;
     left: calc(12px + var(--t) * (100% - 24px));
     transform: translateX(calc(var(--t) * -100%));
-    border-radius: 7px 7px 0 0;
-    padding-bottom: 6px;
+    border-radius: 7px 7px 3px 3px;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, .25),
-      0 -3px 6px -2px rgba(20, 18, 12, .22);
+      0 -2px 5px -2px rgba(20, 18, 12, .22),
+      0 1px 0 rgba(20, 18, 12, .12);
   }
   /* Phone tabs: the code only; the title is on the face. */
   .folder__tab-rest { display: none; }
@@ -431,11 +443,24 @@ a.folder:active { transition-duration: .2s; }
     left: 0;
     right: 0;
     height: var(--strip-h);
-    padding: 16px 16px calc(var(--tab-h) + 10px);
+    padding: calc(var(--tab-h) - 8px + 10px) 16px 12px;
     align-items: flex-start;
   }
   .folder--photo .folder__strip { right: 38%; }
-  .folder--last .folder__strip { padding-bottom: 14px; }
+
+  /* IN PROGRESS: as tall as its content (title + list + padding) */
+  .folder-item--group { height: auto; }
+  .folder--group { height: auto; }
+  .folder--group .folder__face { position: relative; inset: auto; }
+  .folder--group .folder__strip {
+    position: relative;
+    height: auto;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 32px;
+  }
+  .folder--group .folder__label { order: -1; }
+  .folder--group .folder__list { position: static; }
   .folder--index .folder__strip { padding-inline: 22px; }
   .folder__label { align-self: stretch; }
 
@@ -452,6 +477,11 @@ a.folder:active { transition-duration: .2s; }
     a.folder:hover { transform: translateY(-8px); }
   }
   a.folder:focus-visible { transform: translateY(-8px); }
+}
+
+/* phones: ~68px from the folders to Get in Touch at 393x852 */
+@media (max-width: 767.98px) {
+  .projects { padding-bottom: clamp(48px, 8vh, 72px); }
 }
 
 @media (max-width: 480px) {

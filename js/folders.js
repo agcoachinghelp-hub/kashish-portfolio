@@ -106,18 +106,19 @@ function folderHTML(p, i, n) {
   if (img) classes.push('folder--photo');
   if (lightInk(p)) classes.push('folder--dark');
   const subtitle = clean(p.subtitle);
-  const label = (p.index ? `Open ${title}` : `Open project ${code} ${title}`).replace(/\s+/g, ' ');
+  // No aria-label: the visible title (first in the face) names the link.
+  const thumb = img && (img.thumb || img.src);
 
   return `<div class="folder-item${p.index ? ' folder-item--index' : ''}${last ? ' folder-item--last' : ''}" role="listitem" style="--i:${i}; --t:${t}">
   <a class="${classes.join(' ')}" href="#project/${encodeURIComponent(p.slug)}"
-      data-slug="${esc(p.slug)}" aria-label="${esc(label)}" style="${styleVars(p, i, t)}">
+      data-slug="${esc(p.slug)}" style="${styleVars(p, i, t)}">
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab" aria-hidden="true">${tabHTML(code, title)}</span>
-    <span class="folder__face" aria-hidden="true">
-      ${img ? `<span class="folder__photo"><img src="${esc(img.src)}" alt="" loading="lazy" decoding="async"></span>` : ''}
+    <span class="folder__tab">${tabHTML(code, title)}</span>
+    <span class="folder__face">
       <span class="folder__strip">
         <span class="folder__label">${titleHTML(title, p.index ? ' folder__title--index' : '')}</span>
       </span>
+      ${img ? `<span class="folder__photo" aria-hidden="true"><img src="${esc(thumb)}" alt="" loading="lazy" decoding="async"></span>` : ''}
       <span class="folder__sheet">${subtitle ? `<span class="folder__sub">${esc(subtitle)}</span>` : ''}</span>
     </span>
   </a>
@@ -137,10 +138,8 @@ function groupHTML(soon, i, n) {
     <span class="folder__tab" aria-hidden="true">${tabHTML('', 'IN PROGRESS')}</span>
     <span class="folder__face" aria-hidden="true">
       <span class="folder__strip">
-        <span class="folder__label">${titleHTML('IN PROGRESS')}</span>
-      </span>
-      <span class="folder__sheet">
         <span class="folder__list">${titles.map((x) => `<span>${esc(x)}</span>`).join('')}</span>
+        <span class="folder__label">${titleHTML('IN PROGRESS')}</span>
       </span>
     </span>
   </div>
@@ -263,7 +262,11 @@ function track(el) {
   if ('ResizeObserver' in window) new ResizeObserver(set).observe(el);
   else window.addEventListener('resize', set);
   UPRIGHT.addEventListener?.('change', set);
+  // Refit once the display face has really loaded: fonts.ready can resolve
+  // before the title font is even requested.
   document.fonts?.ready.then(set);
+  document.fonts?.addEventListener?.('loadingdone', set);
+  window.addEventListener('load', set, { once: true });
 }
 
 function reveal(container) {
@@ -301,7 +304,10 @@ export function renderFolders(projects = []) {
   const n = published.length + (soon.length ? 1 : 0);
   container.setAttribute('role', 'list');
   container.style.setProperty('--n', n);
-  container.style.setProperty('--gaps', Math.max(1, n - 2));
+  // Slots: reach + (n-2)·step + 2·face, or, when the last folder is the narrow
+  // IN PROGRESS spine, reach + (n-1)·step + face.
+  container.style.setProperty('--gaps', Math.max(1, soon.length ? n - 1 : n - 2));
+  container.classList.toggle('folders--group', soon.length > 0);
   container.innerHTML = published.map((p, i) => folderHTML(p, i, n)).join('')
     + (soon.length ? groupHTML(soon, published.length, n) : '');
   expander(container);

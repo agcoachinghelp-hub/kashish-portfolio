@@ -3,7 +3,7 @@
 // publishes source, tooling or private material (brief/, content/ sources,
 // scripts/, cv/ data, her-portfolio-pages/, her-cv/, package files, docs).
 // Run after `npm run build` (which regenerates content.json + css/tokens.css).
-import { cp, rm, mkdir, writeFile, readdir, stat } from 'node:fs/promises';
+import { cp, rm, mkdir, writeFile, readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +12,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
 // Everything the live site needs, and nothing else.
-const PUBLIC = [
+const PUBLIC = [ // (admin/ is added below when configured)
   'index.html',
   '404.html',
   'content.json',
@@ -20,8 +20,12 @@ const PUBLIC = [
   'js',
   'vendor',
   'assets',
-  'admin', // Decap CMS editor (reads/writes the repo through GitHub, not these files)
 ];
+// Decap CMS editor: published only once admin/config.yml names a real repository
+// (it reads/writes the repo through GitHub; a placeholder repo can't work).
+const adminCfg = existsSync(path.join(ROOT, 'admin/config.yml')) ? await readFile(path.join(ROOT, 'admin/config.yml'), 'utf8') : '';
+const adminReady = /^\s*repo:\s*["']?[A-Za-z0-9-]+\/[A-Za-z0-9._-]+["']?\s*$/m.test(adminCfg);
+if (adminReady) PUBLIC.push('admin'); else console.log('  (admin/ not published: set repo: in admin/config.yml to enable the editor)');
 
 await rm(DIST, { recursive: true, force: true });
 await mkdir(DIST, { recursive: true });
@@ -31,6 +35,22 @@ for (const item of PUBLIC) {
   if (!existsSync(src)) { console.warn(`  (skipped missing ${item})`); continue; }
   await cp(src, path.join(DIST, item), { recursive: true });
 }
+// One render-blocking stylesheet instead of four: merge in cascade order, strip
+// comments and spare whitespace, and point index.html at it.
+const CSS = ['css/tokens.css', 'css/base.css', 'css/folders.css', 'css/project.css'];
+let merged = '';
+for (const f of CSS) merged += (await readFile(path.join(ROOT, f), 'utf8')) + '\n';
+merged = merged.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n\s*\n+/g, '\n').replace(/[ \t]+\n/g, '\n');
+await writeFile(path.join(DIST, 'css/site.css'), merged);
+let html = await readFile(path.join(DIST, 'index.html'), 'utf8');
+const linkRe = /\s*<link rel="stylesheet" href="css\/(tokens|base|folders|project)\.css">/g;
+const count = (html.match(linkRe) || []).length;
+if (count !== CSS.length) { console.error(`index.html: expected ${CSS.length} stylesheet links, found ${count}`); process.exit(1); }
+let first = true;
+html = html.replace(linkRe, () => (first ? ((first = false), '\n  <link rel="stylesheet" href="css/site.css">') : ''));
+await writeFile(path.join(DIST, 'index.html'), html);
+for (const f of CSS) await rm(path.join(DIST, f));
+
 // GitHub Pages: serve files as-is (no Jekyll processing).
 await writeFile(path.join(DIST, '.nojekyll'), '');
 await writeFile(path.join(DIST, 'robots.txt'), 'User-agent: *\nDisallow: /admin/\n');

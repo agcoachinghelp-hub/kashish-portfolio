@@ -1,12 +1,12 @@
 // Landing, Get in Touch, footer and nav state.
-// Owner: Agent R. Contract (CONTRACT.md): export function initCover(site).
-// Fills [data-cover], [data-contact], [data-footer] and [data-site-name].
+// export function initCover(site): fills [data-cover], [data-contact],
+// [data-footer] and [data-site-name].
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[c]));
 
-// Placeholder values start with "[" (CONTRACT.md). They are shown as text so she
+// Placeholder values start with "[". They are shown as text so she
 // can see what's missing, but never turned into a link.
 const isPlaceholder = (v) => String(v ?? '').trim().startsWith('[');
 const hasValue = (v) => String(v ?? '').trim() !== '';
@@ -29,59 +29,142 @@ function fill(selector, html) {
 
 /* ---------- Landing ---------- */
 
-function renderCover(site) {
-  const cover = document.querySelector('[data-cover]');
-  if (!cover) return null;
+// index.html ships the landing as static markup (name, title, about and the
+// hero <picture>) so the hero image, the LCP, loads before any script runs.
+// Here we bring that markup in line with content.json, patching in place so
+// the already-loading image is kept and nothing jumps.
 
-  const nameLines = String(site.name || '').trim().split(/\s+/).filter(Boolean)
-    .map((w) => `<span class="cover__name-line">${esc(w)}</span>`).join('');
-  const hero = site.hero && site.hero.src ? site.hero : null;
-  const study = [site.degree, site.university].filter(hasValue)
-    .map((v) => `<span class="cover__study-part">${esc(v)}</span>`).join(' <span aria-hidden="true">·</span> ');
-  const about = String(site.about || '').trim();
+const norm = (v) => String(v ?? '').replace(/\s+/g, ' ').trim();
 
-  // "Architecture Portfolio": the last word is set in the script face.
+function nameHTML(site) {
+  return String(site.name || '').trim().split(/\s+/).filter(Boolean)
+    .map((w) => `<span class="cover__name-line">${esc(w)}</span>`).join(' ');
+}
+
+// "Architecture Portfolio": the last word is set in the script face.
+function titleHTML(site) {
   const words = String(site.title || '').trim().split(/\s+/).filter(Boolean);
   const script = words.length > 1 ? words.pop() : '';
-  const title = `${esc(words.join(' '))}${script ? ` <span class="cover__title-script">${esc(script)}</span>` : ''}`;
+  return `${esc(words.join(' '))}${script ? ` <span class="cover__title-script">${esc(script)}</span>` : ''}`;
+}
 
-  const dims = (o) => (o && o.width && o.height ? ` width="${Number(o.width)}" height="${Number(o.height)}"` : '');
-  const mobile = hero && hero.mobile && hero.mobile.src ? hero.mobile : null;
-  // Phones get the square crop (centred on the hands) through <picture>.
-  const picture = hero ? `<picture class="cover__picture">
-            ${mobile ? `<source media="(max-width: 767px)" srcset="${esc(mobile.src)}"${dims(mobile)}>` : ''}
-            <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims(hero)} loading="eager" fetchpriority="high" decoding="async">
-          </picture>` : '';
-  // No hero yet: an empty ruled frame holds its place (no generated drawing).
-  const figure = hero ? `
-        <figure class="cover__figure">
-          <div class="cover__frame">${picture}</div>
-          ${hasValue(hero.caption) ? `<figcaption class="cover__caption t-code">${esc(hero.caption)}</figcaption>` : ''}
-        </figure>` : `
-        <div class="cover__figure cover__figure--empty" aria-hidden="true">
+const EMPTY_FRAME = `<div class="cover__figure cover__figure--empty" aria-hidden="true" data-cover-hero>
           <div class="cover__frame"></div>
         </div>`;
 
-  // Order in the markup = phone order (name, title, hero, degree, about).
-  // From 768px up, CSS places the hero beside or below the text.
-  cover.innerHTML = `
+function heroHTML(hero) {
+  if (!hero) return EMPTY_FRAME;
+  const dims = (o) => (o && o.width && o.height ? ` width="${Number(o.width)}" height="${Number(o.height)}"` : '');
+  const mobile = hero.mobile && hero.mobile.src ? hero.mobile : null;
+  return `<figure class="cover__figure" data-cover-hero>
+          <div class="cover__frame">
+            <picture class="cover__picture">
+              ${mobile ? `<source media="(max-width: 1023px)" srcset="${esc(mobile.src)}"${dims(mobile)}>` : ''}
+              <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims(hero)} fetchpriority="high" decoding="async">
+            </picture>
+          </div>
+          ${hasValue(hero.caption) ? `<figcaption class="cover__caption t-code">${esc(hero.caption)}</figcaption>` : ''}
+        </figure>`;
+}
+
+function coverHTML(site) {
+  const about = norm(site.about);
+  return `
     <div class="cover__inner" data-cover-inner>
       <div class="cover__strip">
         ${hasValue(site.edition) ? `<span class="t-label cover__edition">${esc(site.edition)}</span>` : ''}
       </div>
-
       <div class="cover__text">
         <h1 class="cover__h1">
-          <span class="cover__name" data-fit-name>${nameLines}</span>
-          ${title ? `<span class="cover__title">${title}</span>` : ''}
+          <span class="cover__name" data-fit-name>${nameHTML(site)}</span>
+          <span class="cover__title">${titleHTML(site)}</span>
         </h1>
-        ${figure}
-        ${study || about ? `<div class="cover__about">
-          ${study ? `<p class="t-label cover__study">${study}</p>` : ''}
-          ${about ? `<p class="cover__about-text">${esc(about)}</p>` : ''}
-        </div>` : ''}
+        ${heroHTML(site.hero && site.hero.src ? site.hero : null)}
+        ${about ? `<div class="cover__about"><p class="cover__about-text">${esc(about)}</p></div>` : ''}
       </div>
     </div>`;
+}
+
+const toNode = (html) => {
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+};
+
+// Set an attribute only when it differs, so a loading image isn't restarted.
+function setAttr(el, name, value) {
+  if (!el) return;
+  if (value == null || value === '') { if (el.hasAttribute(name)) el.removeAttribute(name); return; }
+  if (el.getAttribute(name) !== String(value)) el.setAttribute(name, value);
+}
+
+function syncHero(cover, site) {
+  const hero = site.hero && site.hero.src ? site.hero : null;
+  const current = cover.querySelector('[data-cover-hero]');
+  const img = current && current.querySelector('.cover__img');
+  if (!hero || !img) {
+    // Swap between the empty frame and a real figure.
+    const fresh = toNode(heroHTML(hero));
+    if (current) current.replaceWith(fresh);
+    return;
+  }
+  setAttr(img, 'src', hero.src);
+  setAttr(img, 'alt', hero.alt || '');
+  setAttr(img, 'width', hero.width);
+  setAttr(img, 'height', hero.height);
+  img.classList.toggle('cover__img--plain', hero.blend === 'none');
+  const mobile = hero.mobile && hero.mobile.src ? hero.mobile : null;
+  let source = current.querySelector('source');
+  if (mobile) {
+    if (!source) {
+      source = document.createElement('source');
+      img.parentElement.insertBefore(source, img);
+    }
+    setAttr(source, 'media', '(max-width: 1023px)');
+    setAttr(source, 'srcset', mobile.src);
+    setAttr(source, 'width', mobile.width);
+    setAttr(source, 'height', mobile.height);
+  } else if (source) {
+    source.remove();
+  }
+  let cap = current.querySelector('.cover__caption');
+  if (hasValue(hero.caption)) {
+    if (!cap) { cap = document.createElement('figcaption'); cap.className = 'cover__caption t-code'; current.appendChild(cap); }
+    cap.textContent = hero.caption;
+  } else if (cap) cap.remove();
+}
+
+function renderCover(site) {
+  const cover = document.querySelector('[data-cover]');
+  if (!cover) return null;
+  if (!cover.querySelector('[data-cover-inner]')) {
+    cover.innerHTML = coverHTML(site);
+    return cover;
+  }
+
+  // Patch the static markup.
+  const strip = cover.querySelector('.cover__strip');
+  if (strip && norm(strip.textContent) !== norm(site.edition)) {
+    strip.innerHTML = hasValue(site.edition) ? `<span class="t-label cover__edition">${esc(site.edition)}</span>` : '';
+  }
+  const name = cover.querySelector('.cover__name');
+  if (name && norm(name.textContent) !== norm(site.name)) name.innerHTML = nameHTML(site);
+  const title = cover.querySelector('.cover__title');
+  if (title && norm(title.textContent) !== norm(site.title)) title.innerHTML = titleHTML(site);
+
+  syncHero(cover, site);
+
+  const about = norm(site.about);
+  let box = cover.querySelector('.cover__about');
+  if (!about) { if (box) box.remove(); }
+  else {
+    if (!box) {
+      box = toNode('<div class="cover__about"><p class="cover__about-text"></p></div>');
+      cover.querySelector('.cover__text').appendChild(box);
+    }
+    const p = box.querySelector('.cover__about-text');
+    if (norm(p.textContent) !== about) p.textContent = about;
+  }
   return cover;
 }
 
@@ -130,8 +213,12 @@ function setupNameFit() {
 
   measure();
   apply();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => { measure(); lastKey = ''; apply(); });
+  // The font stylesheet loads without blocking, so the web font can arrive after
+  // this runs: re-measure whenever a font finishes loading.
+  const remeasure = () => { measure(); lastKey = ''; apply(); };
+  if (document.fonts) {
+    if (document.fonts.ready) document.fonts.ready.then(remeasure);
+    if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', remeasure);
   }
 
   let timer = 0;
@@ -158,7 +245,6 @@ function renderContact(site) {
   const tel = phone.replace(/[^\d+]/g, '');
 
   fill('[data-contact]', `
-    <span class="contact__tab" aria-hidden="true">Correspondence</span>
     <h2 id="contact-heading" class="contact__title">Get in Touch</h2>
     ${hasValue(site.contactIntro) ? `<p class="contact__intro">${esc(site.contactIntro)}</p>` : ''}
 
@@ -182,12 +268,22 @@ function renderContact(site) {
     </dl>`);
 }
 
-// Progressive enhancement for the static Netlify form in index.html. Without JS
-// the form posts normally and Netlify redirects back to /?sent=1#contact.
+// The static Netlify form in index.html is hidden by default (.is-off) and only
+// shown when site.contactForm is true: the POST only works on Netlify. When it
+// is on, this enhances it; without JS it posts normally and Netlify redirects
+// back to /?sent=1#contact.
 function setupContactForm(site) {
   const form = document.querySelector('[data-contact-form]');
   const status = document.querySelector('[data-form-status]');
   if (!form || !status) return;
+  const section = form.closest('.contact');
+  if (site.contactForm !== true) {
+    form.remove();
+    if (section) section.classList.remove('contact--with-form');
+    return;
+  }
+  form.classList.remove('is-off');
+  if (section) section.classList.add('contact--with-form');
 
   const email = String(site.email || '').trim();
   const fallback = () => {
@@ -237,21 +333,13 @@ function setupContactForm(site) {
 function renderFooter(site) {
   const year = new Date().getFullYear();
   const cv = String(site.cvPdf || '').trim();
-  const location = String(site.location || '').trim();
 
   fill('[data-footer]', `
-    <div class="site-footer__top">
-      <p class="site-footer__name">${esc(site.name)}</p>
-      <a class="site-footer__top-link t-label" href="#home">Back to top</a>
-    </div>
-    <div class="site-footer__grid">
-      <p class="t-code site-footer__copy">© ${year} ${esc(site.name)}</p>
-      ${location ? `<p class="t-code site-footer__location${isPlaceholder(location) ? ' is-placeholder' : ''}">${esc(location)}</p>` : ''}
-      ${renderSocials(site.socials, 'site-footer__social')}
-      ${cv && !isPlaceholder(cv)
-        ? `<a class="btn-file t-label" href="${esc(cv)}" download>Download CV <span class="btn-file__ext">(PDF)</span></a>`
-        : ''}
-    </div>`);
+    <p class="t-code site-footer__copy">© ${year} ${esc(site.name)}</p>
+    ${cv && !isPlaceholder(cv)
+      ? `<a class="btn-file t-label" href="${esc(cv)}" download>Download CV <span class="btn-file__ext">(PDF)</span></a>`
+      : ''}
+    <a class="site-footer__top-link t-label" href="#home">Back to top</a>`);
 }
 
 /* ---------- Motion ---------- */
@@ -334,6 +422,25 @@ function setupNavState() {
   window.addEventListener('scroll', () => { if (current !== last) mark(null); }, { passive: true });
 }
 
+// The nav wordmark repeats the giant name, so it stays hidden while the
+// landing name is on screen and fades in once the name has scrolled past.
+function setupNavMark() {
+  const nav = document.querySelector('.site-nav');
+  const name = document.querySelector('.cover__name');
+  if (!nav) return;
+  if (!name || !('IntersectionObserver' in window)) { nav.classList.remove('site-nav--mark-hidden'); return; }
+  const navH = () => nav.offsetHeight || 52;
+  let io;
+  const watch = () => {
+    if (io) io.disconnect();
+    io = new IntersectionObserver(([e]) => {
+      nav.classList.toggle('site-nav--mark-hidden', e.isIntersecting);
+    }, { rootMargin: `-${navH()}px 0px 0px 0px`, threshold: 0 });
+    io.observe(name);
+  };
+  watch();
+}
+
 export function initCover(site = {}) {
   document.querySelectorAll('[data-site-name]').forEach((el) => {
     el.textContent = site.name || el.textContent;
@@ -346,4 +453,5 @@ export function initCover(site = {}) {
   setupContactForm(site);
   setupCoverScroll();
   setupNavState();
+  setupNavMark();
 }

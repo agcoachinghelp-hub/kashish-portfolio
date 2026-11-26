@@ -69,7 +69,7 @@ The editor logs you in through GitHub, with Netlify acting as the go-between.
 
 ### e. Get contact form messages by email
 
-Messages from the **Get in Touch** form are collected by Netlify. To have them emailed to you: Netlify → your site → **Forms** → **Form notifications** → **Add notification → Email notification**, and enter your email address.
+The message form is off by default, because it only works on Netlify. If the site is on Netlify, turn on **Site settings → Contact form (Netlify only)**. Messages are then collected by Netlify. To have them emailed to you: Netlify → your site → **Forms** → **Form notifications** → **Add notification → Email notification**, and enter your email address.
 
 ---
 
@@ -100,11 +100,11 @@ You'll see two collections on the left:
 
 ![Landing page settings](docs/editing/cms-03-settings-landing.webp)
 
-- **Your name** is shown huge on the landing page, one word per line, and in the menu bar and footer.
+- **Your name** is shown huge on the landing page, one word per line. It also appears in the menu bar once you scroll past the landing, and in the footer's copyright line.
 - **Line under your name** is "Architecture Portfolio". Its last word is set in a handwritten script, so "Architecture *Portfolio*".
 - **Edition line** is the small line at the top (e.g. `UNSW 2024-2026`).
 - **About** is your one-paragraph introduction. Two to four sentences is plenty. Leave it empty and the landing page simply shows your name, the line under it and your degree.
-- **University**, **Degree** and **Years of study** appear in small capitals above the about paragraph.
+- **University**, **Degree** and **Years of study** are kept for reference (your about paragraph already says them on the page).
 
 ### Swap the hero image
 
@@ -116,8 +116,8 @@ Tips:
 
 - A JPG or WebP about **2000px wide** is ideal. Very large photos (over about 3MB) make the site slow; export a smaller copy first.
 - Until you add a hero image, the landing page shows an empty frame with a thin outline in its place. Click **Remove image** to go back to that frame.
-- The hero has no frame: it runs off the right-hand edge of the screen, as if cut from your page, and its paper blends into the background. Use **Look: Drawing on paper** for sketches (the default), or *Photo or dark image* for a photo.
-- **Phone crop** (inside the hero settings) is optional: upload a square crop, about 700 x 700px, of the part of the drawing that matters most (for example the hands). Phones show it right under your name, so the name and the drawing appear together on the first screen. Leave it empty to use the full image on phones.
+- The hero has no frame: it runs off the right-hand edge of the screen (and off the bottom on computers), as if cut from your page. Its other cut edges fade softly into the paper, and its paper blends into the background. Use **Look: Drawing on paper** for sketches (the default), or *Photo or dark image* for a photo.
+- **Phone crop** (inside the hero settings) is optional: upload a square crop, about 700 x 700px, of the part of the drawing that matters most (for example the hands). Phones and iPads held upright show it right under your name, so the name and the drawing appear together on the first screen. Leave it empty to use the full image on phones.
 
 ---
 
@@ -128,10 +128,11 @@ Still in **Site settings**, scroll down.
 ![Contact, social links and CV](docs/editing/cms-05-settings-contact-cv.webp)
 
 - **Get in Touch: intro sentence** sits above your email address.
-- **Email** is shown large in the Get in Touch section, and is offered as a fallback if the contact form ever fails.
+- **Email** is shown large in the Get in Touch section.
+- **Contact form (Netlify only)** adds a message form under Get in Touch. Leave it off unless the site is hosted on Netlify (see section 1e); your email and social links always show.
 - **Phone** is optional. Leave it empty to hide it.
-- **Location** appears in the footer.
-- **Social links:** click a link to edit it, **Add link** for a new one, or drag the ═ handle to reorder. Use the full address starting with `https://`.
+- **Location** isn't shown on the site at the moment.
+- **Social links** appear in Get in Touch. Click a link to edit it, **Add link** for a new one, or drag the ═ handle to reorder. Use the full address starting with `https://`.
 
 ### Replace your CV
 
@@ -292,7 +293,7 @@ Log in with the GitHub account that owns the repository, or ask the owner to add
 Make sure you clicked **Choose selected** after uploading, then **Publish**. Check that the file is a JPG, PNG or WebP (not HEIC); export a JPG from Photos if needed.
 
 **The contact form says the message could not be sent.**
-On your computer (not the live site) this is expected: the form only works once the site is on Netlify. On the live site, check **Forms** in Netlify is enabled.
+The form only works when the site is hosted on Netlify. If it isn't, turn **Contact form (Netlify only)** off in Site settings. On Netlify, check that **Forms** is enabled.
 
 **Netlify says the deploy failed and mentions a "[".**
 Somewhere in your text there's a square bracket, which marks unfinished information. The build log names the file. Find it in the editor, replace or remove the bracketed text, and publish again.

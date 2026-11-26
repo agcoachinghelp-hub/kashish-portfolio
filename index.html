@@ -9,7 +9,12 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='22' rx='2' fill='%23B08A5B'/%3E%3Crect x='3' y='3' width='11' height='6' rx='1.5' fill='%23B08A5B'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;700&family=Pinyon+Script&display=swap">
+  <!-- Fonts load without blocking the first paint -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap"></noscript>
+  <!-- The landing hero is the largest paint: fetch the right crop straight away -->
+  <link rel="preload" as="image" href="assets/site/hero-mobile.webp" media="(max-width: 1023px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/site/hero.webp" media="(min-width: 1024px)" fetchpriority="high">
   <link rel="preload" as="fetch" href="content.json" crossorigin>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
@@ -19,7 +24,7 @@
 <body>
   <a class="skip-link" href="#projects">Skip to projects</a>
 
-  <header class="site-nav" data-nav>
+  <header class="site-nav site-nav--mark-hidden" data-nav>
     <a class="site-nav__mark" href="#home" data-site-name>KASHISH KHERA</a>
     <nav aria-label="Main">
       <ul class="site-nav__list">
@@ -31,19 +36,41 @@
   </header>
 
   <main>
-    <!-- Agent R: cover.js renders the landing -->
-    <section id="home" class="cover" data-cover aria-label="Introduction"></section>
+    <!-- The landing is static so the hero loads before any script; cover.js
+         updates it from content.json (content/site.json) if anything differs. -->
+    <section id="home" class="cover" data-cover aria-label="Introduction">
+      <div class="cover__inner" data-cover-inner>
+        <div class="cover__strip">
+          <span class="t-label cover__edition">UNSW 2024-2026</span>
+        </div>
+        <div class="cover__text">
+          <h1 class="cover__h1">
+            <span class="cover__name" data-fit-name><span class="cover__name-line">Kashish</span> <span class="cover__name-line">Khera</span></span>
+            <span class="cover__title">Architecture <span class="cover__title-script">Portfolio</span></span>
+          </h1>
+          <figure class="cover__figure" data-cover-hero>
+            <div class="cover__frame">
+              <picture class="cover__picture">
+                <source media="(max-width: 1023px)" srcset="assets/site/hero-mobile.webp" width="680" height="680">
+                <img class="cover__img" src="assets/site/hero.webp" alt="Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio" width="760" height="1180" fetchpriority="high" decoding="async">
+              </picture>
+            </div>
+          </figure>
+          <div class="cover__about"><p class="cover__about-text">Final-year Bachelor of Architectural Studies student at UNSW Sydney with over four years of experience across construction project support, real estate administration, tutoring and retail leadership. A client-focused problem solver who learns best through hands-on work, equally at home collaborating in a team or working independently.</p></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- Agent P: folders.js renders the folders -->
     <section id="projects" class="projects" aria-labelledby="projects-heading">
       <h2 id="projects-heading" class="visually-hidden">Projects</h2>
       <div class="folders" data-folders></div>
     </section>
 
-    <!-- Agent R: cover.js renders [data-contact] details; the form is static so Netlify Forms can detect it at deploy. -->
+    <!-- The form is static so Netlify Forms can detect it at deploy. It stays hidden
+         (.is-off) unless "Contact form (Netlify only)" is on in Site settings. -->
     <section id="contact" class="contact" aria-labelledby="contact-heading">
       <div class="contact__details" data-contact></div>
-      <form class="contact-form" name="contact" method="POST" action="/?sent=1#contact" data-netlify="true" netlify-honeypot="company" data-contact-form>
+      <form class="contact-form is-off" name="contact" method="POST" action="/?sent=1#contact" data-netlify="true" netlify-honeypot="company" data-contact-form>
         <input type="hidden" name="form-name" value="contact">
         <p class="contact-form__hp" hidden><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
         <p class="contact-form__field">
@@ -68,7 +95,6 @@
 
   <footer class="site-footer" data-footer></footer>
 
-  <!-- Agent P: project.js -->
   <div class="project-view" data-project-view hidden></div>
 
   <script src="vendor/gsap.min.js" defer></script>

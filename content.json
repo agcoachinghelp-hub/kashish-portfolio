@@ -15,6 +15,7 @@
       "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
       "caption": "",
       "blend": "multiply",
+      "thumb": "assets/site/hero-480.webp",
       "width": 760,
       "height": 1180,
       "mobile": {
@@ -22,6 +23,7 @@
         "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
         "caption": "",
         "blend": "multiply",
+        "thumb": "assets/site/hero-mobile-480.webp",
         "width": 680,
         "height": 680
       }
@@ -72,8 +74,9 @@
         "alt": "Hand-drawn precedent sketches: a fan window, a glasshouse elevation, a Vitruvian figure, a structural frame, a domed structure, a temple, a radiating ceiling and a column capital",
         "caption": "",
         "blend": "multiply",
+        "thumb": "assets/projects/contents/01-480.webp",
         "width": 2000,
-        "height": 560
+        "height": 600
       },
       "meta": [],
       "statement": "",
@@ -83,8 +86,9 @@
           "type": "image",
           "src": "assets/projects/contents/02.webp",
           "alt": "Sketches of a triumphal arch with columns, the Art Gallery of New South Wales portico, a Gothic interior and a brick room",
-          "caption": "Precedent sketches",
+          "caption": "",
           "blend": "multiply",
+          "thumb": "assets/projects/contents/02-480.webp",
           "width": 1460,
           "height": 309,
           "layout": "wide",
@@ -95,10 +99,11 @@
           "type": "image",
           "src": "assets/projects/contents/03.webp",
           "alt": "Collage of sepia drawings on kraft paper: a grand interior staircase between columns and a civic building elevation with a clock tower, with handwritten notes",
-          "caption": "Interior and elevation studies",
+          "caption": "",
           "blend": "multiply",
+          "thumb": "assets/projects/contents/03-480.webp",
           "width": 910,
-          "height": 1372,
+          "height": 1284,
           "layout": "half",
           "align": "right",
           "size": "half"
@@ -119,37 +124,57 @@
       "year": "",
       "cover": {
         "src": "assets/projects/burra-pod/01.webp",
-        "alt": "Burra Pod concept collage: angled strips of river landscapes, eels and site photographs with material samples in blue, dark timber, pale timber, stone and red",
+        "alt": "Burra Pod concept collage, river band: angled strips of historic river landscapes and eels",
         "caption": "",
         "blend": "multiply",
         "maxWidth": 400,
         "width": 472,
-        "height": 702
+        "height": 360
       },
       "meta": [
         {
-          "label": "Site",
-          "value": "Fleet Street, North Parramatta, NSW"
-        },
-        {
           "label": "Country",
           "value": "Durug Country"
-        },
-        {
-          "label": "Type",
-          "value": "Community centre"
         }
       ],
       "statement": "<p>Burra Pod is a community centre shaped by movement, adaptation and connection to place. Inspired by Indigenous understandings that the best journeys in life are almost never linear or straightforward, this design incorporates flowing pathways which invite exploration and encounter. Located on Durug Country in North Parramatta, the building concept takes inspiration from the fluid movements of eels and their enduring relationship with the river, translating these qualities into organic forms and a continuous spatial flow through the spaces of the building.</p>\n<p>Water is carried through the project as both a spatial and sensory element, reinforcing ideas of movement, inspiring learning and connection to Country. A water feature within the building and public space strengthens the relationship, creating moments of immersive experiences, reflection and curiosity.</p>\n<p>The program supports gathering, learning in a central courtyard that forms the heart of the project. The spatial journey reflects a process of becoming, guiding individuals from identity, discovery and application, towards exploration and contribution. Spaces for making, storytelling, exhibition and intergenerational exchange allow personal experience and knowledge to develop into collective understanding. Native planting, water and interpretive landscape elements strengthen engagement with Country, encouraging visitors to learn from the ecological and cultural history of the area.</p>\n",
       "pullquote": "The best journeys in life are almost never linear or straightforward.",
-      "blocks": []
+      "blocks": [
+        {
+          "type": "image",
+          "src": "assets/projects/burra-pod/02.webp",
+          "alt": "Burra Pod material swatches: pale blue, dark timber, pale timber, stone and red",
+          "caption": "",
+          "blend": "multiply",
+          "maxWidth": 400,
+          "width": 472,
+          "height": 211,
+          "layout": "half",
+          "align": "right",
+          "after": 2,
+          "size": "half"
+        },
+        {
+          "type": "image",
+          "src": "assets/projects/burra-pod/03.webp",
+          "alt": "Burra Pod site band: angled strips of site photographs, trees, buildings and street",
+          "caption": "",
+          "blend": "multiply",
+          "maxWidth": 400,
+          "width": 472,
+          "height": 327,
+          "layout": "half",
+          "align": "left",
+          "size": "half"
+        }
+      ]
     },
     {
       "slug": "axis-city-centre",
       "order": 2,
       "index": false,
-      "status": "published",
-      "code": "CODE_002",
+      "status": "coming-soon",
+      "code": "CODE_003",
       "title": "AXIS CITY CENTRE",
       "subtitle": "Waterloo Estate Redevelopment",
       "colour": "#2E2E2B",
@@ -167,7 +192,7 @@
       "order": 3,
       "index": false,
       "status": "coming-soon",
-      "code": "CODE_003",
+      "code": "CODE_004",
       "title": "OASIS",
       "subtitle": "",
       "colour": "#7E8CA3",
@@ -185,7 +210,7 @@
       "order": 4,
       "index": false,
       "status": "published",
-      "code": "CODE_004",
+      "code": "CODE_002",
       "title": "COMMON GROUNDS",
       "subtitle": "",
       "colour": "#E8C76A",
@@ -197,6 +222,7 @@
         "alt": "Common Grounds aerial site plan showing the site between Kent Street, High Street, High Lane and the Cahill Expressway, with surrounding building heights",
         "caption": "",
         "blend": "multiply",
+        "thumb": "assets/projects/common-grounds/01-480.webp",
         "width": 864,
         "height": 675
       },
@@ -206,22 +232,11 @@
       "blocks": [
         {
           "type": "image",
-          "src": "assets/projects/common-grounds/03.webp",
-          "alt": "Ground floor plan with gym, bedrooms, entrance, outdoor kitchen, street library, stage and art gallery",
-          "caption": "Ground Floor Plan // 1:100",
-          "blend": "multiply",
-          "width": 1824,
-          "height": 1155,
-          "layout": "bleed",
-          "align": "left",
-          "size": "bleed"
-        },
-        {
-          "type": "image",
           "src": "assets/projects/common-grounds/02.webp",
           "alt": "Basement plan with rumpus and lounge",
           "caption": "Basement Plan // 1:100",
           "blend": "multiply",
+          "thumb": "assets/projects/common-grounds/02-480.webp",
           "width": 722,
           "height": 855,
           "layout": "half",
@@ -230,15 +245,29 @@
         },
         {
           "type": "image",
+          "src": "assets/projects/common-grounds/03.webp",
+          "alt": "Ground floor plan with gym, bedrooms, entrance, outdoor kitchen, street library, stage and art gallery",
+          "caption": "Ground Floor Plan // 1:100",
+          "blend": "multiply",
+          "thumb": "assets/projects/common-grounds/03-480.webp",
+          "width": 1824,
+          "height": 1155,
+          "layout": "bleed",
+          "align": "left",
+          "size": "bleed"
+        },
+        {
+          "type": "image",
           "src": "assets/projects/common-grounds/04.webp",
           "alt": "First floor plan with dining, kitchen and living, and stairs",
           "caption": "First Floor Plan // 1:100",
           "blend": "multiply",
-          "width": 1950,
+          "thumb": "assets/projects/common-grounds/04-480.webp",
+          "width": 800,
           "height": 588,
-          "layout": "wide",
+          "layout": "half",
           "align": "right",
-          "size": "wide"
+          "size": "half"
         },
         {
           "type": "image",
@@ -246,10 +275,11 @@
           "alt": "Second floor plan with studio, rooftop terrace, balconies, laundry, toilet and study",
           "caption": "Second Floor Plan // 1:100",
           "blend": "multiply",
-          "width": 880,
-          "height": 1170,
+          "thumb": "assets/projects/common-grounds/05-480.webp",
+          "width": 820,
+          "height": 1130,
           "layout": "half",
-          "align": "right",
+          "align": "left",
           "size": "half"
         }
       ]

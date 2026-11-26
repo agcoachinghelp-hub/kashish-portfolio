@@ -1,24 +1,5 @@
-# Decap CMS configuration: the editor at yoursite/admin.
-# Owner: Agent R. Field names mirror content/site.json and the front-matter of
-# content/projects/*.md exactly (see CONTRACT.md). If you rename a field here,
-# the site will stop reading it.
-
-# ---------------------------------------------------------------------------
-# WHERE YOUR CONTENT LIVES
-# Saving in the editor commits straight to the GitHub repository below; Netlify
-# sees the commit, runs `npm run build` and republishes the site (about a minute).
-#
-# ONE-TIME SETUP (see EDITING_GUIDE.md, "One-time setup"):
-#   1. Create the repository in Kashish's own GitHub account and push this site.
-#   2. Replace [HER-GITHUB-USERNAME] below with her GitHub username,
-#      e.g.  repo: kashishkhera/kashish-portfolio
-#   3. In Netlify: Site configuration -> Access & security -> OAuth ->
-#      Install provider -> GitHub (Client ID + Secret from a GitHub OAuth App
-#      whose callback URL is https://api.netlify.com/auth/done).
-#   Netlify is only the login go-between (base_url below); her content stays in
-#   her GitHub repository. Log in from the live Netlify address (or a custom
-#   domain added to the same Netlify site), not from localhost.
-# ---------------------------------------------------------------------------
+# Editor settings for yoursite/admin. Saving commits to the GitHub repository
+# below and the site republishes in about a minute. Setup: see EDITING_GUIDE.md.
 backend:
   name: github
   repo: "[HER-GITHUB-USERNAME]/kashish-portfolio"
@@ -32,17 +13,14 @@ backend:
     uploadMedia: "Upload “{{path}}”"
     deleteMedia: "Delete “{{path}}”"
 
-# Local editing without logging in: run `npx decap-server` in the site folder,
-# serve the site (e.g. `npm run dev`), then open http://localhost:8000/admin/.
-# Ignored on the live site.
+# Editing on your own computer: run `npm run cms` and `npm run dev`, then open
+# http://localhost:8000/admin/ (ignored on the live site).
 local_backend: true
 
 # Saving publishes straight away (no draft/review workflow).
 publish_mode: simple
 
-# Default place for uploads (e.g. the CV PDF). Project images go to
-# assets/projects/<slug>/ and landing images to assets/site/ (set below).
-# The build strips the leading "/" so the site also works from a sub-folder.
+# Where uploads go. Project images go to assets/projects/<project>/ instead.
 media_folder: assets/uploads
 public_folder: /assets/uploads
 
@@ -63,7 +41,7 @@ collections:
         fields:
           # --- Landing page ---------------------------------------------------
           - { name: name, label: "Your name", widget: string,
-              hint: "Shown huge on the landing page (one word per line), in the menu bar and in the footer." }
+              hint: "Shown huge on the landing page (one word per line), in the menu bar once you scroll, and in the footer." }
           - { name: title, label: "Line under your name", widget: string, default: "Architecture Portfolio",
               hint: "The second line on the landing page, e.g. Architecture Portfolio. The last word is set in script." }
           - { name: edition, label: "Edition line", widget: string,
@@ -110,16 +88,18 @@ collections:
               hint: "Shown above your email address." }
           - { name: email, label: "Email", widget: string,
               hint: "Shown large in Get in Touch, and used if the contact form fails." }
+          - { name: contactForm, label: "Contact form (Netlify only)", widget: boolean, required: false, default: false,
+              hint: "Shows a message form under Get in Touch. Only turn this on if the site is hosted on Netlify (the form does not work anywhere else). Your email and social links always show." }
           - { name: phone, label: "Phone", widget: string, required: false,
               hint: "Leave empty to hide it." }
           - { name: location, label: "Location", widget: string, required: false,
-              hint: "Shown in the footer, e.g. Sydney, Australia." }
+              hint: "Not shown on the site at the moment, e.g. Sydney, Australia." }
           - name: socials
             label: "Social links"
             label_singular: "link"
             widget: list
             summary: "{{fields.label}}: {{fields.url}}"
-            hint: "Shown in Get in Touch and the footer. Drag to reorder."
+            hint: "Shown in Get in Touch. Drag to reorder."
             fields:
               - { name: label, label: "Name", widget: string, hint: "e.g. LinkedIn" }
               - { name: url, label: "Full web address", widget: string,
@@ -159,8 +139,6 @@ collections:
     label_singular: Project
     description: "Each project is one folder on the site. The Order number sets the folder order (0 = Archive Log, then 1, 2, 3…)."
     folder: content/projects
-    # Each project's images live in their own folder, assets/projects/<slug>/
-    # (the same place the import script writes them).
     media_folder: "/assets/projects/{{slug}}"
     public_folder: "/assets/projects/{{slug}}"
     extension: md

@@ -1,5 +1,5 @@
 /* Decap CMS preview pane: a plain reading view in the site's type and colours.
-   Owner: Agent R. Tokens come from ../css/tokens.css (generated). */
+   Colours and fonts come from ../css/tokens.css. */
 html, body { background: var(--bg, #CFC8BA); color: var(--ink, #2A2A26); }
 body {
   margin: 0;

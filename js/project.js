@@ -19,22 +19,6 @@ const pad = (n) => String(n).padStart(2, '0');
 /* Small archival details                                              */
 /* ------------------------------------------------------------------ */
 
-// Deterministic decorative barcode from a string (aria-hidden).
-function barcode(seed, { width = 132, height = 34 } = {}) {
-  let h = 2166136261;
-  for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
-  const rand = () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
-  let x = 0;
-  let bars = '';
-  while (x < width - 4) {
-    const w = 1 + Math.floor(rand() * 3);
-    const gap = 1 + Math.floor(rand() * 2.4);
-    bars += `<rect x="${x}" y="0" width="${w}" height="${height}"/>`;
-    x += w + gap;
-  }
-  return `<svg class="pv-barcode" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" aria-hidden="true" focusable="false" preserveAspectRatio="none"><g fill="currentColor">${bars}</g></svg>`;
-}
-
 const isSoon = (p) => p?.status === 'coming-soon';
 const isPlaceholder = (v) => /^\s*\[/.test(String(v ?? ''));
 const textOf = (html) => String(html ?? '').replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').trim();
@@ -105,7 +89,7 @@ function captionHTML(caption, auto) {
 }
 
 // A figure laid straight on the paper: no frame. Its width is the smallest of
-// the layout share, the image's natural width (never upscaled), its maxWidth,
+// the layout share, half the image's natural width (crisp at 2x), its maxWidth,
 // and a height cap, so the caption lines up with the image's own edge.
 const LAYOUTS = ['full', 'bleed', 'wide', 'half'];
 function figureHTML(b, ctx, { layout = 'full', align = 'left', eager = false, cls = '', rise = false } = {}) {
@@ -114,8 +98,9 @@ function figureHTML(b, ctx, { layout = 'full', align = 'left', eager = false, cl
   const w = Number(b.width) || 1600;
   const h = Number(b.height) || 1000;
   const mw = Number(b.maxWidth) > 0 ? `; --mw:${Number(b.maxWidth)}px` : '';
+  // No blur: never wider than half the natural width (2x density).
   return `
-    <figure class="pv-figure pv-figure--${lay} pv-figure--${al}${cls}"${rise ? ' data-pv-rise' : ''} style="--nw:${w}px; --ar:${(w / h).toFixed(4)}${mw}">
+    <figure class="pv-figure pv-figure--${lay} pv-figure--${al}${cls}"${rise ? ' data-pv-rise' : ''} style="--nw:${Math.round(w / 2)}px; --ar:${(w / h).toFixed(4)}${mw}">
       ${imgHTML(b, ctx, { sizes: SIZES[lay], eager })}
       ${clean(b.caption) ? captionHTML(b.caption) : ''}
     </figure>`;
@@ -147,8 +132,8 @@ function pdfHTML(b, ctx) {
     </section>`;
 }
 
-function renderBlocks(p, ctx) {
-  const blocks = p.blocks || [];
+function renderBlocks(p, ctx, skip = new Set()) {
+  const blocks = (p.blocks || []).filter((b) => !skip.has(b));
   const out = [];
   for (let i = 0; i < blocks.length; i += 1) {
     const b = blocks[i];
@@ -197,14 +182,60 @@ function renderIndex(projects, self) {
     </section>`;
 }
 
-// Next published file after p (coming-soon files are skipped).
+// "Next file" runs through the published projects only (never CONTENTS or a
+// coming-soon file) and loops from the last back to the first. CONTENTS's own
+// next file is the first published project.
 function nextFile(p, projects) {
-  const idx = projects.indexOf(p);
-  for (let k = 1; k < projects.length; k += 1) {
-    const q = projects[(idx + k) % projects.length];
-    if (!isSoon(q)) return q === p ? null : q;
-  }
-  return null;
+  const chain = projects.filter((q) => !isSoon(q) && !q.index);
+  if (!chain.length) return null;
+  if (p.index) return chain[0];
+  const i = chain.indexOf(p);
+  const q = chain[(i + 1) % chain.length];
+  return q === p ? null : q;
+}
+
+// Her statement, with the pull-quote (her own words, exactly) after the first
+// paragraph, and any image block with `after: n` set straight after paragraph n.
+// The statement is cut into runs around those images, so an image takes the
+// column width rather than the statement's measure.
+function statementHTML(p, ctx, inline) {
+  if (!p.statement || !textOf(p.statement) || isPlaceholder(textOf(p.statement))) return '';
+  const t = document.createElement('template');
+  t.innerHTML = String(p.statement);
+  const quote = clean(p.pullquote).replace(/^["“‘']+|["”’']+$/g, '').trim();
+  const runs = [[]];
+  let para = 0;
+  [...t.content.childNodes].forEach((node) => {
+    if (node.nodeType === 3 && !node.textContent.trim()) return;
+    runs[runs.length - 1].push(node.outerHTML ?? esc(node.textContent));
+    if (node.nodeName !== 'P') return;
+    para += 1;
+    if (para === 1 && quote) runs[runs.length - 1].push(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
+    const here = inline.get(para);
+    if (here?.length) {
+      runs.push(here.map((b) => figureHTML(b, ctx, { layout: b.layout || b.size, align: b.align })).join(''));
+      runs.push([]);
+    }
+  });
+  if (para === 0 && quote) runs[runs.length - 1].push(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
+  const out = runs.filter((r) => (Array.isArray(r) ? r.length : r));
+  return out.map((r, i) => (Array.isArray(r)
+    ? `<div class="pv-statement${i ? ' pv-statement--cont' : ''}${i < out.length - 1 ? ' pv-statement--split' : ''}" data-pv-rise>${r.join('')}</div>`
+    : `<div class="pv-statement-media">${r}</div>`)).join('');
+}
+
+// Image blocks placed inside the statement (`after: n`), by paragraph number.
+function inlineBlocks(p) {
+  const paras = (String(p.statement || '').match(/<p[\s>]/g) || []).length;
+  const map = new Map();
+  (p.blocks || []).forEach((b) => {
+    const n = Number(b.after);
+    if (b.type === 'image' && b.src && Number.isInteger(n) && n >= 1 && n <= paras) {
+      if (!map.has(n)) map.set(n, []);
+      map.get(n).push(b);
+    }
+  });
+  return map;
 }
 
 // A plain empty frame where an image will go: a thin rule, no text.
@@ -218,9 +249,9 @@ function renderProject(p, projects, site) {
   const longest = Math.max(5, ...title.split(/\s+/).map((w) => w.length));
   const subtitle = clean(p.subtitle);
 
-  const meta = (p.meta || []).filter((m) => clean(m.label) && clean(m.value)).map((m, i) => `
+  const meta = (p.meta || []).filter((m) => clean(m.label) && clean(m.value)).map((m) => `
     <div class="pv-meta__item">
-      <dt class="pv-mono"><span class="pv-muted">${String.fromCharCode(65 + i)} /</span> ${esc(m.label)}</dt>
+      <dt class="pv-mono">${esc(m.label)}</dt>
       <dd>${esc(m.value)}</dd>
     </div>`).join('');
 
@@ -228,18 +259,18 @@ function renderProject(p, projects, site) {
     ? figureHTML(p.cover, ctx, { layout: 'full', align: 'left', eager: true, cls: ' pv-hero', rise: true })
     : '';
 
-  const statement = p.statement && textOf(p.statement) && !isPlaceholder(textOf(p.statement))
-    ? `<div class="pv-statement" data-pv-rise>${p.statement}</div>` : '';
-  const blocks = renderBlocks(p, ctx);
+  const inline = inlineBlocks(p);
+  const statement = statementHTML(p, ctx, inline);
+  const blocks = renderBlocks(p, ctx, new Set([...inline.values()].flat()));
 
   // Nothing to show yet: keep the page intentional with plain empty frames.
-  const empty = !p.index && !hero && !blocks
+  const empty = !p.index && !hero && !blocks && !statement
     ? `<div class="pv-empties" data-pv-rise>${emptyFrame(' pv-empty--wide')}<div class="pv-empty-pair">${emptyFrame()}${emptyFrame()}</div></div>`
     : '';
 
   const html = `
     <header class="pv-bar">
-      <span class="pv-bar__file pv-mono">${code ? esc(code) : ''}</span>
+      <span class="pv-bar__file" aria-hidden="true"></span>
       <button type="button" class="pv-close" data-pv-close>
         <span class="pv-close__arrow" aria-hidden="true">&larr;</span>
         <span>Projects</span>
@@ -257,17 +288,13 @@ function renderProject(p, projects, site) {
         ${subtitle ? `<p class="pv-subtitle">${esc(subtitle)}</p>` : ''}
       </div>
       ${meta ? `<dl class="pv-meta" data-pv-rise>${meta}</dl>` : ''}
-      ${statement}
       ${hero}
+      ${statement}
       ${p.index ? renderIndex(projects, p) : ''}
       ${blocks ? `<div class="pv-blocks">${blocks}</div>` : ''}
       ${empty}
 
       <footer class="pv-end">
-        <div class="pv-end__row pv-mono">
-          <span>End of file${code ? ` // ${esc(code)}` : ''}</span>
-          ${barcode('end' + p.slug, { width: 96, height: 22 })}
-        </div>
         <div class="pv-end__nav">
           <button type="button" class="pv-end__back pv-mono" data-pv-close>&larr; Back to projects</button>
           ${next ? `<a class="pv-end__next" href="#project/${esc(next.slug)}" data-pv-link>

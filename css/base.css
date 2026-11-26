@@ -1,6 +1,5 @@
 /* ==========================================================================
    base.css - visual system, nav, landing, Get in Touch, footer
-   Owner: Agent R.
 
    Colour and font tokens (--bg --ink --cream --slate --kraft --charcoal
    --olive --gold --font-display --font-mono) come from css/tokens.css, which
@@ -62,6 +61,15 @@
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .15 0 0 0 0 .13 0 0 0 -1.6 1.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E");
   --grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .96 0 0 0 0 .94 0 0 0 0 .88 0 0 0 -1.6 1.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
   --grain-size: 180px;
+}
+
+/* Metric-matched stand-in for the name while Archivo (loaded without blocking)
+   arrives, so the fitted name keeps nearly the same size and nothing jumps. */
+@font-face {
+  font-family: 'Archivo Name Fallback';
+  src: local('Arial Black'), local('Arial'), local('Liberation Sans'), local('Helvetica Neue'), local('Helvetica');
+  font-weight: 100 900;
+  size-adjust: 137%;
 }
 
 /* ---------- Reset ---------- */
@@ -246,7 +254,10 @@ html.project-open body { overflow: hidden; }
   min-height: 44px;
   font-weight: 700;
   white-space: nowrap;
+  transition: opacity .4s var(--ease-out), visibility .4s;
 }
+/* Hidden while the landing's giant name is on screen (cover.js) */
+.site-nav--mark-hidden .site-nav__mark { opacity: 0; visibility: hidden; pointer-events: none; }
 .site-nav__list {
   display: flex;
   align-items: center;
@@ -347,7 +358,8 @@ html.project-open body { overflow: hidden; }
   font-weight: 900;
   /* --name-fs is fitted by cover.js so the longest word fills the column */
   /* Fallback before/without JS: roughly fits "KASHISH" (about 6.7em wide) */
-  font-size: var(--name-fs, min(14.5cqi, 20vh));
+  font-size: var(--name-fs, min(16.5cqi, 20vh));
+  font-family: 'Archivo', 'Archivo Name Fallback', var(--font-display);
   line-height: .86;
   letter-spacing: -.02em;
   text-transform: uppercase;
@@ -364,7 +376,7 @@ html.project-open body { overflow: hidden; }
   overflow: hidden;
   visibility: hidden;
   pointer-events: none;
-  font-family: var(--font-display);
+  font-family: 'Archivo', 'Archivo Name Fallback', var(--font-display);
   font-stretch: 125%;
   font-weight: 900;
   font-size: 100px;
@@ -400,7 +412,7 @@ html.project-open body { overflow: hidden; }
   margin-left: -.04em;
 }
 
-/* Degree line (+ about, when there is one) */
+/* About paragraph, under a thin rule */
 .cover__about {
   display: flex;
   flex-direction: column;
@@ -409,8 +421,6 @@ html.project-open body { overflow: hidden; }
   padding-top: var(--space-3);
   border-top: 1px solid var(--rule);
 }
-.cover__study { color: var(--muted); }
-.cover__study-part { white-space: nowrap; }
 .cover__about-text {
   font-size: 1.0625rem;
   line-height: 1.5;
@@ -448,7 +458,17 @@ html.project-open body { overflow: hidden; }
   max-width: 85vw;
   max-height: 40vh;
   max-height: 40svh;
-  border-radius: 6px 0 0 6px;      /* square at the bleed edge */
+  border-radius: 0;
+  /* Cut edges that can't run off a screen edge fade into the paper instead:
+     the left and top edges, and on phones the bottom (it runs off the right). */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 14%),
+    linear-gradient(to bottom, transparent, #000 12%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 14%),
+    linear-gradient(to bottom, transparent, #000 12%, #000 82%, transparent);
+  mask-composite: intersect;
   mix-blend-mode: multiply;
   /* The scan's paper is ~#D8D9D4 (85% white), so plain multiply leaves a grey
      box. Lifting it to white first lets it vanish into the page; the pencil
@@ -466,7 +486,8 @@ html.project-open body { overflow: hidden; }
   border: 1px solid var(--rule-strong);
 }
 
-/* 768 to 1023: one column, the hero after the text */
+/* 768 to 1023 (iPad portrait): like phones, the square crop of the hands sits
+   right under the name, so name and hands share the first screen. */
 @media (min-width: 768px) {
   .cover {
     min-height: 100vh;
@@ -474,22 +495,24 @@ html.project-open body { overflow: hidden; }
     padding-bottom: var(--space-6);
   }
   .cover__text {
-    gap: clamp(var(--space-5), 4vh, var(--space-7));
-    padding-top: clamp(var(--space-6), 6vh, var(--space-8));
+    gap: clamp(var(--space-5), 3vh, var(--space-7));
+    padding-top: clamp(var(--space-6), 5vh, var(--space-8));
   }
-  .cover__figure { order: 3; padding-top: var(--space-5); }
-  .cover__img { max-width: 100%; max-height: 50vh; max-height: 50svh; }
+  .cover__img { max-width: 62vw; max-height: 42vh; max-height: 42svh; }
   .cover__about-text { font-size: var(--text-lg); }
-  .cover__figure--empty .cover__frame { aspect-ratio: 5 / 4; max-height: 50vh; max-height: 50svh; }
+  .cover__figure--empty .cover__frame { max-height: 42vh; max-height: 42svh; }
 }
 
 /* Desktop and iPad landscape: text centred on the left, hero on the right */
 @media (min-width: 1024px) {
+  /* The hero runs off the bottom of the first screen: no bottom padding */
+  .cover { padding-bottom: 0; }
   .cover__inner {
     grid-template-rows: auto 1fr;
-    min-height: calc(100vh - var(--nav-h) - var(--space-5) - var(--space-6));
-    min-height: calc(100svh - var(--nav-h) - var(--space-5) - var(--space-6));
+    min-height: calc(100vh - var(--nav-h) - var(--space-5));
+    min-height: calc(100svh - var(--nav-h) - var(--space-5));
   }
+  .cover__name { font-size: var(--name-fs, min(16.5cqi, 24vh)); }
   .cover__text {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -505,7 +528,7 @@ html.project-open body { overflow: hidden; }
   }
   .cover__h1 { grid-area: head; padding-top: var(--space-6); }
   .cover__about { grid-area: about; max-width: 36rem; margin-top: clamp(var(--space-5), 4vh, var(--space-7)); margin-bottom: var(--space-6); }
-  .cover__figure { grid-area: figure; order: 0; padding-top: var(--space-6); }
+  .cover__figure { grid-area: figure; padding-top: var(--space-6); }
   /* The drawing fills the column height, right-aligned against the bleed */
   .cover__frame { flex: 1 1 auto; }
   .cover__img {
@@ -517,13 +540,20 @@ html.project-open body { overflow: hidden; }
     max-height: none;
     object-fit: cover;             /* only crops if the column is unusually narrow */
     object-position: right center;
+    /* runs off the right and bottom; fade only the left and top cut edges */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 14%),
+      linear-gradient(to bottom, transparent, #000 12%);
+    mask-image:
+      linear-gradient(to right, transparent, #000 14%),
+      linear-gradient(to bottom, transparent, #000 12%);
   }
   .cover__figure--empty .cover__frame { aspect-ratio: auto; max-height: none; }
 }
 
 /* ==========================================================================
-   Get in Touch (#contact): a folder-coloured top edge with a tab, details
-   on the left, the Netlify form as a cream sheet on the right.
+   Get in Touch (#contact): a folder-coloured top edge, details on the left
+   and, only when site.contactForm is on, the Netlify form on the right.
    ========================================================================== */
 .contact {
   position: relative;
@@ -533,36 +563,18 @@ html.project-open body { overflow: hidden; }
   margin: var(--space-9) var(--gutter) 0;
   padding: var(--space-7) 0 var(--space-9);
   border-top: 4px solid var(--contact-edge);
-  scroll-margin-top: 34px;          /* the 26px tab + 8px, so the tab lands just under the nav */
+  scroll-margin-top: var(--space-4);
 }
-/* The tab, like a folder's */
-.contact__tab {
-  position: absolute;
-  left: 0;
-  top: -26px;                      /* sits on top of the 4px edge */
-  display: inline-flex;
-  align-items: center;
-  height: 22px;
-  padding: 0 var(--space-4);
-  background-color: var(--contact-edge);
-  background-image: var(--grain);
-  background-size: var(--grain-size);
-  border-radius: 6px 6px 0 0;
-  color: var(--charcoal);          /* 5.2:1 on kraft (ink is only 4.55:1) */
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: 700;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  line-height: 1;
-}
+.contact .contact__details { max-width: 44rem; }
 @media (min-width: 1024px) {
-  .contact {
+  .contact--with-form {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     column-gap: clamp(var(--space-7), 5vw, var(--space-9));
     align-items: start;
   }
 }
+/* Hidden unless the "Contact form (Netlify only)" setting is on */
+.contact-form.is-off { display: none; }
 
 .contact__details { min-width: 0; }
 .contact__title {
@@ -656,10 +668,6 @@ a.contact__social:hover { background-size: 100% 1px; }
   background-color: var(--cream);
   background-image: var(--grain);
   background-size: var(--grain-size);
-  box-shadow:
-    0 0 0 1px rgba(42, 42, 38, .14),
-    0 1px 1px rgba(30, 30, 28, .08),
-    0 14px 30px -18px rgba(30, 30, 28, .45);
 }
 @media (min-width: 720px) {
   .contact-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -743,7 +751,7 @@ a.contact__social:hover { background-size: 100% 1px; }
 .contact-form__status a { text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
 
 @media (max-width: 719px) {
-  .contact { margin-top: var(--space-8); padding-top: var(--space-6); padding-bottom: var(--space-8); gap: var(--space-6); }
+  .contact { margin-top: 0; padding-top: var(--space-6); padding-bottom: var(--space-8); gap: var(--space-6); }
   .contact__row { grid-template-columns: 1fr; gap: var(--space-1); }
 }
 
@@ -751,26 +759,15 @@ a.contact__social:hover { background-size: 100% 1px; }
    Footer
    ========================================================================== */
 .site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-6);
   margin: 0 var(--gutter);
-  padding: var(--space-5) 0 var(--space-6);
+  padding: var(--space-4) 0 var(--space-6);
   border-top: 1px solid var(--rule-strong);
 }
-.site-footer__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
-}
-.site-footer__name {
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 900;
-  font-size: clamp(1.25rem, 1rem + 1.4vw, 2.25rem);
-  line-height: .95;
-  letter-spacing: -.01em;
-  text-transform: uppercase;
-}
+.site-footer__copy { color: var(--ink); margin-right: auto; }
 .site-footer__top-link {
   display: inline-flex;
   align-items: center;
@@ -780,32 +777,9 @@ a.contact__social:hover { background-size: 100% 1px; }
   background: linear-gradient(currentColor, currentColor) 0 calc(100% - 12px) / 100% 1px no-repeat;
 }
 .site-footer__top-link:hover { background-size: 0 1px; }
-.site-footer__grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3) var(--space-6);
-  color: var(--muted);
-}
-.site-footer__copy { color: var(--ink); }
-.site-footer__social-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-5);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-}
-.site-footer__social { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; color: var(--ink); overflow-wrap: anywhere; }
-a.site-footer__social:hover { text-decoration: underline; text-underline-offset: .25em; }
-span.site-footer__social { color: var(--muted); }
-.site-footer .btn-file { margin-left: auto; }
 
-@media (max-width: 719px) {
-  .site-footer__grid { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
-  .site-footer .btn-file { margin: var(--space-3) 0 0; }
+@media (max-width: 479px) {
+  .site-footer__copy { flex-basis: 100%; }
 }
 
 /* ---------- Reduced motion ---------- */

@@ -30,7 +30,7 @@ html.project-open { overflow: hidden; }
 /* Phones: a thin frame, so drawings get the width. */
 @media (max-width: 639.98px) {
   .project-view { --pv-inset: 6px; --pv-bw: 6px; --pv-tab-h: 24px; --pv-pad: 16px; }
-  .pv-tab { font-size: 10px; padding: 0 12px; }
+  .pv-tab { font-size: 12px; padding: 0 12px; }
 }
 
 .pv-backdrop {
@@ -70,7 +70,7 @@ html.project-open { overflow: hidden; }
   background: var(--pv-folder, #7E8CA3);
   color: var(--pv-folder-ink, #1E2330);
   border-radius: 9px 12px 0 0;
-  font: 500 11px/1 var(--pv-mono);
+  font: 500 12px/1 var(--pv-mono);
   letter-spacing: .08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -111,7 +111,7 @@ html.project-open { overflow: hidden; }
 
 .pv-mono {
   font-family: var(--pv-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -147,7 +147,7 @@ html.project-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 8px 0 16px;
   border: 1.5px solid var(--pv-ink);
   border-radius: 999px;
@@ -166,7 +166,7 @@ html.project-open { overflow: hidden; }
   padding: 4px 7px;
   border-radius: 999px;
   background: rgba(42, 42, 38, .1);
-  font: 500 10px/1 var(--pv-mono);
+  font: 500 12px/1 var(--pv-mono);
   letter-spacing: .06em;
 }
 .pv-close:hover, .pv-close:focus-visible { background: var(--pv-ink); color: var(--pv-paper); }
@@ -255,7 +255,7 @@ html.project-open { overflow: hidden; }
   .pv-meta { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .pv-meta__item { border-top: 1.5px solid var(--pv-ink); padding-top: 10px; min-width: 0; }
-.pv-meta dt { font-size: 10px; }
+.pv-meta dt { font-size: 12px; }
 .pv-meta dd {
   margin: 8px 0 0;
   font-size: clamp(14px, 1.3vw, 17px);
@@ -276,9 +276,37 @@ html.project-open { overflow: hidden; }
   letter-spacing: -.005em;
 }
 .pv-statement > * { margin: 0 0 .7em; }
+@media (max-width: 360px) { .pv-statement { font-size: 17px; } }
 .pv-statement > :last-child { margin-bottom: 0; }
 .pv-statement a { color: inherit; text-underline-offset: .18em; }
-.pv-barcode { display: block; height: 34px; width: 132px; }
+
+/* pull-quote: her own sentence, set large after the first paragraph */
+.pv-statement .pv-pullquote {
+  margin: 1.1em 0 1.2em;
+  padding: 0;
+  max-width: 20ch;
+  font-family: var(--pv-display);
+  font-size: clamp(28px, 3.6vw, 48px);
+  font-weight: 800;
+  font-stretch: 112%;
+  line-height: 1.08;
+  letter-spacing: -.012em;
+  text-indent: -.42em; /* hang the opening quote mark */
+}
+.pv-statement .pv-pullquote p { margin: 0; }
+/* the statement cut into runs around images placed with `after: n` */
+.pv-statement--split { border-bottom: 0; padding-bottom: 0; }
+.pv-statement--cont { margin-top: clamp(32px, 4.4vw, 56px); }
+.pv-statement-media { margin-top: clamp(32px, 4.4vw, 56px); }
+@media (max-width: 639.98px) { .pv-statement .pv-pullquote { text-indent: 0; } }
+/* when the statement ends the file, the END OF FILE rule is enough */
+.pv-statement:has(+ .pv-end) { border-bottom: 0; padding-bottom: 0; }
+/* a long run of text after the quote gets a quiet pause between paragraphs */
+.pv-statement .pv-pullquote ~ p + p {
+  margin-top: 1.4em;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--pv-rule);
+}
 
 /* coming soon */
 .pv-soon {
@@ -287,14 +315,14 @@ html.project-open { overflow: hidden; }
   border: 1px solid currentColor;
   border-radius: 2px;
   font-family: var(--pv-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .14em;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
 }
-.pv-soon--lg { font-size: 11px; padding: 6px 10px 5px; }
+.pv-soon--lg { font-size: 12px; padding: 6px 10px 5px; }
 .pv-soonbox {
   display: flex;
   flex-direction: column;
@@ -429,10 +457,12 @@ html.project-open { overflow: hidden; }
   filter: brightness(var(--lift, 1)) contrast(1.1);
 }
 
-/* bleed: edge to edge of the paper */
+/* bleed: edge to edge of the paper, unless that would blur it: then it
+   centres at half its natural width */
 .pv-figure--bleed {
-  width: 100cqw;
-  margin-inline: calc(50% - 50cqw);
+  --bw: min(100cqw, var(--nw, 100cqw));
+  width: var(--bw);
+  margin-inline: calc((100% - var(--bw)) / 2);
 }
 .pv-figure--bleed .pv-figure__cap { padding-inline: var(--pv-pad); }
 @media (min-width: 1024px) {
@@ -460,7 +490,7 @@ html.project-open { overflow: hidden; }
   align-items: baseline;
   gap: 4px 10px;
   margin-top: 10px;
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--pv-muted);
 }
 .pv-figure--right .pv-figure__cap { justify-content: flex-end; text-align: right; }
@@ -497,7 +527,7 @@ html.project-open { overflow: hidden; }
   appearance: none;
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 16px;
   border: 1.5px solid var(--pv-ink);
   border-radius: 999px;
@@ -509,7 +539,7 @@ html.project-open { overflow: hidden; }
   transition: background-color .2s, color .2s;
 }
 .pv-pdf__view:hover, .pv-pdf__view:focus-visible { background: var(--pv-ink); color: var(--pv-paper); }
-.pv-pdf__link { color: var(--pv-ink); text-underline-offset: 5px; }
+.pv-pdf__link { display: inline-flex; align-items: center; min-height: 44px; color: var(--pv-ink); text-underline-offset: 5px; }
 .pv-pdf__missing { color: var(--pv-muted); }
 .pv-pdf__view:focus-visible, .pv-pdf__link:focus-visible { outline: 2px solid var(--gold, #B89B5E); outline-offset: 3px; }
 .pv-pdf__frame { margin-top: 6px; }
@@ -526,28 +556,25 @@ html.project-open { overflow: hidden; }
 
 /* ---------- end of file ---------- */
 .pv-end { margin-top: clamp(56px, 8vw, 112px); }
-.pv-end__row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding-top: 12px;
-  border-top: 1.5px solid var(--pv-ink);
-}
-.pv-end__row .pv-barcode { width: 96px; height: 22px; }
+/* one rule above Back / Next: no barcode, no end-of-file line */
 .pv-end__nav {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
   gap: 24px;
-  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1.5px solid var(--pv-ink);
 }
 .pv-end__back {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
   border: 0;
   background: none;
-  padding: 10px 0;
+  padding: 0;
   color: var(--pv-ink);
   cursor: pointer;
   text-decoration: underline;
@@ -555,6 +582,9 @@ html.project-open { overflow: hidden; }
   text-decoration-thickness: 1px;
 }
 .pv-end__next {
+  min-height: 44px;
+  min-width: 44px;
+  padding-block: 4px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -610,7 +640,7 @@ html.project-open { overflow: hidden; }
   padding: 10px clamp(10px, 2vw, 24px);
   border-bottom: 1px solid rgba(238, 233, 221, .14);
 }
-.pv-lb__count { font-family: var(--pv-mono); font-size: 11px; letter-spacing: .1em; color: rgba(238, 233, 221, .7); }
+.pv-lb__count { font-family: var(--pv-mono); font-size: 12px; letter-spacing: .1em; color: rgba(238, 233, 221, .7); }
 .pv-lb__tools { display: flex; align-items: center; gap: 8px; }
 .pv-lb__btn {
   appearance: none;
@@ -618,14 +648,14 @@ html.project-open { overflow: hidden; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0 14px;
   border: 1px solid rgba(238, 233, 221, .4);
   border-radius: 999px;
   background: transparent;
   color: inherit;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: .1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -639,7 +669,7 @@ html.project-open { overflow: hidden; }
   padding: 3px 6px;
   border-radius: 999px;
   background: rgba(238, 233, 221, .14);
-  font: 500 10px/1 var(--pv-mono);
+  font: 500 12px/1 var(--pv-mono);
 }
 .pv-lb__stage {
   flex: 1 1 auto;
@@ -667,7 +697,7 @@ html.project-open { overflow: hidden; }
   padding: 10px clamp(12px, 2vw, 24px) 14px;
   border-top: 1px solid rgba(238, 233, 221, .14);
 }
-.pv-lb__cap { margin: 0; font-size: 11px; color: #EEE9DD; }
+.pv-lb__cap { margin: 0; font-size: 12px; color: #EEE9DD; }
 .pv-lb__cap:empty { display: none; }
 .pv-lb__alt { margin: 4px 0 0; max-width: 80ch; font-size: 14px; line-height: 1.45; color: rgba(238, 233, 221, .72); }
 .pv-lb__alt:empty { display: none; }

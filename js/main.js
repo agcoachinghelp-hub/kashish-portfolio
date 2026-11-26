@@ -22,6 +22,12 @@ async function boot() {
 
   document.documentElement.classList.add('is-ready');
   ScrollTrigger.refresh();
+
+  // The browser jumps to a section hash (e.g. #projects) before the landing above it
+  // is rendered, so the section ends up lower than the jump. Re-apply it now.
+  const target = location.hash && !location.hash.startsWith('#project/')
+    ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+  if (target) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
 }
 
 boot().catch((err) => {

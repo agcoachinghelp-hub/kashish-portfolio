@@ -46,6 +46,9 @@ function image(obj, ctx) {
   // Optional cap on display width in CSS px (e.g. low-resolution sources).
   const mw = Number(obj.maxWidth ?? obj.max_width);
   if (mw > 0) out.maxWidth = mw;
+  // Small 480px variant (written by the crop/import scripts) for folder thumbnails.
+  const th = src.replace(/\.webp$/, '-480.webp');
+  if (th !== src && existsSync(rel(th))) out.thumb = th;
   const w = Number(obj.width), h = Number(obj.height);
   if (w > 0 && h > 0) { out.width = w; out.height = h; }
   // Responsive variants written by scripts/import-project.mjs: 01.webp -> 01-2400/1600/800.webp
@@ -65,8 +68,10 @@ function block(b, ctx) {
       // full = whole text column; bleed = to the panel edge; wide = two-thirds; half = one-half.
       const layout = ['full', 'bleed', 'wide', 'half'].includes(b.layout) ? b.layout : 'full';
       const align = b.align === 'right' ? 'right' : 'left';
+      // Optional: place this image after statement paragraph N (1-based).
+      const after = Number(b.after) > 0 ? Number(b.after) : undefined;
       // `size` kept for backwards compatibility with the first renderer.
-      return { type: 'image', ...img, layout, align, size: layout };
+      return { type: 'image', ...img, layout, align, ...(after ? { after } : {}), size: layout };
     }
     case 'drawings': {
       const items = (b.items || []).map((it) => image(it, ctx)).filter(Boolean);
