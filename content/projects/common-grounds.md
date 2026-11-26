@@ -1,6 +1,6 @@
 ---
-order: 4
-code: CODE_002
+order: 6
+code: CODE_006
 title: "COMMON GROUNDS"
 subtitle: "City Centre"
 status: published

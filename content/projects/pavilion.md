@@ -1,6 +1,6 @@
 ---
-order: 7
-code: CODE_007
+order: 5
+code: CODE_005
 title: "PAVILION"
 status: coming-soon
 colour: "#BBA585"

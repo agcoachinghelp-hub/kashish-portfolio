@@ -1,6 +1,6 @@
 ---
-order: 1
-code: CODE_001
+order: 2
+code: CODE_002
 title: "BURRA POD"
 subtitle: "Community centre · Fleet Street, North Parramatta, NSW"
 status: published

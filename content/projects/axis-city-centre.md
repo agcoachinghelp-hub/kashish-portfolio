@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 3
 code: CODE_003
 title: "AXIS CITY CENTRE"
 subtitle: "Waterloo Estate Redevelopment"
