@@ -1,53 +1,87 @@
 {
   "_readme": "Edit this file, then run `npm run cv`. Source: her resume (her-cv/Kashish_Khera_Resume.pdf) and portfolio page 05. Keep her own wording. See cv/README.md.",
-
   "meta": {
     "portfolioUrl": "",
     "archivalCode": "CV // 2026",
     "updated": "",
     "printPaper": "cream"
   },
-
   "name": "Kashish Khera",
   "headline": "Architecture Studies · Project Coordination · Client Experience",
-
   "contact": [
-    { "label": "Email", "value": "kashish.khera@outlook.com", "url": "mailto:kashish.khera@outlook.com" },
-    { "label": "Location", "value": "Sydney, NSW", "url": "" },
-    { "label": "LinkedIn", "value": "linkedin.com/in/kashishkhera", "url": "https://www.linkedin.com/in/kashishkhera" },
-    { "label": "Instagram", "value": "@formbykash", "url": "https://www.instagram.com/formbykash/" }
+    {
+      "label": "Email",
+      "value": "kashish.khera@outlook.com",
+      "url": "mailto:kashish.khera@outlook.com"
+    },
+    {
+      "label": "Location",
+      "value": "Sydney, NSW",
+      "url": ""
+    },
+    {
+      "label": "LinkedIn",
+      "value": "linkedin.com/in/kashishkhera",
+      "url": "https://www.linkedin.com/in/kashishkhera"
+    },
+    {
+      "label": "Instagram",
+      "value": "@formbykash",
+      "url": "https://www.instagram.com/formbykash/"
+    }
   ],
-
-  "profile": "Final-year Bachelor of Architectural Studies student at UNSW Sydney with over four years of experience across construction project support, real estate administration, tutoring and retail leadership. A client-focused problem solver who learns best through hands-on work, and has supported construction projects from cost estimating through to coordination.",
-
+  "profile": "Final-year Bachelor of Architectural Studies student at UNSW Sydney with over four years of experience across construction project support, real estate administration, tutoring and retail leadership. A client-focused problem solver who learns best through hands-on work, equally at home collaborating in a team or working independently.",
   "focus": {
     "label": "Key skills",
-    "items": ["Drafting", "Construction detailing", "AutoCAD", "Revit", "Building cost estimation", "Tendering", "Project coordination", "Sustainability & passive design"]
+    "items": [
+      "Drafting",
+      "Construction Detailing",
+      "Visual Communication",
+      "Building Cost Estimation",
+      "Tendering",
+      "Project Coordination",
+      "Stakeholder Coordination"
+    ]
   },
-
   "education": [
     {
       "degree": "Bachelor of Architectural Studies",
       "institution": "University of New South Wales",
       "years": "Jan 2024 - Dec 2026 (Expected)",
       "description": "Developed architectural design proposals integrating sustainability, passive design and human-centred principles. Conducted site analysis and material research, produced hand-drafted and digital drawings, physical and 3D models, and construction details, and led multidisciplinary teams to deliver collaborative design projects.",
-      "notes": ["Elective study: Construction Planning, Urban Planning (International Site in Singapore), Digital Entrepreneurship, Personal Finance."]
+      "notes": [
+        "Elective study: Construction Planning, Urban Planning (International Site in Singapore), Digital Entrepreneurship, Personal Finance."
+      ]
     },
     {
       "degree": "High School Diploma",
       "institution": "Glenwood High School & Saturday School of Community Languages",
       "years": "Jan 2018 - Dec 2023",
       "description": "",
-      "notes": ["HSC High Achievers Award Recipient · 92.4 ATAR", "Basketball Team Captain (2019 - 2023), including Macquarie Zone competitions · Zone athletics (2019 - 2022)"]
+      "notes": [
+        "HSC High Achievers Award Recipient · 92.4 ATAR",
+        "Basketball Team Captain (2019 - 2023), including Macquarie Zone competitions · Zone athletics (2019 - 2022)"
+      ]
     }
   ],
-
   "projects": [
-    { "title": "Burra Pod", "slug": "burra-pod", "line": "Community centre on Durug Country, Fleet Street, North Parramatta, NSW: shaped by movement, adaptation and connection to place." },
-    { "title": "Axis City Centre", "subtitle": "Waterloo Estate Redevelopment", "slug": "axis-city-centre", "line": "Aligning movement, people & space." },
-    { "title": "Common Grounds", "slug": "common-grounds", "line": "Plans at 1:100 across basement, ground, first and second floors, including a street library, stage and art gallery." }
+    {
+      "title": "Burra Pod",
+      "slug": "burra-pod",
+      "line": "Community centre on Durug Country, Fleet Street, North Parramatta, NSW: shaped by movement, adaptation and connection to place."
+    },
+    {
+      "title": "Axis City Centre",
+      "subtitle": "Waterloo Estate Redevelopment",
+      "slug": "axis-city-centre",
+      "line": "Aligning movement, people & space."
+    },
+    {
+      "title": "Common Grounds",
+      "slug": "common-grounds",
+      "line": "Plans at 1:100 across basement, ground, first and second floors, including a street library, stage and art gallery."
+    }
   ],
-
   "experience": {
     "architecture": [
       {
@@ -101,42 +135,136 @@
       }
     ]
   },
-
   "honours": [
-    { "date": "2 Dec 2026", "kind": "Exhibition", "title": "", "note": "" },
-    { "date": "4 Dec 2026", "kind": "Exhibition", "title": "", "note": "" },
-    { "date": "", "kind": "Award", "title": "HSC High Achievers Award", "note": "" }
+    {
+      "date": "2 Dec 2026",
+      "kind": "Exhibition",
+      "title": "",
+      "note": ""
+    },
+    {
+      "date": "4 Dec 2026",
+      "kind": "Exhibition",
+      "title": "",
+      "note": ""
+    },
+    {
+      "date": "",
+      "kind": "Award",
+      "title": "HSC High Achievers Award",
+      "note": ""
+    }
   ],
-
   "skills": [
-    { "group": "Design", "items": ["AutoCAD", "Revit", "Rhino"] },
-    { "group": "Adobe", "items": ["Photoshop", "Illustrator", "InDesign", "Fresco"] },
-    { "group": "Fabrication", "items": ["Laser Cutting (Tetro, Ruby)", "3D Printing (Bambu Lab)", "Physical Model Making"] },
-    { "group": "Other", "items": ["Microsoft Excel", "Microsoft 365 (Word, PowerPoint, Outlook)", "Microsoft Project", "Google Workspace", "Canva", "OpenAI Codex", "Claude Code"] }
+    {
+      "group": "Design",
+      "items": [
+        "AutoCAD",
+        "Revit",
+        "Rhino"
+      ]
+    },
+    {
+      "group": "Adobe",
+      "items": [
+        "Photoshop",
+        "Illustrator",
+        "InDesign",
+        "Fresco"
+      ]
+    },
+    {
+      "group": "Fabrication",
+      "items": [
+        "Laser Cutting (Tetro, Ruby)",
+        "3D Printing (Bambu Lab)",
+        "Physical Model Making"
+      ]
+    },
+    {
+      "group": "Other",
+      "items": [
+        "Microsoft Excel",
+        "Microsoft 365 (Word, PowerPoint, Outlook)",
+        "Microsoft Project",
+        "Google Workspace",
+        "Canva",
+        "OpenAI Codex",
+        "Claude Code"
+      ]
+    }
   ],
-
   "certifications": [
-    { "title": "Real Estate NSW Assistant Agents Course", "issuer": "Entry Education", "date": "Nov 2026" },
-    { "title": "Sales Skills for Real Estate Agents", "issuer": "Entry Education", "date": "Nov 2026" },
-    { "title": "Certificate III in Retail Services", "issuer": "Atwea College", "date": "Dec 2023" }
+    {
+      "title": "Real Estate NSW Assistant Agents Course",
+      "issuer": "Entry Education",
+      "date": "Nov 2026"
+    },
+    {
+      "title": "Sales Skills for Real Estate Agents",
+      "issuer": "Entry Education",
+      "date": "Nov 2026"
+    },
+    {
+      "title": "Certificate III in Retail Services",
+      "issuer": "Atwea College",
+      "date": "Dec 2023"
+    }
   ],
-
   "community": [
-    { "role": "Soccer Coach", "org": "Western Sydney Khalsa Women's", "dates": "Feb 2026 - Present" },
-    { "role": "Dance Coach & National Competitor", "org": "Down to Bhangra", "dates": "Feb 2020 - Present" },
-    { "role": "Community Member", "org": "Suwayda (Socio-spiritual movement)", "dates": "2024 - Present" },
-    { "role": "Basketball Coach", "org": "Cyclones Women’s U22 - A Grade", "dates": "Sep 2022 - Jul 2023" },
-    { "role": "Representative Basketball Player", "org": "Waratah League - Hills Hornets Basketball Association", "dates": "Feb 2022 - Dec 2022" },
-    { "role": "Student Advocacy Team Member & Peer Mentoring Leader", "org": "Glenwood High School", "dates": "Jan 2021 - Jul 2023" },
-    { "role": "Volunteer", "org": "Relay for Life", "dates": "2022 - 2023" }
+    {
+      "role": "Soccer Coach",
+      "org": "Western Sydney Khalsa Women's",
+      "dates": "Feb 2026 - Present"
+    },
+    {
+      "role": "Dance Coach & National Competitor",
+      "org": "Down to Bhangra",
+      "dates": "Feb 2020 - Present"
+    },
+    {
+      "role": "Community Member",
+      "org": "Suwayda (Socio-spiritual movement)",
+      "dates": "2024 - Present"
+    },
+    {
+      "role": "Basketball Coach",
+      "org": "Cyclones Women’s U22 - A Grade",
+      "dates": "Sep 2022 - Jul 2023"
+    },
+    {
+      "role": "Representative Basketball Player",
+      "org": "Waratah League - Hills Hornets Basketball Association",
+      "dates": "Feb 2022 - Dec 2022"
+    },
+    {
+      "role": "Student Advocacy Team Member & Peer Mentoring Leader",
+      "org": "Glenwood High School",
+      "dates": "Jan 2021 - Jul 2023"
+    },
+    {
+      "role": "Volunteer",
+      "org": "Relay for Life",
+      "dates": "2022 - 2023"
+    }
   ],
-
   "languages": [
-    { "language": "English", "level": "Native" },
-    { "language": "Punjabi", "level": "Fluent, spoken and written" },
-    { "language": "Hindi", "level": "Fluent, spoken only" },
-    { "language": "Urdu", "level": "Fluent, spoken only" }
+    {
+      "language": "English",
+      "level": "Native"
+    },
+    {
+      "language": "Punjabi",
+      "level": "Fluent, spoken and written"
+    },
+    {
+      "language": "Hindi",
+      "level": "Fluent, spoken only"
+    },
+    {
+      "language": "Urdu",
+      "level": "Fluent, spoken only"
+    }
   ],
-
   "references": "Available on request"
 }

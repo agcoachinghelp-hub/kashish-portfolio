@@ -85,6 +85,7 @@ function captionHTML(caption, auto) {
       ${code ? `<span class="pv-figure__code">${esc(code)}</span>` : ''}
       ${code && label ? '<span class="pv-figure__sep" aria-hidden="true">//</span>' : ''}
       ${label ? `<span>${esc(label)}</span>` : ''}
+      <span class="pv-figure__hint" aria-hidden="true">&middot; Tap to enlarge</span>
     </figcaption>`;
 }
 

@@ -437,13 +437,20 @@ html.project-open { overflow: hidden; }
    so portrait sheets fit one screen. The caption follows the image's edge. */
 .pv-figure {
   --lw: 100%;
+  --fw: min(var(--lw), var(--nw, 100%), var(--mw, 100000px), calc((100svh - 170px) * var(--ar, 1.6)));
   margin: 0;
   min-width: 0;
-  width: min(var(--lw), var(--nw, 100%), var(--mw, 100000px), calc((100svh - 170px) * var(--ar, 1.6)));
+  width: var(--fw);
 }
 .pv-figure--wide { --lw: 66.667%; }
 .pv-figure--half { --lw: 50%; }
-.pv-figure--right { margin-left: auto; }
+/* Right-aligned only while the image fills its layout share; once capped
+   narrower (2x rule, maxWidth) it goes to the start of the text column, so
+   nothing floats alone at the far right. (fw - lw) is 0 when it fills the
+   share and negative when capped; x1000 makes that a switch. */
+.pv-figure--right {
+  margin-left: max(0px, min(calc(100% - var(--lw)), calc((var(--fw) - var(--lw)) * 1000 + 100% - var(--lw))));
+}
 .pv-hero { margin-top: clamp(32px, 4.4vw, 64px); }
 .pv-figure img {
   display: block;
@@ -457,22 +464,19 @@ html.project-open { overflow: hidden; }
   filter: brightness(var(--lift, 1)) contrast(1.1);
 }
 
-/* bleed: edge to edge of the paper, unless that would blur it: then it
-   centres at half its natural width */
+/* bleed: edge to edge of the paper, unless that would blur it: then it starts
+   at the text column's left edge like every other figure (and never runs past
+   the paper). */
 .pv-figure--bleed {
   --bw: min(100cqw, var(--nw, 100cqw));
   width: var(--bw);
-  margin-inline: calc((100% - var(--bw)) / 2);
+  margin-left: max(calc(50% - 50cqw), min(0px, calc(100% - var(--bw))));
 }
-.pv-figure--bleed .pv-figure__cap { padding-inline: var(--pv-pad); }
-@media (min-width: 1024px) {
-  .pv-figure--bleed .pv-figure__cap { padding-inline: max(var(--pv-pad), calc((100cqw - 1320px) / 2 + var(--pv-pad))); }
-}
+.pv-figure--bleed .pv-figure__cap { padding-left: max(0px, calc(50cqw - 50% - (100cqw - var(--bw)) * 1000)); }
 
 /* phones: everything takes the column (still never upscaled); bleed still bleeds */
 @media (max-width: 639.98px) {
   .pv-figure:not(.pv-figure--bleed) { --lw: 100%; margin-left: 0; }
-  .pv-figure--right .pv-figure__cap { justify-content: flex-start; text-align: left; }
 }
 
 .pv-zoom {
@@ -493,7 +497,9 @@ html.project-open { overflow: hidden; }
   font-size: 12px;
   color: var(--pv-muted);
 }
-.pv-figure--right .pv-figure__cap { justify-content: flex-end; text-align: right; }
+/* captions always start at the image's left edge */
+.pv-figure__hint { display: none; }
+@media (hover: none) { .pv-figure__hint { display: inline; } }
 .pv-figure__code { color: var(--pv-ink); font-weight: 700; }
 .pv-figure__sep { opacity: .6; }
 

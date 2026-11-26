@@ -29,15 +29,19 @@ const JOBS = [
   // [page, output, box | 'sheet', drawing?]
   // Hero: tighter on the hands; the right edge is the page edge (bleeds off).
   ['01', 'assets/site/hero.webp', { left: 1240, top: 150, width: 760, height: 1180 }, false],
-  // Mobile hero: square, centred on the clasped hands, stopping above the perforations.
-  ['01', 'assets/site/hero-mobile.webp', { left: 1130, top: 655, width: 680, height: 680 }, false],
+  // Phone hero: 4:5, the whole figure (clasped hands + raised arm), 1000px native
+  // (full sketch width, page edge on the right), between the perforation rows.
+  // Her drawing ends at the page's bottom perforations right under the hands, so the
+  // crop (below her printed date) is extended 312px with plain paper in her own tone:
+  // the name overlaps blank paper, never the hands. Nothing is drawn or invented.
+  ['01', 'assets/site/hero-mobile.webp', { left: 1000, top: 395, width: 1000, height: 938 }, false, 'padbottom:312'],
   // Page 02 sketches: the perforation line slopes from y~45 (left) to y~125 (right).
   // 'dots' lifts the scan paper to white, then paints the band above that sloped line
   // white too, so both multiply away into the page cream; no sketch lies above it.
-  ['02', 'assets/projects/contents/01.webp', { left: 0, top: 60, width: 2000, height: 600 }, true, 'dots'],
+  ['02', 'assets/projects/contents/01.webp', { left: 0, top: 60, width: 1840, height: 600 }, true, 'dots'],
   ['02', 'assets/projects/contents/02.webp', { left: 0, top: 1105, width: 1460, height: 309 }, true, 'lift'],
   // Page 13: start below the separate "CLOSE-UP" sheet; paint out paper slivers past the collage's right edge.
-  ['13', 'assets/projects/contents/03.webp', { left: 535, top: 98, width: 910, height: 1284 }, false, 'slivers'],
+  ['13', 'assets/projects/contents/03.webp', { left: 727, top: 98, width: 718, height: 1284 }, false, 'slivers'],
   // Burra Pod collage split into its three diagonal bands (river strips, material
   // swatches, site photo strips); everything outside a band is painted white so it
   // multiplies away. Polygons are in page-06 coordinates.
@@ -48,12 +52,13 @@ const JOBS = [
   // Plans: labels ("X Plan 1:100") cropped off and moved to captions; edges cut
   // through grid lines, clear of grid bubbles.
   // Basement: tight to the building and courtyard; bottom edge cuts through hatching, clear of bubbles.
-  ['09', 'assets/projects/common-grounds/02.webp', { left: 110, top: 145, width: 722, height: 855 }, true],
+  ['09', 'assets/projects/common-grounds/02.webp', { left: 110, top: 145, width: 680, height: 830 }, true],
   ['10', 'assets/projects/common-grounds/03.webp', { left: 48, top: 145, width: 1824, height: 1155 }, true],
   // First floor: below her ghosted "COMMON GROUNDS / CITY CENTRE" title (opaque; it hides the
-  // top rooms, which only her original file can restore), tight on the building.
-  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 712, width: 800, height: 588 }, true],
-  ['12', 'assets/projects/common-grounds/05.webp', { left: 0, top: 160, width: 820, height: 1130 }, true],
+  // top rooms, which only her original file can restore), tight on the building; the top
+  // edge runs along the wall line at y~724 so it never cuts mid-room.
+  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 722, width: 800, height: 578 }, true],
+  ['12', 'assets/projects/common-grounds/05.webp', { left: 40, top: 180, width: 780, height: 1100 }, true],
 ];
 
 async function paperColour(n) {
@@ -87,7 +92,9 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     const [r, g, b] = pix[Math.floor(pix.length * 0.92)];
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><path fill-rule="evenodd" fill="rgb(${r},${g},${b})" d="M0 0H${W}V${H}H0Z M${pts.split(' ').join(' L')} Z"/></svg>`;
     const buf = await sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]).png().toBuffer();
-    img = sharp(buf).trim({ background: `rgb(${r},${g},${b})`, threshold: 12 });
+    // Lift paper (and the matching fill) to white so the multiply leaves no box.
+    const lifted = await sharp(buf).linear([252 / r, 252 / g, 252 / b], [0, 0, 0]).png().toBuffer();
+    img = sharp(lifted).trim({ background: '#ffffff', threshold: 10 });
   }
   if (fix === 'lift') {
     const { channels } = await sharp(page(n)).extract({ left: 1300, top: 700, width: 400, height: 200 }).stats();
@@ -95,8 +102,18 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     img = sharp(await img.png().toBuffer()).linear([252 / r, 252 / g, 252 / b], [0, 0, 0]);
   }
   if (fix === 'slivers') {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="${1403 - region.left}" y="${490 - region.top}" width="60" height="400" fill="#fff"/></svg>`;
+    // Paper slivers past the collage's right edge, and the remnant of a separate
+    // handwritten scrap left of the staircase drawing (words would be cut mid-way).
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="${1403 - region.left}" y="${490 - region.top}" width="60" height="400" fill="#fff"/><rect x="0" y="0" width="${760 - region.left}" height="${850 - region.top}" fill="#fff"/></svg>`;
     img = sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]);
+  }
+  if (fix && fix.startsWith('padbottom:')) {
+    const extra = Number(fix.split(':')[1]);
+    const pr = await sharp(page(n)).extract({ left: 1010, top: 1100, width: 140, height: 220 }).removeAlpha().raw().toBuffer();
+    const pix = []; for (let i = 0; i < pr.length; i += 3) pix.push([pr[i], pr[i + 1], pr[i + 2]]);
+    pix.sort((a, c) => a[0] + a[1] + a[2] - (c[0] + c[1] + c[2]));
+    const [r, g, b] = pix[Math.floor(pix.length * 0.5)];
+    img = sharp(await img.png().toBuffer()).extend({ bottom: extra, background: { r, g, b } });
   }
   if (fix === 'dots') {
     // Lift her grey scan paper to white first (a plain levels adjustment, line work

@@ -2,7 +2,7 @@
 # below and the site republishes in about a minute. Setup: see EDITING_GUIDE.md.
 backend:
   name: github
-  repo: "[HER-GITHUB-USERNAME]/kashish-portfolio"
+  repo: "agcoachinghelp-hub/kashish-portfolio"
   branch: main
   base_url: https://api.netlify.com
   auth_endpoint: auth
@@ -69,7 +69,7 @@ collections:
                 widget: object
                 required: false
                 collapsed: true
-                hint: "Optional. A square crop (about 700 x 700px) of the most important part of the hero, shown on phones instead of the full image. Leave empty to use the full image on phones too."
+                hint: "Optional. A tall crop (4:5, about 1000 x 1250px) shown on phones and upright iPads: the drawing at the top, with plain paper in its lowest quarter where your name overlaps it. Leave empty to use the full image."
                 fields:
                   - { name: image, label: "Square image", widget: image, required: false, choose_url: false, media_folder: /assets/site, public_folder: /assets/site }
           - name: outro
@@ -90,8 +90,6 @@ collections:
               hint: "Shown large in Get in Touch, and used if the contact form fails." }
           - { name: contactForm, label: "Contact form (Netlify only)", widget: boolean, required: false, default: false,
               hint: "Shows a message form under Get in Touch. Only turn this on if the site is hosted on Netlify (the form does not work anywhere else). Your email and social links always show." }
-          - { name: phone, label: "Phone", widget: string, required: false,
-              hint: "Leave empty to hide it." }
           - { name: location, label: "Location", widget: string, required: false,
               hint: "Not shown on the site at the moment, e.g. Sydney, Australia." }
           - name: socials

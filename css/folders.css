@@ -239,9 +239,10 @@ a.folder:active { transition-duration: .2s; }
    ========================================================================== */
 @media (min-width: 1024px) {
   .folders {
-    /* No edge tabs on the upright drawer: a tab on the previous folder's edge
-       read as belonging to it. The spines carry the titles. */
-    --tab-reach: 0px;
+    /* Each folder's index tab protrudes left from its OWN left edge, over the
+       previous folder's spine, at a staggered height. */
+    --tab-w: 28px;
+    --tab-reach: calc(var(--tab-w) + 4px);
     --cw: calc(100vw - 2 * var(--gutter) - 16px); /* JS sets the real value */
     /* fewer folders, wider faces: 0.44 of the drawer for 4 folders, ~0.3 for 9 */
     --face: clamp(300px, calc(var(--cw) * (.56 - var(--n, 6) * .03)), 640px);
@@ -295,7 +296,7 @@ a.folder:active { transition-duration: .2s; }
   }
   .folder--group .folder__list { position: static; margin-bottom: 20px; }
 
-  .folder__tab { display: none; }
+  .folder__tab-phone { display: none; }
   .folder__tab {
     left: calc(-1 * var(--tab-reach));
     width: calc(var(--tab-reach) + 2px);
@@ -324,13 +325,16 @@ a.folder:active { transition-duration: .2s; }
       0 28px 44px -28px rgba(20, 18, 12, .5);
   }
 
+  /* anchored to the spine side; never larger than half the source (2x) */
   .folder__photo {
     top: 0;
     left: 0;
-    right: 0;
-    height: var(--photo-h);
-    -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
-    mask-image: linear-gradient(to bottom, #000 72%, transparent);
+    width: min(100%, var(--pw, 100%));
+    height: min(var(--photo-h), var(--ph, 100%));
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to left, transparent, #000 22%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to left, transparent, #000 22%);
+    mask-composite: intersect;
   }
 
   .folder__strip {
@@ -388,15 +392,18 @@ a.folder:active { transition-duration: .2s; }
     padding-top: 8px; /* the first tab rises 8px above its folder */
   }
 
+  /* Each folder tucks only --under px beneath the next, so nothing can poke
+     out below the last one; only the last folder shows its full face. */
   .folder-item {
+    --under: 40px;
     position: relative;
     flex: none;
-    height: var(--fh);
+    height: calc(var(--strip-h) + var(--under));
     --strip-h: var(--strip);
   }
+  .folder-item--last { height: var(--fh); }
   .folder-item--2l { --strip-h: calc(var(--strip) + var(--line)); }
-  .folder-item + .folder-item { margin-top: calc(var(--strip) - var(--fh)); }
-  .folder-item--2l + .folder-item { margin-top: calc(var(--strip) + var(--line) - var(--fh)); }
+  .folder-item + .folder-item { margin-top: calc(-1 * var(--under)); }
   .folder { position: relative; height: 100%; }
 
   .folder__leaf { top: -5px; left: 4px; right: 4px; }
@@ -418,7 +425,7 @@ a.folder:active { transition-duration: .2s; }
       0 1px 0 rgba(20, 18, 12, .12);
   }
   /* Phone tabs: the code only; the title is on the face. */
-  .folder__tab-rest { display: none; }
+  .folder__tab-desk { display: none; }
 
   .folder__face {
     box-shadow:
@@ -432,8 +439,8 @@ a.folder:active { transition-duration: .2s; }
   .folder__photo {
     top: 0;
     right: 0;
-    width: 42%;
-    height: var(--strip-h);
+    width: min(42%, var(--pw, 42%));
+    height: min(var(--strip-h), var(--ph, 100%));
     -webkit-mask-image: linear-gradient(to right, transparent, #000 38%);
     mask-image: linear-gradient(to right, transparent, #000 38%);
   }

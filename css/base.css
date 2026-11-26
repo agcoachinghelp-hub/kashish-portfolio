@@ -308,12 +308,15 @@ html.project-open body { overflow: hidden; }
 
 /* ==========================================================================
    Landing (#home)
-   Markup order is the phone order: name, title, hero, degree, about.
-   Phones (<768): the hands sit right under the title, bleeding off the right.
-   768 to 1023: one column, hero last. Desktop: text left, hero right.
+   Below 1024: name, title, hero, about (CSS order). Phones bleed the hero
+   off both sides; 768 to 1023 bleeds it off the right. Desktop: text left,
+   hero right.
    ========================================================================== */
 .cover {
   position: relative;
+  /* clip (not hidden): keeps the hero's scroll motion from poking out below
+     the landing, without creating a stacking context that breaks the blend */
+  overflow: clip;
   padding: calc(var(--nav-h) + var(--space-5)) var(--gutter) var(--space-4);
 }
 .cover__inner {
@@ -486,6 +489,67 @@ html.project-open body { overflow: hidden; }
   border: 1px solid var(--rule-strong);
 }
 
+/* Phones (<768): name and title first, then the drawing edge to edge (both
+   sides bleed, square corners), about 55svh tall, then the about text, which
+   tucks up over the blank paper under the hands. The phone crop is 4:5 and her drawing ends
+   at about 75% of its height (where her page ended); cover.js sets --m-ratio
+   from the crop's real size. Only the bottom edge is faded: her page (and the
+   drawing) stops in a straight cut at 75%, so the fade ends just past it. */
+@media (max-width: 767px) {
+  .cover {
+    --m-ratio: 1.25;                          /* crop height / width */
+    --m-art: .75;                             /* where the drawing ends */
+    --m-full: calc(100vw * var(--m-ratio));   /* the crop at full width */
+    --m-art-end: calc(var(--m-full) * var(--m-art));
+    /* ~55svh, but never so short that the drawing is cut, never taller than the crop */
+    --m-h: clamp(var(--m-art-end), 55vh, var(--m-full));
+    padding-bottom: var(--space-2);
+    /* the clip is only needed for the desktop hero; here it would cut the
+       about text while it drifts down in the scroll fade */
+    overflow: visible;
+  }
+  @supports (height: 1svh) {
+    .cover { --m-h: clamp(var(--m-art-end), 55svh, var(--m-full)); }
+  }
+  .cover__figure {
+    margin-left: calc(-1 * var(--gutter));
+    margin-right: calc(-1 * var(--gutter));
+    align-items: stretch;
+  }
+  .cover__img {
+    width: 100%;
+    height: var(--m-h);
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    object-position: 50% 0;                   /* crop blank paper off the bottom first */
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--m-full) * .63), transparent calc(var(--m-full) * .755));
+    mask-image: linear-gradient(to bottom, #000 calc(var(--m-full) * .63), transparent calc(var(--m-full) * .755));
+  }
+  .cover__h1 { order: 0; }
+  .cover__figure { order: 1; }
+  .cover__about { order: 2; }
+  /* the about text tucks up over the blank paper at the bottom of the crop */
+  .cover__figure:not(.cover__figure--empty) {
+    margin-bottom: calc(-1 * max(0px, var(--m-h) - var(--m-art-end)));
+  }
+  .cover__figure--empty { margin-inline: 0; }
+  .cover__figure--empty .cover__frame { aspect-ratio: 4 / 3; }
+}
+
+/* Opening on phones: the name rises, then the title, then the drawing fades
+   in, then the about text. Pure CSS with backwards fill, so it runs without
+   JS, ends fully visible, and leaves the scroll fade (inline styles) in charge
+   afterwards. */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .cover__name { animation: cover-rise .7s var(--ease-out) backwards; }
+  .cover__title { animation: cover-rise .7s var(--ease-out) .15s backwards; }
+  .cover__img { animation: cover-in .8s var(--ease-out) .35s backwards; }
+  .cover__about { animation: cover-rise .7s var(--ease-out) .6s backwards; }
+}
+@keyframes cover-in { from { opacity: 0; } }
+@keyframes cover-rise { from { opacity: 0; transform: translateY(12px); } }
+
 /* 768 to 1023 (iPad portrait): like phones, the square crop of the hands sits
    right under the name, so name and hands share the first screen. */
 @media (min-width: 768px) {
@@ -498,9 +562,30 @@ html.project-open body { overflow: hidden; }
     gap: clamp(var(--space-5), 3vh, var(--space-7));
     padding-top: clamp(var(--space-6), 5vh, var(--space-8));
   }
-  .cover__img { max-width: 62vw; max-height: 42vh; max-height: 42svh; }
+  .cover__h1 { order: 0; }
+  .cover__figure { order: 1; }
+  .cover__about { order: 2; }
+  /* never wider than half the crop's 1000px, so it stays sharp on 2x screens */
+  .cover__img { max-width: min(62vw, 500px); max-height: 42vh; max-height: 42svh; }
   .cover__about-text { font-size: var(--text-lg); }
   .cover__figure--empty .cover__frame { max-height: 42vh; max-height: 42svh; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* The 4:5 crop's drawing stops in a straight cut at 75% (her page edge):
+     fade it out there, and let the plain paper below tuck under the about text. */
+  .cover__figure:not(.cover__figure--empty) .cover__img {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 14%),
+      linear-gradient(to bottom, transparent, #000 12%, #000 63%, transparent 75.5%);
+    mask-image:
+      linear-gradient(to right, transparent, #000 14%),
+      linear-gradient(to bottom, transparent, #000 12%, #000 63%, transparent 75.5%);
+  }
+  .cover__figure:not(.cover__figure--empty) { margin-bottom: calc(-.24 * 42vh); }
+  @supports (height: 1svh) {
+    .cover__figure:not(.cover__figure--empty) { margin-bottom: calc(-.24 * 42svh); }
+  }
 }
 
 /* Desktop and iPad landscape: text centred on the left, hero on the right */
@@ -540,13 +625,16 @@ html.project-open body { overflow: hidden; }
     max-height: none;
     object-fit: cover;             /* only crops if the column is unusually narrow */
     object-position: right center;
-    /* runs off the right and bottom; fade only the left and top cut edges */
+    /* Runs off the right and bottom; fade only the left and top cut edges.
+       The bottom edge only shows once you scroll (above the folders), so
+       cover.js eases --hero-cut from 100% (no fade) to 86% over the first
+       120px of scroll. */
     -webkit-mask-image:
       linear-gradient(to right, transparent, #000 14%),
-      linear-gradient(to bottom, transparent, #000 12%);
+      linear-gradient(to bottom, transparent, #000 12%, #000 var(--hero-cut, 100%), transparent calc(var(--hero-cut, 100%) + 14%));
     mask-image:
       linear-gradient(to right, transparent, #000 14%),
-      linear-gradient(to bottom, transparent, #000 12%);
+      linear-gradient(to bottom, transparent, #000 12%, #000 var(--hero-cut, 100%), transparent calc(var(--hero-cut, 100%) + 14%));
   }
   .cover__figure--empty .cover__frame { aspect-ratio: auto; max-height: none; }
 }
@@ -784,6 +872,7 @@ a.contact__social:hover { background-size: 100% 1px; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
+  .cover__img { --hero-cut: 86%; }   /* no scroll-driven fade: soften the bottom edge up front */
   *, *::before, *::after {
     transition-duration: .01ms !important;
     animation-duration: .01ms !important;

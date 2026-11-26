@@ -83,12 +83,21 @@ function titleHTML(title, extra = '') {
   return `<span class="folder__title${extra}">${words.map((w) => `<span class="folder__word">${esc(w)}</span>`).join(' ')}</span>`;
 }
 
-// Stacked (phone) tabs show only the code; the title is on the face.
-// A folder without a code (CONTENTS, IN PROGRESS) shows its title instead.
-function tabHTML(code, title) {
-  return code
-    ? `<span class="folder__tab-text"><span class="folder__tab-code">${esc(code)}</span><span class="folder__tab-rest"> // ${esc(title)}</span></span>`
-    : `<span class="folder__tab-text"><span class="folder__tab-code">${esc(title)}</span></span>`;
+// Tabs: on the upright drawer "CODE // TITLE" (or the folder's name when it has
+// no code); on stacked phones only the code, so no word appears twice: CONTENTS
+// is blank there and IN PROGRESS shows its file count.
+function tabHTML({ desk, phone }) {
+  return `<span class="folder__tab-text"><span class="folder__tab-desk">${esc(desk)}</span>${phone ? `<span class="folder__tab-phone">${esc(phone)}</span>` : ''}</span>`;
+}
+
+// Folder image: never shown wider (or taller) than half the largest file, so it
+// stays sharp at 2x; the thumb serves 1x screens.
+function photoHTML(img) {
+  const nw = Number(img.width) || 960;
+  const nh = Number(img.height) || 600;
+  const show = Math.round(Math.min(nw / 2, 640));
+  const srcset = img.thumb ? ` srcset="${esc(img.thumb)} 480w, ${esc(img.src)} ${nw}w" sizes="${show}px"` : '';
+  return `<span class="folder__photo" aria-hidden="true" style="--pw:${Math.round(nw / 2)}px; --ph:${Math.round(nh / 2)}px"><img src="${esc(img.thumb && !srcset ? img.thumb : img.src)}"${srcset} alt="" loading="lazy" decoding="async"></span>`;
 }
 
 const styleVars = (p, i, t) => `--folder:${esc(p.colour)}; --accent:${esc(p.accent)}; --ink:${esc(p.ink)}; --i:${i}; --t:${t}; --tab:${tabColour(p.colour, p.ink)}`;
@@ -106,19 +115,18 @@ function folderHTML(p, i, n) {
   if (img) classes.push('folder--photo');
   if (lightInk(p)) classes.push('folder--dark');
   const subtitle = clean(p.subtitle);
-  // No aria-label: the visible title (first in the face) names the link.
-  const thumb = img && (img.thumb || img.src);
+  // No aria-label: the visible text names the link.
 
   return `<div class="folder-item${p.index ? ' folder-item--index' : ''}${last ? ' folder-item--last' : ''}" role="listitem" style="--i:${i}; --t:${t}">
   <a class="${classes.join(' ')}" href="#project/${encodeURIComponent(p.slug)}"
       data-slug="${esc(p.slug)}" style="${styleVars(p, i, t)}">
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab">${tabHTML(code, title)}</span>
+    <span class="folder__tab">${tabHTML(code ? { desk: `${code} // ${title}`, phone: code } : { desk: title, phone: '' })}</span>
     <span class="folder__face">
       <span class="folder__strip">
         <span class="folder__label">${titleHTML(title, p.index ? ' folder__title--index' : '')}</span>
       </span>
-      ${img ? `<span class="folder__photo" aria-hidden="true"><img src="${esc(thumb)}" alt="" loading="lazy" decoding="async"></span>` : ''}
+      ${img ? photoHTML(img) : ''}
       <span class="folder__sheet">${subtitle ? `<span class="folder__sub">${esc(subtitle)}</span>` : ''}</span>
     </span>
   </a>
@@ -135,7 +143,7 @@ function groupHTML(soon, i, n) {
   <div class="folder folder--group${last ? ' folder--last' : ''}${lightInk(p) ? ' folder--dark' : ''}" style="${styleVars(p, i, t)}">
     <span class="visually-hidden">In progress: ${esc(titles.join(', '))}.</span>
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab" aria-hidden="true">${tabHTML('', 'IN PROGRESS')}</span>
+    <span class="folder__tab" aria-hidden="true">${tabHTML({ desk: 'IN PROGRESS', phone: `${titles.length} ${titles.length === 1 ? 'FILE' : 'FILES'}` })}</span>
     <span class="folder__face" aria-hidden="true">
       <span class="folder__strip">
         <span class="folder__list">${titles.map((x) => `<span>${esc(x)}</span>`).join('')}</span>

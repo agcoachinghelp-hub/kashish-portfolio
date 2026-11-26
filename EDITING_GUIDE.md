@@ -117,7 +117,7 @@ Tips:
 - A JPG or WebP about **2000px wide** is ideal. Very large photos (over about 3MB) make the site slow; export a smaller copy first.
 - Until you add a hero image, the landing page shows an empty frame with a thin outline in its place. Click **Remove image** to go back to that frame.
 - The hero has no frame: it runs off the right-hand edge of the screen (and off the bottom on computers), as if cut from your page. Its other cut edges fade softly into the paper, and its paper blends into the background. Use **Look: Drawing on paper** for sketches (the default), or *Photo or dark image* for a photo.
-- **Phone crop** (inside the hero settings) is optional: upload a square crop, about 700 x 700px, of the part of the drawing that matters most (for example the hands). Phones and iPads held upright show it right under your name, so the name and the drawing appear together on the first screen. Leave it empty to use the full image on phones.
+- **Phone crop** (inside the hero settings) is optional: upload a tall crop, 4:5 and about 1000 x 1250px, with the part of the drawing that matters most (for example the hands) at the top and plain paper in the lowest quarter. On phones it opens the page edge to edge, with your name overlapping that plain paper; upright iPads show it under your name. Leave it empty to use the full image.
 
 ---
 
@@ -130,7 +130,6 @@ Still in **Site settings**, scroll down.
 - **Get in Touch: intro sentence** sits above your email address.
 - **Email** is shown large in the Get in Touch section.
 - **Contact form (Netlify only)** adds a message form under Get in Touch. Leave it off unless the site is hosted on Netlify (see section 1e); your email and social links always show.
-- **Phone** is optional. Leave it empty to hide it.
 - **Location** isn't shown on the site at the moment.
 - **Social links** appear in Get in Touch. Click a link to edit it, **Add link** for a new one, or drag the ═ handle to reorder. Use the full address starting with `https://`.
 

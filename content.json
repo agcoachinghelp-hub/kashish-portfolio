@@ -9,7 +9,6 @@
     "years": "2024-2026",
     "location": "Sydney",
     "email": "kashish.khera@outlook.com",
-    "phone": "",
     "hero": {
       "src": "assets/site/hero.webp",
       "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
@@ -24,8 +23,8 @@
         "caption": "",
         "blend": "multiply",
         "thumb": "assets/site/hero-mobile-480.webp",
-        "width": 680,
-        "height": 680
+        "width": 1000,
+        "height": 1250
       }
     },
     "outro": null,
@@ -40,7 +39,7 @@
         "url": "https://www.instagram.com/formbykash/"
       }
     ],
-    "contactIntro": "For opportunities, collaborations or a copy of my portfolio, get in touch.",
+    "contactIntro": "",
     "colours": {
       "background": "#CFC8BA",
       "ink": "#2A2A26",
@@ -75,7 +74,7 @@
         "caption": "",
         "blend": "multiply",
         "thumb": "assets/projects/contents/01-480.webp",
-        "width": 2000,
+        "width": 1840,
         "height": 600
       },
       "meta": [],
@@ -102,10 +101,10 @@
           "caption": "",
           "blend": "multiply",
           "thumb": "assets/projects/contents/03-480.webp",
-          "width": 910,
+          "width": 718,
           "height": 1284,
           "layout": "half",
-          "align": "right",
+          "align": "left",
           "size": "half"
         }
       ]
@@ -129,7 +128,7 @@
         "blend": "multiply",
         "maxWidth": 400,
         "width": 472,
-        "height": 360
+        "height": 366
       },
       "meta": [
         {
@@ -138,7 +137,7 @@
         }
       ],
       "statement": "<p>Burra Pod is a community centre shaped by movement, adaptation and connection to place. Inspired by Indigenous understandings that the best journeys in life are almost never linear or straightforward, this design incorporates flowing pathways which invite exploration and encounter. Located on Durug Country in North Parramatta, the building concept takes inspiration from the fluid movements of eels and their enduring relationship with the river, translating these qualities into organic forms and a continuous spatial flow through the spaces of the building.</p>\n<p>Water is carried through the project as both a spatial and sensory element, reinforcing ideas of movement, inspiring learning and connection to Country. A water feature within the building and public space strengthens the relationship, creating moments of immersive experiences, reflection and curiosity.</p>\n<p>The program supports gathering, learning in a central courtyard that forms the heart of the project. The spatial journey reflects a process of becoming, guiding individuals from identity, discovery and application, towards exploration and contribution. Spaces for making, storytelling, exhibition and intergenerational exchange allow personal experience and knowledge to develop into collective understanding. Native planting, water and interpretive landscape elements strengthen engagement with Country, encouraging visitors to learn from the ecological and cultural history of the area.</p>\n",
-      "pullquote": "The best journeys in life are almost never linear or straightforward.",
+      "pullquote": "",
       "blocks": [
         {
           "type": "image",
@@ -148,10 +147,10 @@
           "blend": "multiply",
           "maxWidth": 400,
           "width": 472,
-          "height": 211,
+          "height": 215,
           "layout": "half",
-          "align": "right",
-          "after": 2,
+          "align": "left",
+          "after": 1,
           "size": "half"
         },
         {
@@ -162,7 +161,7 @@
           "blend": "multiply",
           "maxWidth": 400,
           "width": 472,
-          "height": 327,
+          "height": 328,
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -212,7 +211,7 @@
       "status": "published",
       "code": "CODE_002",
       "title": "COMMON GROUNDS",
-      "subtitle": "",
+      "subtitle": "City Centre",
       "colour": "#E8C76A",
       "accent": "#6B5420",
       "ink": "#2A2A26",
@@ -237,8 +236,8 @@
           "caption": "Basement Plan // 1:100",
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/02-480.webp",
-          "width": 722,
-          "height": 855,
+          "width": 680,
+          "height": 830,
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -264,9 +263,9 @@
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/04-480.webp",
           "width": 800,
-          "height": 588,
+          "height": 578,
           "layout": "half",
-          "align": "right",
+          "align": "left",
           "size": "half"
         },
         {
@@ -276,8 +275,8 @@
           "caption": "Second Floor Plan // 1:100",
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/05-480.webp",
-          "width": 820,
-          "height": 1130,
+          "width": 780,
+          "height": 1100,
           "layout": "half",
           "align": "left",
           "size": "half"

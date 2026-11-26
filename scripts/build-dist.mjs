@@ -25,7 +25,11 @@ const PUBLIC = [ // (admin/ is added below when configured)
 // (it reads/writes the repo through GitHub; a placeholder repo can't work).
 const adminCfg = existsSync(path.join(ROOT, 'admin/config.yml')) ? await readFile(path.join(ROOT, 'admin/config.yml'), 'utf8') : '';
 const adminReady = /^\s*repo:\s*["']?[A-Za-z0-9-]+\/[A-Za-z0-9._-]+["']?\s*$/m.test(adminCfg);
-if (adminReady) PUBLIC.push('admin'); else console.log('  (admin/ not published: set repo: in admin/config.yml to enable the editor)');
+// Its GitHub login runs through Netlify, so it is only published on Netlify builds
+// (Netlify sets NETLIFY=true), or when forced with PUBLISH_ADMIN=1.
+const onNetlify = process.env.NETLIFY === 'true' || process.env.PUBLISH_ADMIN === '1';
+if (adminReady && onNetlify) PUBLIC.push('admin');
+else console.log(`  (admin/ not published: ${adminReady ? 'editor login needs Netlify' : 'set repo: in admin/config.yml'})`);
 
 await rm(DIST, { recursive: true, force: true });
 await mkdir(DIST, { recursive: true });

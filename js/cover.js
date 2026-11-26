@@ -75,11 +75,11 @@ function coverHTML(site) {
         ${hasValue(site.edition) ? `<span class="t-label cover__edition">${esc(site.edition)}</span>` : ''}
       </div>
       <div class="cover__text">
+        ${heroHTML(site.hero && site.hero.src ? site.hero : null)}
         <h1 class="cover__h1">
           <span class="cover__name" data-fit-name>${nameHTML(site)}</span>
           <span class="cover__title">${titleHTML(site)}</span>
         </h1>
-        ${heroHTML(site.hero && site.hero.src ? site.hero : null)}
         ${about ? `<div class="cover__about"><p class="cover__about-text">${esc(about)}</p></div>` : ''}
       </div>
     </div>`;
@@ -137,6 +137,9 @@ function syncHero(cover, site) {
 function renderCover(site) {
   const cover = document.querySelector('[data-cover]');
   if (!cover) return null;
+  // Phone layout reads the crop's shape (height / width) from content.
+  const m = site.hero && site.hero.mobile;
+  if (m && m.width && m.height) cover.style.setProperty('--m-ratio', String(Number(m.height) / Number(m.width)));
   if (!cover.querySelector('[data-cover-inner]')) {
     cover.innerHTML = coverHTML(site);
     return cover;
@@ -241,8 +244,6 @@ function renderSocials(socials, cls, { showMissing = false } = {}) {
 
 function renderContact(site) {
   const email = String(site.email || '').trim();
-  const phone = String(site.phone || '').trim();
-  const tel = phone.replace(/[^\d+]/g, '');
 
   fill('[data-contact]', `
     <h2 id="contact-heading" class="contact__title">Get in Touch</h2>
@@ -254,12 +255,6 @@ function renderContact(site) {
         <dd>${isPlaceholder(email)
           ? `<span class="contact__email is-placeholder">${esc(email)}</span>`
           : `<a class="contact__email" href="mailto:${esc(email)}">${esc(email).replace('@', '<wbr>@')}</a>`}</dd>
-      </div>` : ''}
-      ${phone ? `<div class="contact__row">
-        <dt class="t-label">Phone</dt>
-        <dd>${isPlaceholder(phone) || !tel
-          ? `<span class="contact__phone is-placeholder">${esc(phone)}</span>`
-          : `<a class="contact__phone" href="tel:${esc(tel)}">${esc(phone)}</a>`}</dd>
       </div>` : ''}
       ${(site.socials || []).length ? `<div class="contact__row">
         <dt class="t-label">Elsewhere</dt>
@@ -359,23 +354,27 @@ function setupCoverScroll() {
   const mm = gsap.matchMedia();
   mm.add({ motion: '(prefers-reduced-motion: no-preference)', phone: '(max-width: 767px)' }, (ctx) => {
     if (!ctx.conditions.motion) return;
-    const tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: cover,
-        // Phones: the landing is taller than the screen, so the text only
-        // fades as its last lines (the about text) leave the top.
-        start: ctx.conditions.phone ? 'bottom 45%' : 'top top',
-        end: ctx.conditions.phone ? 'bottom 5%' : 'bottom 20%',
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
-    if (text.length) tl.fromTo(text, { opacity: 1, scale: 1, yPercent: 0, transformOrigin: '0% 30%' },
-      { opacity: 0, scale: 0.94, yPercent: 6 }, 0);
-    // Phones: the hero sits mid-screen, so it scrolls away unfaded (it must be seen).
-    if (art.length && !ctx.conditions.phone) tl.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: '100% 30%' },
-      { opacity: 0, scale: 0.94, y: () => cover.offsetHeight * 0.06 }, 0);
+    const trigger = (end) => ({ trigger: cover, start: 'top top', end, scrub: true, invalidateOnRefresh: true });
+    if (text.length) {
+      gsap.fromTo(text, { opacity: 1, scale: 1, yPercent: 0, transformOrigin: '0% 30%' },
+        { opacity: 0, scale: 0.94, yPercent: 6, ease: 'none', immediateRender: false, scrollTrigger: trigger('bottom 20%') });
+    }
+    if (art.length) {
+      // Phones: the drawing opens the page, so it is done fading by the time
+      // the cover's bottom reaches 30% of the screen.
+      // Wider screens: shrink toward the bottom-right corner so the drawing never
+      // drifts below the landing.
+      gsap.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: ctx.conditions.phone ? '50% 0%' : '100% 100%' },
+        { opacity: 0, scale: 0.94, y: () => (ctx.conditions.phone ? cover.offsetHeight * 0.06 : 0), ease: 'none', immediateRender: false,
+          scrollTrigger: trigger(ctx.conditions.phone ? 'bottom 30%' : 'bottom 20%') });
+      // Wider screens: the drawing runs off the bottom of the first screen; as
+      // soon as you scroll, its bottom edge fades so no hard line shows above
+      // the folders.
+      if (!ctx.conditions.phone) {
+        gsap.fromTo(art, { '--hero-cut': '100%' }, { '--hero-cut': '86%', ease: 'none', immediateRender: false,
+          scrollTrigger: { trigger: cover, start: 'top top', end: '+=120', scrub: true } });
+      }
+    }
   });
   // Reduced motion: no scrub, no scale. A plain, untied fade as it leaves.
   mm.add('(prefers-reduced-motion: reduce)', () => {
