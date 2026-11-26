@@ -210,15 +210,9 @@ a.folder { will-change: transform; }
 /* No borders on closed folders: the last card separates by colour and shadow. */
 
 /* ---------- interaction ---------- */
+/* focus: one outline around the whole folder, none on its parts */
+a.folder:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 a.folder:focus-visible .folder__tab::after { opacity: .22; }
-a.folder:focus-visible .folder__strip {
-  outline: 2px solid var(--ink);
-  outline-offset: -7px;
-}
-a.folder:focus-visible .folder__tab {
-  outline: 2px solid var(--ink);
-  outline-offset: -4px;
-}
 a.folder:active { transition-duration: .2s; }
 
 @media (hover: hover) and (pointer: fine) {
@@ -346,6 +340,18 @@ a.folder:active { transition-duration: .2s; }
     align-items: stretch;
   }
   .folder--photo .folder__strip { top: var(--photo-h); }
+  /* narrow cover: composed on the open face, bottom-left above the subtitle;
+     the spine keeps its full height for the title */
+  .folder--photo-narrow .folder__strip { top: 0; }
+  .folder--photo-narrow .folder__photo {
+    top: auto;
+    left: calc(var(--strip-w) + 8px);
+    bottom: 120px;
+    width: min(calc(100% - var(--strip-w) - 34px), var(--pw, 100%));
+    height: min(calc(100% - 180px), var(--ph, 100%));
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .folder--index .folder__strip { padding: 26px calc(var(--tab-reach) + 14px) 26px 22px; }
 
   .folder__title {

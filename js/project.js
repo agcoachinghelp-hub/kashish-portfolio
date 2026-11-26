@@ -209,33 +209,34 @@ function nextFile(p, projects) {
 }
 
 // Her statement, with the pull-quote (her own words, exactly) after the first
-// paragraph, and any image block with `after: n` set straight after paragraph n.
-// The statement is cut into runs around those images, so an image takes the
-// column width rather than the statement's measure.
-function statementHTML(p, ctx, inline) {
+// paragraph, and any image block with `after: n` placed after paragraph n.
+// Built as rows: [meta + first text run | cover], then [next text run | the
+// images placed before it], ... At >= 1024px a row is two columns (text on a
+// readable measure, images beside it); on phones it stacks in reading order.
+function storyHTML(p, ctx, inline, metaHTML, heroHTML) {
   if (!p.statement || !textOf(p.statement) || isPlaceholder(textOf(p.statement))) return '';
   const t = document.createElement('template');
   t.innerHTML = String(p.statement);
   const quote = clean(p.pullquote).replace(/^["“‘']+|["”’']+$/g, '').trim();
-  const runs = [[]];
+  const bq = () => `<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`;
+  const rows = [{ lead: true, text: [], media: heroHTML }];
   let para = 0;
   [...t.content.childNodes].forEach((node) => {
     if (node.nodeType === 3 && !node.textContent.trim()) return;
-    runs[runs.length - 1].push(node.outerHTML ?? esc(node.textContent));
+    rows[rows.length - 1].text.push(node.outerHTML ?? esc(node.textContent));
     if (node.nodeName !== 'P') return;
     para += 1;
-    if (para === 1 && quote) runs[runs.length - 1].push(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
+    if (para === 1 && quote) rows[rows.length - 1].text.push(bq());
     const here = inline.get(para);
-    if (here?.length) {
-      runs.push(here.map((b) => figureHTML(b, ctx, { layout: b.layout || b.size, align: b.align })).join(''));
-      runs.push([]);
-    }
+    if (here?.length) rows.push({ text: [], media: here.map((b) => figureHTML(b, ctx, { layout: b.layout || b.size, align: b.align })).join('') });
   });
-  if (para === 0 && quote) runs[runs.length - 1].push(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
-  const out = runs.filter((r) => (Array.isArray(r) ? r.length : r));
-  return out.map((r, i) => (Array.isArray(r)
-    ? `<div class="pv-statement${i ? ' pv-statement--cont' : ''}${i < out.length - 1 ? ' pv-statement--split' : ''}" data-pv-rise>${r.join('')}</div>`
-    : `<div class="pv-statement-media">${r}</div>`)).join('');
+  if (para === 0 && quote) rows[rows.length - 1].text.push(bq());
+  return `<div class="pv-story">${rows.map((r) => `
+    <div class="pv-row${r.lead ? ' pv-row--lead' : ''}${r.media ? '' : ' pv-row--text'}" data-pv-rise>
+      ${r.lead && metaHTML ? `<div class="pv-row__meta">${metaHTML}</div>` : ''}
+      ${r.media ? `<div class="pv-row__media">${r.media}</div>` : ''}
+      ${r.text.length ? `<div class="pv-row__text pv-statement">${r.text.join('')}</div>` : ''}
+    </div>`).join('')}</div>`;
 }
 
 // Image blocks placed inside the statement (`after: n`), by paragraph number.
@@ -274,8 +275,13 @@ function renderProject(p, projects, site) {
     : '';
 
   const inline = inlineBlocks(p);
-  const statement = statementHTML(p, ctx, inline);
+  const metaHTML = meta ? `<dl class="pv-meta">${meta}</dl>` : '';
+  const story = storyHTML(p, ctx, inline, metaHTML, hero);
+  const statement = story;
   const blocks = renderBlocks(p, ctx, new Set([...inline.values()].flat()));
+  // No statement: the cover joins the plans in the 2-column composition
+  // (CONTENTS keeps it on top, above the index).
+  const heroInGrid = !story && hero && !p.index && blocks;
 
   // Nothing to show yet: keep the page intentional with plain empty frames.
   const empty = !p.index && !hero && !blocks && !statement
@@ -301,11 +307,9 @@ function renderProject(p, projects, site) {
         </h2>
         ${subtitle ? `<p class="pv-subtitle">${esc(subtitle)}</p>` : ''}
       </div>
-      ${meta ? `<dl class="pv-meta" data-pv-rise>${meta}</dl>` : ''}
-      ${hero}
-      ${statement}
+      ${story || `${meta ? `<dl class="pv-meta" data-pv-rise>${meta}</dl>` : ''}${heroInGrid ? '' : hero}`}
       ${p.index ? renderIndex(projects, p) : ''}
-      ${blocks ? `<div class="pv-blocks">${blocks}</div>` : ''}
+      ${blocks || heroInGrid ? `<div class="pv-blocks">${heroInGrid ? hero : ''}${blocks}</div>` : ''}
       ${empty}
 
       <footer class="pv-end">
@@ -607,10 +611,21 @@ export function initProjectView(projects, site) {
       gsap.set([panel, backdrop, skin, tab, scroller], { clearProps: 'all' });
       if (folder) { folder.style.visibility = ''; folder.classList.remove('is-flipping'); }
       scroller.innerHTML = '';
+      const keepY = window.scrollY;
       unlockPage();
       current = null;
       busy = false;
       closeRequested = false;
+      // Every close (Esc, button, history back) lands where the view closed.
+      // Re-assert it briefly: some browsers apply their own history scroll
+      // restoration for the #projects entry after this point.
+      let userScrolled = false;
+      const mark = () => { userScrolled = true; };
+      ['wheel', 'touchstart', 'keydown'].forEach((t) => window.addEventListener(t, mark, { once: true, passive: true }));
+      const hold = () => { if (!userScrolled && !current && Math.abs(window.scrollY - keepY) > 1) window.scrollTo({ top: keepY, behavior: 'instant' }); };
+      requestAnimationFrame(hold);
+      setTimeout(hold, 150);
+      setTimeout(() => ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, mark)), 400);
       const back = returnFocus && document.contains(returnFocus) ? returnFocus : document.getElementById('projects');
       if (back) {
         if (back.id === 'projects' && !back.hasAttribute('tabindex')) back.setAttribute('tabindex', '-1');

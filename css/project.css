@@ -294,13 +294,46 @@ html.project-open { overflow: hidden; }
   text-indent: -.42em; /* hang the opening quote mark */
 }
 .pv-statement .pv-pullquote p { margin: 0; }
-/* the statement cut into runs around images placed with `after: n` */
-.pv-statement--split { border-bottom: 0; padding-bottom: 0; }
-.pv-statement--cont { margin-top: clamp(32px, 4.4vw, 56px); }
-.pv-statement-media { margin-top: clamp(32px, 4.4vw, 56px); }
+/* ---------- story: statement rows with their images ----------
+   phones: one column in reading order (meta, cover, text / image, text);
+   >= 1024px: text on a readable measure at left, images beside it at right. */
+.pv-story {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 4.4vw, 64px);
+  margin-top: clamp(32px, 4.4vw, 64px);
+  padding-bottom: clamp(36px, 5vw, 64px);
+  border-bottom: 1px solid var(--pv-rule);
+}
+.pv-row { display: flex; flex-direction: column; gap: clamp(28px, 3.4vw, 44px); }
+.pv-row--lead .pv-row__meta { order: 0; }
+.pv-row--lead .pv-row__media { order: 1; }
+.pv-row--lead .pv-row__text { order: 2; }
+.pv-row .pv-statement { margin: 0; padding: 0; border: 0; }
+.pv-row__meta .pv-meta { margin-top: 0; }
+.pv-row__media { display: flex; flex-direction: column; gap: 28px; }
+.pv-row__media .pv-figure { margin-top: 0; }
+@media (min-width: 1024px) {
+  .pv-row {
+    display: grid;
+    grid-template-columns: minmax(0, 40rem) minmax(0, 1fr);
+    column-gap: clamp(40px, 5vw, 96px);
+    row-gap: clamp(28px, 3vw, 44px);
+    align-items: start;
+  }
+  .pv-row__meta, .pv-row__text { grid-column: 1; }
+  .pv-row__media { grid-column: 2; grid-row: 1 / span 2; }
+  .pv-row--lead .pv-row__meta { grid-row: 1; }
+  .pv-row--lead .pv-row__text { grid-row: 2; }
+  .pv-row:not(.pv-row--lead) .pv-row__text { grid-row: 1; }
+  .pv-row--lead:not(:has(.pv-row__meta)) .pv-row__text { grid-row: 1; }
+  /* capped images sit centred in the image column, so neither side runs empty */
+  .pv-row__media { align-items: center; }
+  .pv-row__media .pv-figure { margin-inline: auto; }
+}
 @media (max-width: 639.98px) { .pv-statement .pv-pullquote { text-indent: 0; } }
 /* when the statement ends the file, the END OF FILE rule is enough */
-.pv-statement:has(+ .pv-end) { border-bottom: 0; padding-bottom: 0; }
+.pv-story:has(+ .pv-end) { border-bottom: 0; padding-bottom: 0; }
 /* a long run of text after the quote gets a quiet pause between paragraphs */
 .pv-statement .pv-pullquote ~ p + p {
   margin-top: 1.4em;
@@ -506,6 +539,23 @@ html.project-open { overflow: hidden; }
 @media (hover: none) { .pv-figure__hint { display: inline; } }
 .pv-figure__code { color: var(--pv-ink); font-weight: 700; }
 .pv-figure__sep { opacity: .6; }
+
+/* >= 1024px: images without a statement form a deliberate two-column
+   composition: halves side by side on a shared top line, bleed and text
+   across both columns. Images keep their capped native size. */
+@media (min-width: 1024px) {
+  .pv-blocks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(32px, 4vw, 72px);
+    row-gap: clamp(44px, 5vw, 80px);
+    align-items: start;
+  }
+  .pv-blocks > * { grid-column: 1 / -1; }
+  .pv-blocks > .pv-figure--half,
+  .pv-blocks > .pv-figure--wide,
+  .pv-blocks > .pv-hero { grid-column: auto; --lw: 100%; margin-top: 0; }
+}
 
 /* a drawings set's title: a quiet mono line, no rule or card */
 .pv-set-title { margin: 0 0 -12px; font-weight: 700; color: var(--pv-ink); }

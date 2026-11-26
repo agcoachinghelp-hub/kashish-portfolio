@@ -105,9 +105,9 @@
           "caption": "",
           "blend": "multiply",
           "thumb": "assets/projects/contents/03-480.webp",
-          "width": 718,
-          "height": 1284,
-          "srcset": "assets/projects/contents/03-480.webp 480w, assets/projects/contents/03.webp 718w",
+          "width": 647,
+          "height": 832,
+          "srcset": "assets/projects/contents/03-480.webp 480w, assets/projects/contents/03.webp 647w",
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -128,12 +128,12 @@
       "year": "",
       "cover": {
         "src": "assets/projects/burra-pod/01.webp",
-        "alt": "Burra Pod concept collage, river band: angled strips of historic river landscapes and eels",
+        "alt": "Burra Pod concept collage: angled strips of historic river landscapes and eels, material swatches in pale blue, dark timber, pale timber, stone and red, and strips of site photographs",
         "caption": "",
         "blend": "multiply",
         "maxWidth": 400,
-        "width": 490,
-        "height": 371
+        "width": 530,
+        "height": 706
       },
       "meta": [
         {
@@ -147,28 +147,14 @@
         {
           "type": "image",
           "src": "assets/projects/burra-pod/02.webp",
-          "alt": "Burra Pod material swatches: pale blue, dark timber, pale timber, stone and red",
+          "alt": "Detail of the Burra Pod collage: material swatches in pale blue, dark timber, pale timber, stone and red",
           "caption": "",
           "blend": "multiply",
-          "maxWidth": 400,
           "width": 515,
           "height": 211,
           "layout": "half",
           "align": "left",
-          "after": 1,
-          "size": "half"
-        },
-        {
-          "type": "image",
-          "src": "assets/projects/burra-pod/03.webp",
-          "alt": "Burra Pod site band: angled strips of site photographs, trees, buildings and street",
-          "caption": "",
-          "blend": "multiply",
-          "maxWidth": 400,
-          "width": 530,
-          "height": 327,
-          "layout": "half",
-          "align": "left",
+          "after": 2,
           "size": "half"
         }
       ]
@@ -271,7 +257,7 @@
           "blend": "multiply",
           "thumb": "assets/projects/common-grounds/04-480.webp",
           "width": 800,
-          "height": 578,
+          "height": 1154,
           "srcset": "assets/projects/common-grounds/04-480.webp 480w, assets/projects/common-grounds/04.webp 800w",
           "layout": "half",
           "align": "left",

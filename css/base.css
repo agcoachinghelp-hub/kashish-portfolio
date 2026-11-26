@@ -521,14 +521,32 @@ html.project-open body { overflow: hidden; }
     max-height: none;
     object-fit: cover;
     object-position: 50% 100%;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
+    /* Top and bottom cuts fade. The bottom stop is built from the same
+       --hero-cut the desktop tween drives (100% at rest, 86% after 120px of
+       scroll), but on phones the bottom cut is on screen from the start, so
+       it is already faded from 86% (the tween ends where phones begin). A
+       deeper fade would wash out the clasped hands at the bottom. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
+    /* No contrast boost, so her light pencil highlights keep their tone. The
+       scan's paper is about #D5D7D0; 1.23 is the lowest lift that leaves no
+       visible box (1.1 leaves a grey band, 21 levels darker than the page). */
+    filter: saturate(.85) brightness(var(--paper-lift-phone, 1.23));
   }
   .cover__h1 { order: 0; }
   .cover__figure { order: 1; }
   .cover__about { order: 2; }
   .cover__figure--empty { margin-inline: 0; }
   .cover__figure--empty .cover__frame { aspect-ratio: 4 / 3; }
+}
+/* Short phones (e.g. iPhone SE, 375x667): tighter spacing above the drawing
+   (cover.js also sets a smaller name) so more of the figure fits. */
+@media (max-width: 767px) and (max-height: 700px) {
+  .cover { padding-top: calc(var(--nav-h) + var(--space-2)); --m-gap: 4px; }
+  .cover__strip { min-height: 0; padding-bottom: var(--space-2); }
+  .cover__text { padding-top: var(--space-3); gap: var(--space-3); }
+  .cover__h1 { gap: var(--space-1); }
+  .cover__title-script { font-size: 1.85em; }
 }
 
 /* Opening on phones: the name rises, then the title, then the drawing fades

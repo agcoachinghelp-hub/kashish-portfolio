@@ -40,23 +40,21 @@ const JOBS = [
   ['02', 'assets/projects/contents/01.webp', { left: 0, top: 60, width: 1840, height: 600 }, true, 'dots'],
   ['02', 'assets/projects/contents/02.webp', { left: 0, top: 1105, width: 1460, height: 309 }, true, 'lift'],
   // Page 13: start below the separate "CLOSE-UP" sheet; paint out paper slivers past the collage's right edge.
-  ['13', 'assets/projects/contents/03.webp', { left: 727, top: 98, width: 718, height: 1284 }, false, 'slivers'],
+  ['13', 'assets/projects/contents/03.webp', { left: 758, top: 98, width: 647, height: 832 }, false, 'slivers'],
   // Burra Pod collage split into its three diagonal bands (river strips, material
   // swatches, site photo strips); everything outside a band is painted white so it
   // multiplies away. Polygons are in page-06 coordinates.
-  ['06', 'assets/projects/burra-pod/01.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:1'],
+  ['06', 'assets/projects/burra-pod/01.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'collage'],
   ['06', 'assets/projects/burra-pod/02.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:2'],
-  ['06', 'assets/projects/burra-pod/03.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:3'],
   ['08', 'assets/projects/common-grounds/01.webp', { left: 992, top: 141, width: 864, height: 675 }, false],
   // Plans: labels ("X Plan 1:100") cropped off and moved to captions; edges cut
   // through grid lines, clear of grid bubbles.
   // Basement: tight to the building and courtyard; bottom edge cuts through hatching, clear of bubbles.
   ['09', 'assets/projects/common-grounds/02.webp', { left: 110, top: 145, width: 680, height: 830 }, true],
   ['10', 'assets/projects/common-grounds/03.webp', { left: 48, top: 145, width: 1824, height: 1155 }, true],
-  // First floor: below her ghosted "COMMON GROUNDS / CITY CENTRE" title (opaque; it hides the
-  // top rooms, which only her original file can restore), tight on the building; the top
-  // edge runs along the wall line at y~724 so it never cuts mid-room.
-  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 722, width: 800, height: 578 }, true],
+  // First floor: the whole plan, top section marker to the bottom wall. Her faint
+  // "COMMON GROUNDS / CITY CENTRE" overlay is part of her page and stays.
+  ['11', 'assets/projects/common-grounds/04.webp', { left: 0, top: 146, width: 800, height: 1154 }, true],
   ['12', 'assets/projects/common-grounds/05.webp', { left: 40, top: 180, width: 780, height: 1100 }, true],
 ];
 
@@ -94,6 +92,16 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     // Lift paper (and the matching fill) to white so the multiply leaves no box.
     const lifted = await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer();
     img = sharp(lifted).trim({ background: '#ffffff', threshold: 10 });
+  }
+  if (fix === 'collage') {
+    const pr = await sharp(page(n)).extract({ left: 1540, top: 80, width: 200, height: 420 }).removeAlpha().raw().toBuffer();
+    const pix = []; for (let i = 0; i < pr.length; i += 3) pix.push([pr[i], pr[i + 1], pr[i + 2]]);
+    pix.sort((a, c) => a[0] + a[1] + a[2] - (c[0] + c[1] + c[2]));
+    const [r, g, b] = pix[Math.floor(pix.length * 0.92)];
+    // her "BURRA POD / CONCEPT" title letters reach x~1027 on the left: paint that strip as paper
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="0" y="0" width="${1030 - region.left}" height="${300 - region.top}" fill="rgb(${r},${g},${b})"/></svg>`;
+    const buf = await sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]).png().toBuffer();
+    img = sharp(await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()).trim({ background: '#ffffff', threshold: 10 });
   }
   if (fix === 'lift') {
     const { channels } = await sharp(page(n)).extract({ left: 1300, top: 700, width: 400, height: 200 }).stats();

@@ -211,7 +211,12 @@ function setupNameFit() {
       lastKey = key;
       const byWidth = (100 * width) / em;
       const wide = window.matchMedia('(min-width: 1024px)').matches;
-      const byHeight = (window.innerHeight * (wide ? 0.42 : 0.34)) / (words.length * 0.86);
+      // Short phones (under 700px tall, e.g. iPhone SE): a smaller name leaves
+      // room for more of the drawing above the fold.
+      const shortPhone = window.matchMedia('(max-width: 767px)').matches && window.innerHeight < 700;
+      const byHeight = shortPhone
+        ? window.innerHeight * 0.06
+        : (window.innerHeight * (wide ? 0.42 : 0.34)) / (words.length * 0.86);
       const fs = `${Math.floor(Math.min(byWidth, byHeight) * 0.995)}px`;
       if (fs !== lastFs) { lastFs = fs; el.style.setProperty('--name-fs', fs); }
     }
@@ -252,7 +257,8 @@ function setupPhoneHero() {
       if (!fig) return;
       let top = 0; let el = fig;
       while (el) { top += el.offsetTop; el = el.offsetParent; }   // layout position, ignores transforms
-      cover.style.setProperty('--m-top', `${Math.round(top + 12)}px`);
+      const gap = parseFloat(getComputedStyle(cover).getPropertyValue('--m-gap')) || 12;   // breathing room above the fold
+      cover.style.setProperty('--m-top', `${Math.round(top + gap)}px`);
     });
   };
   measure(true);
@@ -388,27 +394,23 @@ function setupCoverScroll() {
   mm.add({ motion: '(prefers-reduced-motion: no-preference)', phone: '(max-width: 767px)' }, (ctx) => {
     if (!ctx.conditions.motion) return;
     const trigger = (end) => ({ trigger: cover, start: 'top top', end, scrub: true, invalidateOnRefresh: true });
-    if (text.length) {
-      gsap.fromTo(text, { opacity: 1, scale: 1, yPercent: 0, transformOrigin: '0% 30%' },
+    // Phones: the about text is what you read as the landing leaves, so it
+    // isn't faded there; it simply scrolls away.
+    const fading = ctx.conditions.phone ? text.filter((el) => !el.classList.contains('cover__about')) : text;
+    if (fading.length) {
+      gsap.fromTo(fading, { opacity: 1, scale: 1, yPercent: 0, transformOrigin: '0% 30%' },
         { opacity: 0, scale: 0.94, yPercent: 6, ease: 'none', immediateRender: false, scrollTrigger: trigger('bottom 20%') });
     }
     if (art.length) {
-      // Phones: the drawing opens the page, so it is done fading by the time
-      // the cover's bottom reaches 30% of the screen.
-      // Wider screens: shrink toward the bottom-right corner so the drawing never
-      // drifts below the landing.
-      // Phones: fade and a small drift only. Scaling would pull the arm's
-      // cut edge (which bleeds off the side) into view.
-      gsap.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: ctx.conditions.phone ? '50% 0%' : '100% 100%' },
-        { opacity: 0, scale: ctx.conditions.phone ? 1 : 0.94, y: () => (ctx.conditions.phone ? 24 : 0), ease: 'none', immediateRender: false,
-          scrollTrigger: trigger(ctx.conditions.phone ? 'bottom 30%' : 'bottom 20%') });
-      // Wider screens: the drawing runs off the bottom of the first screen; as
-      // soon as you scroll, its bottom edge fades so no hard line shows above
-      // the folders.
-      if (!ctx.conditions.phone) {
-        gsap.fromTo(art, { '--hero-cut': '100%' }, { '--hero-cut': '86%', ease: 'none', immediateRender: false,
-          scrollTrigger: { trigger: cover, start: 'top top', end: '+=120', scrub: true } });
-      }
+      // Same fade as desktop at every size. Phones keep scale 1, so the arm's
+      // cut edge (which bleeds off the side) never comes into view.
+      gsap.fromTo(art, { opacity: 1, scale: 1, transformOrigin: '100% 100%' },
+        { opacity: 0, scale: ctx.conditions.phone ? 1 : 0.94, ease: 'none', immediateRender: false,
+          scrollTrigger: trigger('bottom 20%') });
+      // As soon as you scroll, the drawing's bottom cut fades (no hard line
+      // above the folders).
+      gsap.fromTo(art, { '--hero-cut': '100%' }, { '--hero-cut': '86%', ease: 'none', immediateRender: false,
+        scrollTrigger: { trigger: cover, start: 'top top', end: '+=120', scrub: true } });
     }
   });
   // Reduced motion: no scrub, no scale. A plain, untied fade as it leaves.

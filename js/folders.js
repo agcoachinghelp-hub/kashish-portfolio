@@ -84,8 +84,7 @@ function titleHTML(title, extra = '') {
 }
 
 // Tabs: on the upright drawer "CODE // TITLE" (or the folder's name when it has
-// no code); on stacked phones only the code, so no word appears twice: CONTENTS
-// is blank there and IN PROGRESS shows its file count.
+// no code); on stacked phones the code, or the name (CONTENTS, IN PROGRESS).
 function tabHTML({ desk, phone }) {
   return `<span class="folder__tab-text"><span class="folder__tab-desk">${esc(desk)}</span>${phone ? `<span class="folder__tab-phone">${esc(phone)}</span>` : ''}</span>`;
 }
@@ -116,6 +115,9 @@ function folderHTML(p, i, n) {
   if (p.index) classes.push('folder--index');
   if (last) classes.push('folder--last');
   if (img) classes.push('folder--photo');
+  // A narrow cover (shown <= 400px at 2x) is set on the face above the
+  // subtitle instead of across the top band.
+  if (img && (Number(img.width) || 960) / 2 < 400) classes.push('folder--photo-narrow');
   if (lightInk(p)) classes.push('folder--dark');
   const subtitle = clean(p.subtitle);
   // No aria-label: the visible text names the link.
@@ -124,7 +126,7 @@ function folderHTML(p, i, n) {
   <a class="${classes.join(' ')}" href="#project/${encodeURIComponent(p.slug)}"
       data-slug="${esc(p.slug)}" style="${styleVars(p, i, t)}">
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab">${tabHTML(code ? { desk: `${code} // ${title}`, phone: code } : { desk: title, phone: p.index ? 'INDEX' : '' })}</span>
+    <span class="folder__tab">${tabHTML(code ? { desk: `${code} // ${title}`, phone: code } : { desk: title, phone: title })}</span>
     <span class="folder__face">
       <span class="folder__strip">
         <span class="folder__label">${titleHTML(title, p.index ? ' folder__title--index' : '')}</span>
@@ -146,7 +148,7 @@ function groupHTML(soon, i, n) {
   <div class="folder folder--group${last ? ' folder--last' : ''}${lightInk(p) ? ' folder--dark' : ''}" style="${styleVars(p, i, t)}">
     <span class="visually-hidden">In progress: ${esc(titles.join(', '))}.</span>
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab" aria-hidden="true">${tabHTML({ desk: 'IN PROGRESS', phone: `${titles.length} ${titles.length === 1 ? 'FILE' : 'FILES'}` })}</span>
+    <span class="folder__tab" aria-hidden="true">${tabHTML({ desk: 'IN PROGRESS', phone: 'IN PROGRESS' })}</span>
     <span class="folder__face" aria-hidden="true">
       <span class="folder__strip">
         <span class="folder__list">${titles.map((x) => `<span>${esc(x)}</span>`).join('')}</span>
