@@ -15,8 +15,8 @@
     "height": 1180,
     "mobile": {
       "image": "assets/site/hero-mobile.webp",
-      "width": 1000,
-      "height": 1250
+      "width": 850,
+      "height": 1265
     }
   },
   "outro": {

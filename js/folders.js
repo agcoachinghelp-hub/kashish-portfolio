@@ -95,9 +95,12 @@ function tabHTML({ desk, phone }) {
 function photoHTML(img) {
   const nw = Number(img.width) || 960;
   const nh = Number(img.height) || 600;
-  const show = Math.round(Math.min(nw / 2, 640));
-  const srcset = img.thumb ? ` srcset="${esc(img.thumb)} 480w, ${esc(img.src)} ${nw}w" sizes="${show}px"` : '';
-  return `<span class="folder__photo" aria-hidden="true" style="--pw:${Math.round(nw / 2)}px; --ph:${Math.round(nh / 2)}px"><img src="${esc(img.thumb && !srcset ? img.thumb : img.src)}"${srcset} alt="" loading="lazy" decoding="async"></span>`;
+  const pw = Math.round(nw / 2);
+  // stacked: at most 42% of the folder; upright: the face (<= 640px); both capped at pw
+  const sizes = `(max-width: ${Math.min(1023, Math.round(pw / 0.42))}px) 42vw, (max-width: 1023px) ${pw}px, ${Math.min(pw, 640)}px`;
+  const set = img.srcset || (img.thumb ? `${img.thumb} 480w, ${img.src} ${nw}w` : '');
+  const srcset = set ? ` srcset="${esc(set)}" sizes="${sizes}"` : '';
+  return `<span class="folder__photo" aria-hidden="true" style="--pw:${pw}px; --ph:${Math.round(nh / 2)}px"><img src="${esc(img.src)}"${srcset} alt="" loading="lazy" decoding="async"></span>`;
 }
 
 const styleVars = (p, i, t) => `--folder:${esc(p.colour)}; --accent:${esc(p.accent)}; --ink:${esc(p.ink)}; --i:${i}; --t:${t}; --tab:${tabColour(p.colour, p.ink)}`;
@@ -121,7 +124,7 @@ function folderHTML(p, i, n) {
   <a class="${classes.join(' ')}" href="#project/${encodeURIComponent(p.slug)}"
       data-slug="${esc(p.slug)}" style="${styleVars(p, i, t)}">
     <span class="folder__leaf" aria-hidden="true"></span>
-    <span class="folder__tab">${tabHTML(code ? { desk: `${code} // ${title}`, phone: code } : { desk: title, phone: '' })}</span>
+    <span class="folder__tab">${tabHTML(code ? { desk: `${code} // ${title}`, phone: code } : { desk: title, phone: p.index ? 'INDEX' : '' })}</span>
     <span class="folder__face">
       <span class="folder__strip">
         <span class="folder__label">${titleHTML(title, p.index ? ' folder__title--index' : '')}</span>
@@ -259,12 +262,34 @@ function expander(container) {
 
 /* ---------- layout + motion ---------- */
 
+// True if any title spills out of its spine (e.g. measured mid font swap).
+function overflowing(el) {
+  return [...el.querySelectorAll('.folder')].some((f) => {
+    const t = f.querySelector('.folder__title')?.getBoundingClientRect();
+    const s = f.querySelector('.folder__strip')?.getBoundingClientRect();
+    return t && s && s.height > 0 && (t.bottom > s.bottom + 1 || t.top < s.top - 1 || t.right > s.right + 1);
+  });
+}
+
 function track(el) {
   let raf = 0;
+  let checks = 0;
+  let timer = 0;
+  // After a fit, re-check a few times and refit if a title still spills over
+  // (some loads apply the display face or settle layout after every event).
+  const verify = () => {
+    clearTimeout(timer);
+    if (checks >= 10) return;
+    timer = setTimeout(() => {
+      checks += 1;
+      if (overflowing(el)) fitTitles(el);
+      verify();
+    }, 300);
+  };
   const set = () => {
     el.style.setProperty('--cw', `${el.clientWidth}px`);
     cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => fitTitles(el));
+    raf = requestAnimationFrame(() => { fitTitles(el); checks = 0; verify(); });
   };
   set();
   if ('ResizeObserver' in window) new ResizeObserver(set).observe(el);

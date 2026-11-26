@@ -8,3 +8,4 @@ node_modules/
 /dist/
 # Review screenshots are large; keep only the written notes in git
 /review/**/*.png
+/CONTRACT.md

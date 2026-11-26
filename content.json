@@ -17,14 +17,16 @@
       "thumb": "assets/site/hero-480.webp",
       "width": 760,
       "height": 1180,
+      "srcset": "assets/site/hero-480.webp 480w, assets/site/hero.webp 760w",
       "mobile": {
         "src": "assets/site/hero-mobile.webp",
         "alt": "Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio",
         "caption": "",
         "blend": "multiply",
         "thumb": "assets/site/hero-mobile-480.webp",
-        "width": 1000,
-        "height": 1250
+        "width": 850,
+        "height": 1265,
+        "srcset": "assets/site/hero-mobile-480.webp 480w, assets/site/hero-mobile.webp 850w"
       }
     },
     "outro": null,
@@ -75,7 +77,8 @@
         "blend": "multiply",
         "thumb": "assets/projects/contents/01-480.webp",
         "width": 1840,
-        "height": 600
+        "height": 600,
+        "srcset": "assets/projects/contents/01-480.webp 480w, assets/projects/contents/01-960.webp 960w, assets/projects/contents/01.webp 1840w"
       },
       "meta": [],
       "statement": "",
@@ -90,6 +93,7 @@
           "thumb": "assets/projects/contents/02-480.webp",
           "width": 1460,
           "height": 309,
+          "srcset": "assets/projects/contents/02-480.webp 480w, assets/projects/contents/02-960.webp 960w, assets/projects/contents/02.webp 1460w",
           "layout": "wide",
           "align": "left",
           "size": "wide"
@@ -103,6 +107,7 @@
           "thumb": "assets/projects/contents/03-480.webp",
           "width": 718,
           "height": 1284,
+          "srcset": "assets/projects/contents/03-480.webp 480w, assets/projects/contents/03.webp 718w",
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -127,8 +132,8 @@
         "caption": "",
         "blend": "multiply",
         "maxWidth": 400,
-        "width": 472,
-        "height": 366
+        "width": 490,
+        "height": 371
       },
       "meta": [
         {
@@ -146,8 +151,8 @@
           "caption": "",
           "blend": "multiply",
           "maxWidth": 400,
-          "width": 472,
-          "height": 215,
+          "width": 515,
+          "height": 211,
           "layout": "half",
           "align": "left",
           "after": 1,
@@ -160,8 +165,8 @@
           "caption": "",
           "blend": "multiply",
           "maxWidth": 400,
-          "width": 472,
-          "height": 328,
+          "width": 530,
+          "height": 327,
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -223,7 +228,8 @@
         "blend": "multiply",
         "thumb": "assets/projects/common-grounds/01-480.webp",
         "width": 864,
-        "height": 675
+        "height": 675,
+        "srcset": "assets/projects/common-grounds/01-480.webp 480w, assets/projects/common-grounds/01.webp 864w"
       },
       "meta": [],
       "statement": "",
@@ -238,6 +244,7 @@
           "thumb": "assets/projects/common-grounds/02-480.webp",
           "width": 680,
           "height": 830,
+          "srcset": "assets/projects/common-grounds/02-480.webp 480w, assets/projects/common-grounds/02.webp 680w",
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -251,6 +258,7 @@
           "thumb": "assets/projects/common-grounds/03-480.webp",
           "width": 1824,
           "height": 1155,
+          "srcset": "assets/projects/common-grounds/03-480.webp 480w, assets/projects/common-grounds/03-960.webp 960w, assets/projects/common-grounds/03.webp 1824w",
           "layout": "bleed",
           "align": "left",
           "size": "bleed"
@@ -264,6 +272,7 @@
           "thumb": "assets/projects/common-grounds/04-480.webp",
           "width": 800,
           "height": 578,
+          "srcset": "assets/projects/common-grounds/04-480.webp 480w, assets/projects/common-grounds/04.webp 800w",
           "layout": "half",
           "align": "left",
           "size": "half"
@@ -277,6 +286,7 @@
           "thumb": "assets/projects/common-grounds/05-480.webp",
           "width": 780,
           "height": 1100,
+          "srcset": "assets/projects/common-grounds/05-480.webp 480w, assets/projects/common-grounds/05.webp 780w",
           "layout": "half",
           "align": "left",
           "size": "half"

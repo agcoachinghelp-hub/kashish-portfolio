@@ -472,7 +472,11 @@ html.project-open { overflow: hidden; }
   width: var(--bw);
   margin-left: max(calc(50% - 50cqw), min(0px, calc(100% - var(--bw))));
 }
-.pv-figure--bleed .pv-figure__cap { padding-left: max(0px, calc(50cqw - 50% - (100cqw - var(--bw)) * 1000)); }
+/* a true full-bleed caption keeps the panel padding off the paper edge;
+   a capped bleed's caption sits on its image's left edge like the others */
+.pv-figure--bleed .pv-figure__cap {
+  padding-inline: max(0px, calc(var(--pv-pad) - (100cqw - var(--bw)) * 1000));
+}
 
 /* phones: everything takes the column (still never upscaled); bleed still bleeds */
 @media (max-width: 639.98px) {
@@ -498,7 +502,7 @@ html.project-open { overflow: hidden; }
   color: var(--pv-muted);
 }
 /* captions always start at the image's left edge */
-.pv-figure__hint { display: none; }
+.pv-figure__hint { display: none; white-space: nowrap; } /* wraps whole, never split */
 @media (hover: none) { .pv-figure__hint { display: inline; } }
 .pv-figure__code { color: var(--pv-ink); font-weight: 700; }
 .pv-figure__sep { opacity: .6; }

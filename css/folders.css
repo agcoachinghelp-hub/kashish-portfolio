@@ -477,7 +477,9 @@ a.folder:active { transition-duration: .2s; }
     right: 0;
     bottom: 0;
   }
-  .folder__sub { left: 16px; right: 16px; top: 2px; }
+  /* stacked: faces hide under the next folder, so the subtitle never shows
+     (it would bleed through while the folders animate in) */
+  .folder__sub { display: none; }
   .folder__list { left: 16px; right: 16px; top: 6px; }
 
   @media (hover: hover) and (pointer: fine) {
@@ -486,6 +488,11 @@ a.folder:active { transition-duration: .2s; }
   a.folder:focus-visible { transform: translateY(-8px); }
 }
 
+/* iPad portrait: the folders-to-Get-in-Touch gap was 118px here + .contact's
+   margin; this side is now 48px */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .projects { padding-bottom: 48px; }
+}
 /* phones: ~68px from the folders to Get in Touch at 393x852 */
 @media (max-width: 767.98px) {
   .projects { padding-bottom: clamp(48px, 8vh, 72px); }

@@ -52,10 +52,16 @@ function image(obj, ctx) {
   const w = Number(obj.width), h = Number(obj.height);
   if (w > 0 && h > 0) { out.width = w; out.height = h; }
   // Responsive variants written by scripts/import-project.mjs: 01.webp -> 01-2400/1600/800.webp
-  const m = src.match(/^(.*\/\d+)\.webp$/);
+  // Responsive variants (written by the import/crop scripts): name-480/-800/-960/-1600/-2400.webp,
+  // plus the original at its natural width when known.
+  const m = src.match(/^(.*)\.webp$/);
   if (m) {
-    const set = [2400, 1600, 800].filter((v) => existsSync(rel(`${m[1]}-${v}.webp`)));
-    if (set.length) out.srcset = set.map((v) => `${m[1]}-${v}.webp ${v}w`).join(', ');
+    const set = [480, 800, 960, 1600, 2400].filter((v) => existsSync(rel(`${m[1]}-${v}.webp`)));
+    if (set.length) {
+      const parts = set.map((v) => `${m[1]}-${v}.webp ${v}w`);
+      if (out.width && !set.includes(out.width)) parts.push(`${src} ${out.width}w`);
+      out.srcset = parts.join(', ');
+    }
   }
   return out;
 }

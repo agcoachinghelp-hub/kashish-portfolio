@@ -48,6 +48,9 @@ function titleHTML(site) {
   return `${esc(words.join(' '))}${script ? ` <span class="cover__title-script">${esc(script)}</span>` : ''}`;
 }
 
+// Display width of the phone/iPad crop: full width on phones, 425px on iPad portrait.
+const SIZES = '(max-width: 767px) 100vw, 425px';
+
 const EMPTY_FRAME = `<div class="cover__figure cover__figure--empty" aria-hidden="true" data-cover-hero>
           <div class="cover__frame"></div>
         </div>`;
@@ -59,7 +62,7 @@ function heroHTML(hero) {
   return `<figure class="cover__figure" data-cover-hero>
           <div class="cover__frame">
             <picture class="cover__picture">
-              ${mobile ? `<source media="(max-width: 1023px)" srcset="${esc(mobile.src)}"${dims(mobile)}>` : ''}
+              ${mobile ? `<source media="(max-width: 1023px)" srcset="${esc(mobile.srcset || mobile.src)}" sizes="${SIZES}"${dims(mobile)}>` : ''}
               <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims(hero)} fetchpriority="high" decoding="async">
             </picture>
           </div>
@@ -121,7 +124,8 @@ function syncHero(cover, site) {
       img.parentElement.insertBefore(source, img);
     }
     setAttr(source, 'media', '(max-width: 1023px)');
-    setAttr(source, 'srcset', mobile.src);
+    setAttr(source, 'srcset', mobile.srcset || mobile.src);
+    setAttr(source, 'sizes', SIZES);
     setAttr(source, 'width', mobile.width);
     setAttr(source, 'height', mobile.height);
   } else if (source) {
@@ -229,6 +233,35 @@ function setupNameFit() {
   // The container's width does not depend on the name's size, so this can't loop.
   if ('ResizeObserver' in window) new ResizeObserver(schedule).observe(box);
   window.addEventListener('resize', schedule, { passive: true });
+}
+
+// Phones: the drawing should end at the fold, so CSS needs to know where it
+// starts on the page (--m-top). That depends on the name's fitted size, so it
+// is re-measured after the name fit, on width changes and when fonts load.
+function setupPhoneHero() {
+  const cover = document.querySelector('[data-cover]');
+  if (!cover) return;
+  const phone = window.matchMedia('(max-width: 767px)');
+  let lastW = 0;
+  const measure = (force) => {
+    if (!phone.matches) return;
+    if (!force && window.innerWidth === lastW) return;   // ignore toolbar-only resizes
+    lastW = window.innerWidth;
+    requestAnimationFrame(() => {
+      const fig = cover.querySelector('[data-cover-hero]');
+      if (!fig) return;
+      let top = 0; let el = fig;
+      while (el) { top += el.offsetTop; el = el.offsetParent; }   // layout position, ignores transforms
+      cover.style.setProperty('--m-top', `${Math.round(top + 12)}px`);
+    });
+  };
+  measure(true);
+  if (document.fonts) {
+    if (document.fonts.ready) document.fonts.ready.then(() => setTimeout(() => measure(true), 120));
+    if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', () => setTimeout(() => measure(true), 120));
+  }
+  let t = 0;
+  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => measure(false), 120); }, { passive: true });
 }
 
 /* ---------- Get in Touch ---------- */
@@ -364,8 +397,10 @@ function setupCoverScroll() {
       // the cover's bottom reaches 30% of the screen.
       // Wider screens: shrink toward the bottom-right corner so the drawing never
       // drifts below the landing.
+      // Phones: fade and a small drift only. Scaling would pull the arm's
+      // cut edge (which bleeds off the side) into view.
       gsap.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: ctx.conditions.phone ? '50% 0%' : '100% 100%' },
-        { opacity: 0, scale: 0.94, y: () => (ctx.conditions.phone ? cover.offsetHeight * 0.06 : 0), ease: 'none', immediateRender: false,
+        { opacity: 0, scale: ctx.conditions.phone ? 1 : 0.94, y: () => (ctx.conditions.phone ? 24 : 0), ease: 'none', immediateRender: false,
           scrollTrigger: trigger(ctx.conditions.phone ? 'bottom 30%' : 'bottom 20%') });
       // Wider screens: the drawing runs off the bottom of the first screen; as
       // soon as you scroll, its bottom edge fades so no hard line shows above
@@ -449,6 +484,7 @@ export function initCover(site = {}) {
   renderContact(site);
   renderFooter(site);
   setupNameFit();
+  setupPhoneHero();
   setupContactForm(site);
   setupCoverScroll();
   setupNavState();

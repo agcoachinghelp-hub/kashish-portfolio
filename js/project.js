@@ -47,23 +47,36 @@ function largest(img) {
   return best.url;
 }
 
-const SIZES = {
-  full: '(min-width: 1024px) 80vw, 100vw',
-  bleed: '100vw',
-  wide: '(min-width: 1024px) 56vw, (min-width: 640px) 66vw, 100vw',
-  half: '(min-width: 1024px) 42vw, (min-width: 640px) 50vw, 100vw',
-};
+// `sizes` that match the rendered width: the layout share of the column
+// (phones: the full column), capped at half the natural width / maxWidth.
+// Column ~ 100vw - 56px on phones (inset + border + padding), ~ 100vw - 240px
+// wider; bleed spans the paper (~ 100vw - 24px / - 92px).
+const SHARE = { full: 1, wide: 0.667, half: 0.5, bleed: 1 };
+function sizesFor(layout, cap) {
+  const C = Math.max(1, Math.round(cap));
+  const bleed = layout === 'bleed';
+  const phoneOff = bleed ? 24 : 56;
+  const share = SHARE[layout] || 1;
+  const off = bleed ? 92 : 240;
+  const vw = (x) => (x === 1 ? `calc(100vw - ${off}px)` : `calc((100vw - ${off}px) * ${x})`);
+  return [
+    `(max-width: ${Math.min(639, C + phoneOff)}px) calc(100vw - ${phoneOff}px)`,
+    `(max-width: 639px) ${C}px`,
+    `(max-width: ${Math.round(C / share + off)}px) ${vw(share)}`,
+    `${C}px`,
+  ].join(', ');
+}
 
 // Every image registers itself for the lightbox; returns the clickable <a><img></a>.
 // blend 'multiply' (the default) lets her paper drop into the cream page.
-function imgHTML(img, ctx, { sizes, eager = false } = {}) {
+function imgHTML(img, ctx, { sizes = '100vw', eager = false } = {}) {
   const n = ctx.gallery.length;
   const alt = clean(img.alt) || clean(img.caption) || ctx.title;
   ctx.gallery.push({ src: img.src, full: largest(img), alt, caption: clean(img.caption), w: img.width, h: img.height });
   const w = Number(img.width) || 1600;
   const h = Number(img.height) || 1000;
   const blend = img.blend === 'none' ? '' : ' class="is-multiply"';
-  const srcset = img.srcset ? ` srcset="${esc(img.srcset)}" sizes="${esc(sizes || SIZES.full)}"` : '';
+  const srcset = img.srcset ? ` srcset="${esc(img.srcset)}" sizes="${esc(sizes)}"` : '';
   return `<a class="pv-zoom" href="${esc(largest(img))}" data-pv-zoom="${n}">
       <img${blend} src="${esc(img.src)}"${srcset} alt="${esc(alt)}" width="${w}" height="${h}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">
       <span class="visually-hidden">(view full size)</span>
@@ -102,7 +115,7 @@ function figureHTML(b, ctx, { layout = 'full', align = 'left', eager = false, cl
   // No blur: never wider than half the natural width (2x density).
   return `
     <figure class="pv-figure pv-figure--${lay} pv-figure--${al}${cls}"${rise ? ' data-pv-rise' : ''} style="--nw:${Math.round(w / 2)}px; --ar:${(w / h).toFixed(4)}${mw}">
-      ${imgHTML(b, ctx, { sizes: SIZES[lay], eager })}
+      ${imgHTML(b, ctx, { sizes: sizesFor(lay, Math.min(w / 2, Number(b.maxWidth) > 0 ? Number(b.maxWidth) : Infinity)), eager })}
       ${clean(b.caption) ? captionHTML(b.caption) : ''}
     </figure>`;
 }

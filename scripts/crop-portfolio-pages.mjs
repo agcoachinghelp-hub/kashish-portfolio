@@ -31,10 +31,9 @@ const JOBS = [
   ['01', 'assets/site/hero.webp', { left: 1240, top: 150, width: 760, height: 1180 }, false],
   // Phone hero: 4:5, the whole figure (clasped hands + raised arm), 1000px native
   // (full sketch width, page edge on the right), between the perforation rows.
-  // Her drawing ends at the page's bottom perforations right under the hands, so the
-  // crop (below her printed date) is extended 312px with plain paper in her own tone:
-  // the name overlaps blank paper, never the hands. Nothing is drawn or invented.
-  ['01', 'assets/site/hero-mobile.webp', { left: 1000, top: 395, width: 1000, height: 938 }, false, 'padbottom:312'],
+  // Phone hero: the whole figure, upper clasp to the clasped hands, between the
+  // perforation rows and right of her printed date (no padding, nothing added).
+  ['01', 'assets/site/hero-mobile.webp', { left: 1150, top: 70, width: 850, height: 1265 }, false],
   // Page 02 sketches: the perforation line slopes from y~45 (left) to y~125 (right).
   // 'dots' lifts the scan paper to white, then paints the band above that sloped line
   // white too, so both multiply away into the page cream; no sketch lies above it.
@@ -45,9 +44,9 @@ const JOBS = [
   // Burra Pod collage split into its three diagonal bands (river strips, material
   // swatches, site photo strips); everything outside a band is painted white so it
   // multiplies away. Polygons are in page-06 coordinates.
-  ['06', 'assets/projects/burra-pod/01.webp', { left: 1032, top: 5, width: 472, height: 702 }, false, 'band:1'],
-  ['06', 'assets/projects/burra-pod/02.webp', { left: 1032, top: 5, width: 472, height: 702 }, false, 'band:2'],
-  ['06', 'assets/projects/burra-pod/03.webp', { left: 1032, top: 5, width: 472, height: 702 }, false, 'band:3'],
+  ['06', 'assets/projects/burra-pod/01.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:1'],
+  ['06', 'assets/projects/burra-pod/02.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:2'],
+  ['06', 'assets/projects/burra-pod/03.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:3'],
   ['08', 'assets/projects/common-grounds/01.webp', { left: 992, top: 141, width: 864, height: 675 }, false],
   // Plans: labels ("X Plan 1:100") cropped off and moved to captions; edges cut
   // through grid lines, clear of grid bubbles.
@@ -70,17 +69,17 @@ for (const [n, out, box, drawing, fix] of JOBS) {
   const region = box === 'sheet' ? await whiteSheetBox(n) : box;
   await mkdir(path.dirname(path.join(ROOT, out)), { recursive: true });
   let img = sharp(page(n)).extract(region);
-  const sep1 = [[0,388],[118,388],[235,424],[355,462],[472,495],[590,532],[780,560]];
-  const sep2 = [[0,568],[212,572],[240,604],[330,604],[355,636],[450,640],[472,668],[565,670],[590,703],[690,706],[780,712]];
+  const sep1 = [[0,388],[118,388],[235,424],[355,462],[472,495],[590,532],[800,562]];
+  const sep2 = [[0,568],[212,572],[240,604],[330,604],[355,636],[450,640],[472,668],[565,670],[590,703],[690,706],[800,712]];
   if (fix && fix.startsWith('band:')) {
     // Separators traced on a 1.5x view of page 06 offset by x=1000; convert to crop coords.
     const toCrop = ([vx, vy]) => [vx / 1.5 + 1000 - region.left, vy / 1.5 - region.top];
     const k = fix.split(':')[1];
     const W = region.width, H = region.height;
     let poly;
-    if (k === '1') poly = [[0, -10], [780, -10], ...sep1.slice().reverse()];
+    if (k === '1') poly = [[45, -10], [800, -10], ...sep1.slice().reverse(), [45, 392]];
     if (k === '2') poly = [...sep1, ...sep2.slice().reverse()];
-    if (k === '3') poly = [...sep2, [780, 1200], [0, 1200]];
+    if (k === '3') poly = [...sep2, [800, 1200], [0, 1200]];
     const pts = poly.map(toCrop).map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
     // Fill outside the band with her paper colour sampled right beside the collage,
     // so band and surround are one tone; the site's paper lift then whitens both.
@@ -93,7 +92,7 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><path fill-rule="evenodd" fill="rgb(${r},${g},${b})" d="M0 0H${W}V${H}H0Z M${pts.split(' ').join(' L')} Z"/></svg>`;
     const buf = await sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]).png().toBuffer();
     // Lift paper (and the matching fill) to white so the multiply leaves no box.
-    const lifted = await sharp(buf).linear([252 / r, 252 / g, 252 / b], [0, 0, 0]).png().toBuffer();
+    const lifted = await sharp(buf).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer();
     img = sharp(lifted).trim({ background: '#ffffff', threshold: 10 });
   }
   if (fix === 'lift') {
@@ -104,7 +103,7 @@ for (const [n, out, box, drawing, fix] of JOBS) {
   if (fix === 'slivers') {
     // Paper slivers past the collage's right edge, and the remnant of a separate
     // handwritten scrap left of the staircase drawing (words would be cut mid-way).
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="${1403 - region.left}" y="${490 - region.top}" width="60" height="400" fill="#fff"/><rect x="0" y="0" width="${760 - region.left}" height="${850 - region.top}" fill="#fff"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}"><rect x="${1403 - region.left}" y="${490 - region.top}" width="60" height="400" fill="#fff"/><rect x="0" y="0" width="${758 - region.left}" height="${region.height}" fill="#fff"/></svg>`;
     img = sharp(await img.png().toBuffer()).composite([{ input: Buffer.from(svg), top: 0, left: 0 }]);
   }
   if (fix && fix.startsWith('padbottom:')) {
@@ -128,6 +127,8 @@ for (const [n, out, box, drawing, fix] of JOBS) {
   await (drawing ? img.webp({ quality: 90, nearLossless: true }) : img.webp({ quality: 82 }))
     .toFile(path.join(ROOT, out));
   const meta = await sharp(path.join(ROOT, out)).metadata();
-  if (meta.width > 480) await sharp(path.join(ROOT, out)).resize({ width: 480 }).webp({ quality: 78 }).toFile(path.join(ROOT, out.replace(/\.webp$/, '-480.webp')));
+  for (const w of [480, 960]) {
+    if (meta.width > w * 1.15) await sharp(path.join(ROOT, out)).resize({ width: w }).webp({ quality: 80 }).toFile(path.join(ROOT, out.replace(/\.webp$/, `-${w}.webp`)));
+  }
   console.log(`${n} -> ${out}  ${meta.width}x${meta.height}`);
 }

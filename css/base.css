@@ -490,26 +490,24 @@ html.project-open body { overflow: hidden; }
 }
 
 /* Phones (<768): name and title first, then the drawing edge to edge (both
-   sides bleed, square corners), about 55svh tall, then the about text, which
-   tucks up over the blank paper under the hands. The phone crop is 4:5 and her drawing ends
-   at about 75% of its height (where her page ended); cover.js sets --m-ratio
-   from the crop's real size. Only the bottom edge is faded: her page (and the
-   drawing) stops in a straight cut at 75%, so the fade ends just past it. */
+   sides bleed, square corners), then the about text. The phone crop is the
+   whole figure (about 2:3) cut straight at the top and bottom of her page, so
+   both of those cuts fade into the paper. The box is sized so it ends at the
+   fold: cover.js sets --m-top (where the drawing starts on the page) and the
+   crop's shape (--m-ratio). If the box is shorter than the crop, the top of
+   the figure is trimmed (object-position bottom), never the clasped hands. */
 @media (max-width: 767px) {
   .cover {
-    --m-ratio: 1.25;                          /* crop height / width */
-    --m-art: .75;                             /* where the drawing ends */
+    --m-ratio: 1.488;                         /* crop height / width (850 x 1265) */
     --m-full: calc(100vw * var(--m-ratio));   /* the crop at full width */
-    --m-art-end: calc(var(--m-full) * var(--m-art));
-    /* ~55svh, but never so short that the drawing is cut, never taller than the crop */
-    --m-h: clamp(var(--m-art-end), 55vh, var(--m-full));
+    --m-h: clamp(260px, calc(100vh - var(--m-top, 320px)), var(--m-full));
     padding-bottom: var(--space-2);
     /* the clip is only needed for the desktop hero; here it would cut the
        about text while it drifts down in the scroll fade */
     overflow: visible;
   }
   @supports (height: 1svh) {
-    .cover { --m-h: clamp(var(--m-art-end), 55svh, var(--m-full)); }
+    .cover { --m-h: clamp(260px, calc(100svh - var(--m-top, 320px)), var(--m-full)); }
   }
   .cover__figure {
     margin-left: calc(-1 * var(--gutter));
@@ -522,17 +520,13 @@ html.project-open body { overflow: hidden; }
     max-width: none;
     max-height: none;
     object-fit: cover;
-    object-position: 50% 0;                   /* crop blank paper off the bottom first */
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--m-full) * .63), transparent calc(var(--m-full) * .755));
-    mask-image: linear-gradient(to bottom, #000 calc(var(--m-full) * .63), transparent calc(var(--m-full) * .755));
+    object-position: 50% 100%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
   }
   .cover__h1 { order: 0; }
   .cover__figure { order: 1; }
   .cover__about { order: 2; }
-  /* the about text tucks up over the blank paper at the bottom of the crop */
-  .cover__figure:not(.cover__figure--empty) {
-    margin-bottom: calc(-1 * max(0px, var(--m-h) - var(--m-art-end)));
-  }
   .cover__figure--empty { margin-inline: 0; }
   .cover__figure--empty .cover__frame { aspect-ratio: 4 / 3; }
 }
@@ -565,26 +559,28 @@ html.project-open body { overflow: hidden; }
   .cover__h1 { order: 0; }
   .cover__figure { order: 1; }
   .cover__about { order: 2; }
-  /* never wider than half the crop's 1000px, so it stays sharp on 2x screens */
   .cover__img { max-width: min(62vw, 500px); max-height: 42vh; max-height: 42svh; }
   .cover__about-text { font-size: var(--text-lg); }
   .cover__figure--empty .cover__frame { max-height: 42vh; max-height: 42svh; }
 }
 
+/* 768 to 1023 (iPad portrait): the whole-figure crop, centred under the
+   title, at most 425px wide (half its 850px, so it stays sharp on 2x). All
+   four cut edges fade into the paper. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* The 4:5 crop's drawing stops in a straight cut at 75% (her page edge):
-     fade it out there, and let the plain paper below tuck under the about text. */
+  .cover__figure:not(.cover__figure--empty) { margin-right: 0; align-items: center; }
+  .cover__figure:not(.cover__figure--empty) .cover__frame { justify-content: center; }
   .cover__figure:not(.cover__figure--empty) .cover__img {
+    width: min(425px, 62vw);
+    height: auto;
+    max-width: none;
+    max-height: none;
     -webkit-mask-image:
-      linear-gradient(to right, transparent, #000 14%),
-      linear-gradient(to bottom, transparent, #000 12%, #000 63%, transparent 75.5%);
+      linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+      linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
     mask-image:
-      linear-gradient(to right, transparent, #000 14%),
-      linear-gradient(to bottom, transparent, #000 12%, #000 63%, transparent 75.5%);
-  }
-  .cover__figure:not(.cover__figure--empty) { margin-bottom: calc(-.24 * 42vh); }
-  @supports (height: 1svh) {
-    .cover__figure:not(.cover__figure--empty) { margin-bottom: calc(-.24 * 42svh); }
+      linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+      linear-gradient(to bottom, transparent 0, #000 9%, #000 86%, transparent 100%);
   }
 }
 
@@ -838,6 +834,10 @@ a.contact__social:hover { background-size: 100% 1px; }
 .contact-form__status[data-state='sending'] { border-left-color: var(--rule-strong); color: var(--muted); }
 .contact-form__status a { text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
 
+/* iPad portrait: keep the gap from the last folder to Get in Touch small */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .contact { margin-top: var(--space-5); }
+}
 @media (max-width: 719px) {
   .contact { margin-top: 0; padding-top: var(--space-6); padding-bottom: var(--space-8); gap: var(--space-6); }
   .contact__row { grid-template-columns: 1fr; gap: var(--space-1); }

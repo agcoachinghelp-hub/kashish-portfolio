@@ -1,0 +1,342 @@
+{
+  "iphone15": {
+    "metrics": {
+      "landing": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "folders": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "contact": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      }
+    },
+    "notes": [
+      "In Progress click: hash  -> , project view open=false",
+      "contents: last project link -> #project/burra-pod",
+      "burra-pod: last project link -> #project/common-grounds",
+      "common-grounds: last project link -> #project/burra-pod",
+      "After Esc: {\"hash\":\"#projects\",\"open\":false}",
+      "Opened before back: #project/burra-pod",
+      "After back: {\"hash\":\"#projects\",\"open\":false}"
+    ],
+    "consoleErrors": []
+  },
+  "iphoneSE": {
+    "metrics": {
+      "landing": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "folders": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "contact": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      }
+    },
+    "notes": [
+      "In Progress click: hash  -> , project view open=false",
+      "contents: last project link -> #project/burra-pod",
+      "burra-pod: last project link -> #project/common-grounds",
+      "common-grounds: last project link -> #project/burra-pod",
+      "After Esc: {\"hash\":\"#projects\",\"open\":false}",
+      "Opened before back: #project/burra-pod",
+      "After back: {\"hash\":\"#projects\",\"open\":false}"
+    ],
+    "consoleErrors": []
+  },
+  "ipad-portrait": {
+    "metrics": {
+      "landing": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "folders": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "contact": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      }
+    },
+    "notes": [
+      "In Progress click: hash  -> , project view open=false",
+      "contents: last project link -> #project/burra-pod",
+      "burra-pod: last project link -> #project/common-grounds",
+      "common-grounds: last project link -> #project/burra-pod",
+      "After Esc: {\"hash\":\"#projects\",\"open\":false}",
+      "Opened before back: #project/burra-pod",
+      "After back: {\"hash\":\"#projects\",\"open\":false}"
+    ],
+    "consoleErrors": []
+  },
+  "ipad-landscape": {
+    "metrics": {
+      "landing": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "folders": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "contact": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      }
+    },
+    "notes": [
+      "In Progress click: hash  -> , project view open=false",
+      "contents: last project link -> #project/burra-pod",
+      "burra-pod: last project link -> #project/common-grounds",
+      "common-grounds: last project link -> #project/burra-pod",
+      "After Esc: {\"hash\":\"#projects\",\"open\":false}",
+      "Opened before back: #project/burra-pod",
+      "After back: {\"hash\":\"#projects\",\"open\":false}"
+    ],
+    "consoleErrors": []
+  },
+  "desktop": {
+    "metrics": {
+      "landing": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "folders": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-contents-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-burra-pod-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "project-common-grounds-end": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      },
+      "contact": {
+        "overflow": 0,
+        "smallFonts": [],
+        "smallTaps": [],
+        "smallInputs": []
+      }
+    },
+    "notes": [
+      "In Progress click: hash  -> , project view open=false",
+      "contents: last project link -> #project/burra-pod",
+      "burra-pod: last project link -> #project/common-grounds",
+      "common-grounds: last project link -> #project/burra-pod",
+      "After Esc: {\"hash\":\"#projects\",\"open\":false}",
+      "Opened before back: #project/burra-pod",
+      "After back: {\"hash\":\"#projects\",\"open\":false}"
+    ],
+    "consoleErrors": []
+  }
+}

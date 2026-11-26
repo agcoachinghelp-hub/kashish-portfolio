@@ -13,7 +13,7 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Pinyon+Script&amp;display=swap"></noscript>
   <!-- The landing hero is the largest paint: fetch the right crop straight away -->
-  <link rel="preload" as="image" href="assets/site/hero-mobile.webp" media="(max-width: 1023px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/site/hero-mobile.webp" imagesrcset="assets/site/hero-mobile-480.webp 480w, assets/site/hero-mobile.webp 850w" imagesizes="(max-width: 767px) 100vw, 425px" media="(max-width: 1023px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/site/hero.webp" media="(min-width: 1024px)" fetchpriority="high">
   <link rel="preload" as="fetch" href="content.json" crossorigin>
   <link rel="stylesheet" href="css/tokens.css">
@@ -47,7 +47,7 @@
           <figure class="cover__figure" data-cover-hero>
             <div class="cover__frame">
               <picture class="cover__picture">
-                <source media="(max-width: 1023px)" srcset="assets/site/hero-mobile.webp" width="1000" height="1250">
+                <source media="(max-width: 1023px)" srcset="assets/site/hero-mobile-480.webp 480w, assets/site/hero-mobile.webp 850w" sizes="(max-width: 767px) 100vw, 425px" width="850" height="1265">
                 <img class="cover__img" src="assets/site/hero.webp" alt="Pencil sketch of sculptural, intertwined figures with hands, from the cover of Kashish Khera's portfolio" width="760" height="1180" fetchpriority="high" decoding="async">
               </picture>
             </div>
