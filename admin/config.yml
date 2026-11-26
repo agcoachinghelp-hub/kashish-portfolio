@@ -42,7 +42,7 @@ collections:
           # --- Landing page ---------------------------------------------------
           - { name: name, label: "Your name", widget: string,
               hint: "Shown huge on the landing page (one word per line), in the menu bar once you scroll, and in the footer." }
-          - { name: title, label: "Line under your name", widget: string, default: "Architecture Portfolio",
+          - { name: title, label: "Line under your name (leave empty for name only)", widget: string, required: false, default: "",
               hint: "The second line on the landing page, e.g. Architecture Portfolio. The last word is set in script." }
           - { name: edition, label: "Edition line", widget: string,
               hint: "Small line at the top of the landing page, e.g. UNSW 2024-2026." }

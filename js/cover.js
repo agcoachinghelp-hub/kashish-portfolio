@@ -81,7 +81,7 @@ function coverHTML(site) {
         ${heroHTML(site.hero && site.hero.src ? site.hero : null)}
         <h1 class="cover__h1">
           <span class="cover__name" data-fit-name>${nameHTML(site)}</span>
-          <span class="cover__title">${titleHTML(site)}</span>
+          ${hasValue(site.title) ? `<span class="cover__title">${titleHTML(site)}</span>` : ''}
         </h1>
         ${about ? `<div class="cover__about"><p class="cover__about-text">${esc(about)}</p></div>` : ''}
       </div>
@@ -158,8 +158,13 @@ function renderCover(site) {
   }
   const name = cover.querySelector('.cover__name');
   if (name && norm(name.textContent) !== norm(site.name)) name.innerHTML = nameHTML(site);
-  const title = cover.querySelector('.cover__title');
-  if (title && norm(title.textContent) !== norm(site.title)) title.innerHTML = titleHTML(site);
+  // The line under her name is optional (Kashish, 26 Nov: name only).
+  let title = cover.querySelector('.cover__title');
+  if (!hasValue(site.title)) { if (title) title.remove(); }
+  else {
+    if (!title && name) { title = document.createElement('span'); title.className = 'cover__title'; name.after(title); }
+    if (title && norm(title.textContent) !== norm(site.title)) title.innerHTML = titleHTML(site);
+  }
 
   syncHero(cover, site);
 
