@@ -294,48 +294,46 @@ html.project-open { overflow: hidden; }
   text-indent: -.42em; /* hang the opening quote mark */
 }
 .pv-statement .pv-pullquote p { margin: 0; }
-/* ---------- story: statement rows with their images ----------
-   phones: one column in reading order (meta, cover, text / image, text);
-   >= 1024px: text on a readable measure at left, images beside it at right. */
+/* ---------- story: the statement with its images ----------
+   One flat sequence in reading order (meta, paragraphs, each image after the
+   paragraph it belongs to). Phones: top to bottom. >= 1024px: two columns,
+   text at left on a readable measure, each image at right starting beside its
+   paragraph (--r, set in project.js) and running alongside the next. */
 .pv-story {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(36px, 4.4vw, 64px);
+  max-width: none;
   margin-top: clamp(32px, 4.4vw, 64px);
   padding-bottom: clamp(36px, 5vw, 64px);
   border-bottom: 1px solid var(--pv-rule);
 }
-.pv-row { display: flex; flex-direction: column; gap: clamp(28px, 3.4vw, 44px); }
-.pv-row--lead .pv-row__meta { order: 0; }
-.pv-row--lead .pv-row__media { order: 1; }
-.pv-row--lead .pv-row__text { order: 2; }
-.pv-row .pv-statement { margin: 0; padding: 0; border: 0; }
-.pv-row__meta .pv-meta { margin-top: 0; }
-.pv-row__media { display: flex; flex-direction: column; gap: 28px; }
-.pv-row__media .pv-figure { margin-top: 0; }
+.pv-story > :not(.pv-story__media) { max-width: 40ch; }
+.pv-story > .pv-story__meta { max-width: none; margin-bottom: clamp(28px, 3.4vw, 44px); }
+.pv-story__meta .pv-meta { margin-top: 0; }
+.pv-story__media { display: flex; flex-direction: column; gap: 28px; margin: clamp(28px, 3.4vw, 44px) 0; }
+.pv-story__media .pv-figure { margin-top: 0; }
 @media (min-width: 1024px) {
-  .pv-row {
+  .pv-story {
     display: grid;
-    /* the image column is only as wide as its images, so a small detail
-       sits right beside its text instead of alone in an empty column */
+    /* the image column is only as wide as its images */
     grid-template-columns: minmax(0, 40rem) auto;
     justify-content: start;
     column-gap: clamp(40px, 5vw, 80px);
-    row-gap: clamp(28px, 3vw, 44px);
     align-items: start;
   }
-  .pv-row__meta, .pv-row__text { grid-column: 1; }
-  .pv-row__media { grid-column: 2; grid-row: 1 / span 2; }
-  .pv-row--lead .pv-row__meta { grid-row: 1; }
-  .pv-row--lead .pv-row__text { grid-row: 2; }
-  .pv-row:not(.pv-row--lead) .pv-row__text { grid-row: 1; }
-  .pv-row--lead:not(:has(.pv-row__meta)) .pv-row__text { grid-row: 1; }
-  .pv-row__media { align-items: flex-start; }
-  /* sized by the image itself (2x cap, maxWidth, height cap); the grid gives
-     the text column what is left, up to 40rem */
-  .pv-row__media .pv-figure { margin-inline: 0; width: min(var(--nw, 480px), var(--mw, 100000px), calc((100svh - 170px) * var(--ar, 1.6))); }
+  .pv-story > :not(.pv-story__media) { grid-column: 1; }
+  .pv-story__media {
+    grid-column: 2;
+    grid-row: var(--r, 1) / span 2;
+    margin: 0;
+  }
+  .pv-story__media .pv-figure { margin-inline: 0; width: min(var(--nw, 480px), var(--mw, 100000px), calc((100svh - 170px) * var(--ar, 1.6))); }
 }
+.pv-statement .pv-pullquote p { margin: 0; }
 @media (max-width: 639.98px) { .pv-statement .pv-pullquote { text-indent: 0; } }
+/* phones: a quiet rule between consecutive paragraphs, so no unbroken run of
+   text is longer than a screen */
+@media (max-width: 767.98px) {
+  .pv-story > p + p { margin-top: 1.2em; padding-top: 1.2em; border-top: 1px solid var(--pv-rule); }
+}
 /* when the statement ends the file, the END OF FILE rule is enough */
 .pv-story:has(+ .pv-end) { border-bottom: 0; padding-bottom: 0; }
 /* a long run of text after the quote gets a quiet pause between paragraphs */
@@ -513,7 +511,14 @@ html.project-open { overflow: hidden; }
   padding-inline: max(0px, calc(var(--pv-pad) - (100cqw - var(--bw)) * 1000));
 }
 
-/* phones: everything takes the column (still never upscaled); bleed still bleeds */
+/* below 768px a bleed image takes the full column width: no negative margins,
+   so nothing (e.g. a plan's grid bubbles) is clipped at the panel edge */
+@media (max-width: 767.98px) {
+  .pv-figure--bleed { width: min(100%, var(--nw, 100%)); margin-left: 0; }
+  .pv-figure--bleed .pv-figure__cap { padding-inline: 0; }
+}
+
+/* phones: everything takes the column (still never upscaled) */
 @media (max-width: 639.98px) {
   .pv-figure:not(.pv-figure--bleed) { --lw: 100%; margin-left: 0; }
 }
@@ -539,6 +544,11 @@ html.project-open { overflow: hidden; }
 /* captions always start at the image's left edge */
 .pv-figure__hint { display: none; white-space: nowrap; } /* wraps whole, never split */
 @media (hover: none) { .pv-figure__hint { display: inline; } }
+/* phones: the hint gets its own line, without the separator dot */
+@media (hover: none) and (max-width: 767.98px) {
+  .pv-figure__hint { display: block; flex-basis: 100%; }
+  .pv-figure__hint-dot { display: none; }
+}
 .pv-figure__code { color: var(--pv-ink); font-weight: 700; }
 .pv-figure__sep { opacity: .6; }
 

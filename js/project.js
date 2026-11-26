@@ -98,7 +98,7 @@ function captionHTML(caption, auto) {
       ${code ? `<span class="pv-figure__code">${esc(code)}</span>` : ''}
       ${code && label ? '<span class="pv-figure__sep" aria-hidden="true">//</span>' : ''}
       ${label ? `<span>${esc(label)}</span>` : ''}
-      <span class="pv-figure__hint" aria-hidden="true">&middot; Tap to enlarge</span>
+      <span class="pv-figure__hint" aria-hidden="true"><span class="pv-figure__hint-dot">&middot; </span>Tap to enlarge</span>
     </figcaption>`;
 }
 
@@ -208,35 +208,35 @@ function nextFile(p, projects) {
   return q === p ? null : q;
 }
 
-// Her statement, with the pull-quote (her own words, exactly) after the first
-// paragraph, and any image block with `after: n` placed after paragraph n.
-// Built as rows: [meta + first text run | cover], then [next text run | the
-// images placed before it], ... At >= 1024px a row is two columns (text on a
-// readable measure, images beside it); on phones it stacks in reading order.
+// Her statement as one flat sequence in reading order: meta, (cover),
+// paragraphs, the pull-quote after paragraph 1, and each `after: n` image
+// straight after paragraph n. Phones read it top to bottom. At >= 1024px it is
+// a two-column grid: text on a readable measure at left, and each image in the
+// right column starting beside the paragraph it follows and running alongside
+// the next one (rows set here as --r).
 function storyHTML(p, ctx, inline, metaHTML, heroHTML) {
   if (!p.statement || !textOf(p.statement) || isPlaceholder(textOf(p.statement))) return '';
   const t = document.createElement('template');
   t.innerHTML = String(p.statement);
   const quote = clean(p.pullquote).replace(/^["“‘']+|["”’']+$/g, '').trim();
-  const bq = () => `<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`;
-  const rows = [{ lead: true, text: [], media: heroHTML }];
+  const items = [];
+  let row = 0; // grid row of the last left-column item
+  const text = (html) => { row += 1; items.push(html); };
+  const media = (html, r) => items.push(`<div class="pv-story__media" style="--r:${Math.max(1, r)}">${html}</div>`);
+  if (metaHTML) text(`<div class="pv-story__meta">${metaHTML}</div>`);
+  if (heroHTML) media(heroHTML, 1);
   let para = 0;
   [...t.content.childNodes].forEach((node) => {
     if (node.nodeType === 3 && !node.textContent.trim()) return;
-    rows[rows.length - 1].text.push(node.outerHTML ?? esc(node.textContent));
+    text(node.outerHTML ?? `<p>${esc(node.textContent)}</p>`);
     if (node.nodeName !== 'P') return;
     para += 1;
-    if (para === 1 && quote) rows[rows.length - 1].text.push(bq());
+    if (para === 1 && quote) text(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
     const here = inline.get(para);
-    if (here?.length) rows.push({ text: [], media: here.map((b) => figureHTML(b, ctx, { layout: b.layout || b.size, align: b.align })).join('') });
+    if (here?.length) media(here.map((b) => figureHTML(b, ctx, { layout: b.layout || b.size, align: b.align })).join(''), row);
   });
-  if (para === 0 && quote) rows[rows.length - 1].text.push(bq());
-  return `<div class="pv-story">${rows.map((r) => `
-    <div class="pv-row${r.lead ? ' pv-row--lead' : ''}${r.media ? '' : ' pv-row--text'}" data-pv-rise>
-      ${r.lead && metaHTML ? `<div class="pv-row__meta">${metaHTML}</div>` : ''}
-      ${r.media ? `<div class="pv-row__media">${r.media}</div>` : ''}
-      ${r.text.length ? `<div class="pv-row__text pv-statement">${r.text.join('')}</div>` : ''}
-    </div>`).join('')}</div>`;
+  if (para === 0 && quote) text(`<blockquote class="pv-pullquote"><p>“${esc(quote)}”</p></blockquote>`);
+  return `<div class="pv-story pv-statement" data-pv-rise>${items.join('')}</div>`;
 }
 
 // Image blocks placed inside the statement (`after: n`), by paragraph number.
@@ -582,6 +582,8 @@ export function initProjectView(projects, site) {
       if (folder) { folder.style.visibility = ''; folder.classList.remove('is-flipping'); }
       scroller.innerHTML = '';
       const keepY = window.scrollY;
+      // never leave an empty hash behind (e.g. back to a hashless entry)
+      if (!location.hash) history.replaceState(null, '', '#projects');
       unlockPage();
       current = null;
       busy = false;

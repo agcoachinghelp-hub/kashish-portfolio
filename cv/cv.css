@@ -189,3 +189,6 @@ ul { padding: 0; list-style: none; }
   .cv-skills, .cv-dated, .cv-foot { break-inside: avoid; }
 }
 .cv-entry__org { font-weight: 400; }
+
+/* Keep each entry whole across the page break. */
+.cv-entry, .cv-entry * { break-inside: avoid; page-break-inside: avoid; }

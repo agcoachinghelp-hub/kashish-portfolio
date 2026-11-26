@@ -85,6 +85,14 @@
   "experience": {
     "architecture": [
       {
+        "role": "Academic Tutor",
+        "org": "Art of Smart",
+        "dates": "Aug 2025 - Present",
+        "bullets": [
+          "Deliver personalised tutoring across multiple subjects, adapting teaching methods to individual learning needs to strengthen understanding and academic confidence."
+        ]
+      },
+      {
         "role": "Civil & Project Management Assistant",
         "org": "Kalra Group",
         "dates": "Jan 2025 - Jul 2026",
@@ -92,25 +100,7 @@
           "Prepared building cost estimates for 3 new multi-million-dollar commercial projects and multiple ongoing renovation projects, supporting budgeting, tender preparation and financial planning.",
           "Tendered and compared 40+ supplier and contractor quotations per project across each stage of the build, collating and analysing them in Excel to identify lower-cost options and reduce procurement costs.",
           "Drafted architectural and construction plans and technical drawings in AutoCAD and Revit for selected renovation projects, supporting council review and development approval.",
-          "Coordinated clients, contractors, consultants and suppliers to track project requirements and progress across multiple concurrent construction projects. Receptionist &"
-        ]
-      },
-      {
-        "role": "Architecture Student Apprentice",
-        "org": "Collard Maxwell Architects",
-        "dates": "Jun 2021 - Jul 2021",
-        "bullets": [
-          "Shadowed practising architects on live projects and observed client meetings, gaining insight into architectural workflows, client requirements and professional design processes."
-        ]
-      }
-    ],
-    "other": [
-      {
-        "role": "Academic Tutor",
-        "org": "Art of Smart",
-        "dates": "Aug 2025 - Present",
-        "bullets": [
-          "Deliver personalised tutoring across multiple subjects, adapting teaching methods to individual learning needs to strengthen understanding and academic confidence."
+          "Coordinated clients, contractors, consultants and suppliers to track project requirements and progress across multiple concurrent construction projects."
         ]
       },
       {
@@ -128,8 +118,17 @@
         "bullets": [
           "Promoted from Team Member to Shift Manager, assuming responsibility for store operations, team performance and customer service."
         ]
+      },
+      {
+        "role": "Architecture Student Apprentice",
+        "org": "Collard Maxwell Architects",
+        "dates": "Jun 2021 - Jul 2021",
+        "bullets": [
+          "Shadowed practising architects on live projects and observed client meetings, gaining insight into architectural workflows, client requirements and professional design processes."
+        ]
       }
-    ]
+    ],
+    "other": []
   },
   "honours": [
     {

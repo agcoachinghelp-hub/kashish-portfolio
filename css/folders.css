@@ -43,7 +43,10 @@
   transition: transform .6s var(--lift-ease);
 }
 a.folder { will-change: transform; }
-.folder--group { cursor: default; }
+/* IN PROGRESS is not a link: static, no lift, no press, no pointer */
+.folder--group,
+.folder--group:hover,
+.folder--group:active { cursor: default; transform: none; }
 
 .folder__leaf,
 .folder__face,

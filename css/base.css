@@ -541,6 +541,24 @@ html.project-open body { overflow: hidden; }
   .cover__text { padding-top: var(--space-3); gap: var(--space-3); }
   .cover__h1 { gap: var(--space-1); }
   .cover__title-script { font-size: 1.85em; }
+  /* Show the WHOLE figure (no top trim): the box takes the crop's own
+     proportions at the available height, so it is narrower than the screen
+     (about 80% on an SE) and bleeds off the right edge. Its left edge is now
+     on screen, so it fades too. */
+  .cover__figure:not(.cover__figure--empty) { margin-left: 0; }
+  .cover__figure:not(.cover__figure--empty) .cover__frame { justify-content: flex-end; }
+  .cover__figure:not(.cover__figure--empty) .cover__img {
+    width: min(100%, calc(var(--m-h) / var(--m-ratio)));
+    object-position: 100% 100%;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 10%),
+      linear-gradient(to bottom, transparent 0, #000 6%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent, #000 10%),
+      linear-gradient(to bottom, transparent 0, #000 6%, #000 min(86%, var(--hero-cut, 100%)), transparent 100%);
+    mask-composite: intersect;
+  }
 }
 
 /* Opening on phones: the drawing fades in from page load; once the fonts are

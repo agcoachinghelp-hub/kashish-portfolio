@@ -4,7 +4,7 @@
 // Temporary source until her original files come from Google Drive; then use
 // scripts/import-project.mjs instead. Never upscales.
 import sharp from 'sharp';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,12 +40,11 @@ const JOBS = [
   ['02', 'assets/projects/contents/01.webp', { left: 0, top: 60, width: 1840, height: 600 }, true, 'dots'],
   ['02', 'assets/projects/contents/02.webp', { left: 0, top: 1105, width: 1460, height: 309 }, true, 'lift'],
   // Page 13: start below the separate "CLOSE-UP" sheet; paint out paper slivers past the collage's right edge.
-  ['13', 'assets/projects/contents/03.webp', { left: 758, top: 98, width: 647, height: 832 }, false, 'slivers'],
+  ['13', 'assets/projects/contents/03.webp', { left: 758, top: 98, width: 647, height: 832 }, false, 'kraft'],
   // Burra Pod collage split into its three diagonal bands (river strips, material
   // swatches, site photo strips); everything outside a band is painted white so it
   // multiplies away. Polygons are in page-06 coordinates.
   ['06', 'assets/projects/burra-pod/01.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'collage'],
-  ['06', 'assets/projects/burra-pod/02.webp', { left: 1000, top: 0, width: 530, height: 706 }, false, 'band:2'],
   ['08', 'assets/projects/common-grounds/01.webp', { left: 992, top: 141, width: 864, height: 675 }, false],
   // Plans: labels ("X Plan 1:100") cropped off and moved to captions; edges cut
   // through grid lines, clear of grid bubbles.
@@ -121,10 +120,20 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     const [r, g, b] = pix[Math.floor(pix.length * 0.85)];
     img = sharp(await whitenPaper(await img.modulate({ saturation: 0.85 }).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()));
   }
+  if (fix === 'kraft') {
+    // Her kraft paper multiplies to orange; level each channel so the kraft becomes
+    // white and only the sepia linework remains (her drawing, ground removed).
+    const raw = await img.removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    const px = []; for (let i = 0; i < raw.data.length; i += 3) px.push([raw.data[i], raw.data[i + 1], raw.data[i + 2]]);
+    px.sort((a, c) => a[0] + a[1] + a[2] - (c[0] + c[1] + c[2]));
+    const [r, g, b] = px[Math.floor(px.length * 0.7)];
+    const lev = await sharp(raw.data, { raw: raw.info }).linear([255 / r, 255 / g, 255 / b], [0, 0, 0]).png().toBuffer();
+    img = sharp(await whitenPaper(await sharp(lev).modulate({ saturation: 0.7 }).png().toBuffer()));
+  }
   if (fix === 'lift') {
     const { channels } = await sharp(page(n)).extract({ left: 1300, top: 700, width: 400, height: 200 }).stats();
     const [r, g, b] = channels.slice(0, 3).map((c) => c.mean);
-    img = sharp(await img.png().toBuffer()).linear([252 / r, 252 / g, 252 / b], [0, 0, 0]);
+    img = sharp(await whitenPaper(await sharp(await img.png().toBuffer()).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()));
   }
   if (fix === 'slivers') {
     // Paper slivers past the collage's right edge, and the remnant of a separate
@@ -144,7 +153,7 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     // Lift her grey scan paper to white first (a plain levels adjustment, line work
     // keeps its tone), so the painted band and the paper match exactly.
     const [r, g, b] = await paperColour(n);
-    img = sharp(await img.png().toBuffer()).linear([250 / r, 250 / g, 250 / b], [0, 0, 0]);
+    img = sharp(await whitenPaper(await sharp(await img.png().toBuffer()).linear([262 / r, 262 / g, 262 / b], [0, 0, 0]).png().toBuffer()));
     // Sloped line in page coords: (0, 78) -> (2000, 146); paint everything above it.
     const y0 = 78 - region.top, y1 = 146 - region.top, w = region.width;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${region.height}"><polygon points="0,0 ${w},0 ${w},${y1} 0,${y0}" fill="#ffffff"/></svg>`;
@@ -154,6 +163,8 @@ for (const [n, out, box, drawing, fix] of JOBS) {
     .toFile(path.join(ROOT, out));
   const meta = await sharp(path.join(ROOT, out)).metadata();
   for (const w of [480, 960]) {
+    const vf = path.join(ROOT, out.replace(/\.webp$/, `-${w}.webp`));
+    if (meta.width <= w * 1.15) { await rm(vf, { force: true }); continue; }
     if (meta.width > w * 1.15) await sharp(path.join(ROOT, out)).resize({ width: w }).webp({ quality: 80 }).toFile(path.join(ROOT, out.replace(/\.webp$/, `-${w}.webp`)));
   }
   console.log(`${n} -> ${out}  ${meta.width}x${meta.height}`);
