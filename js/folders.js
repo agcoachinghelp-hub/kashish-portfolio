@@ -337,8 +337,10 @@ function reveal(container) {
 export function renderFolders(projects = []) {
   const container = document.querySelector('[data-folders]');
   if (!container) return;
-  const published = projects.filter((p) => !isSoon(p));
-  const soon = projects.filter(isSoon);
+  // Kashish, 26 Nov: every project gets its own folder (coming-soon ones too,
+  // each in its own colour), and the Contents index has no folder of its own.
+  const published = projects.filter((p) => !p.index);
+  const soon = [];
   const n = published.length + (soon.length ? 1 : 0);
   container.setAttribute('role', 'list');
   container.style.setProperty('--n', n);
