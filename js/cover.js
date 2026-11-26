@@ -45,19 +45,25 @@ function renderCover(site) {
   const script = words.length > 1 ? words.pop() : '';
   const title = `${esc(words.join(' '))}${script ? ` <span class="cover__title-script">${esc(script)}</span>` : ''}`;
 
-  const dims = hero && hero.width && hero.height ? ` width="${Number(hero.width)}" height="${Number(hero.height)}"` : '';
+  const dims = (o) => (o && o.width && o.height ? ` width="${Number(o.width)}" height="${Number(o.height)}"` : '');
+  const mobile = hero && hero.mobile && hero.mobile.src ? hero.mobile : null;
+  // Phones get the square crop (centred on the hands) through <picture>.
+  const picture = hero ? `<picture class="cover__picture">
+            ${mobile ? `<source media="(max-width: 767px)" srcset="${esc(mobile.src)}"${dims(mobile)}>` : ''}
+            <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims(hero)} loading="eager" fetchpriority="high" decoding="async">
+          </picture>` : '';
   // No hero yet: an empty ruled frame holds its place (no generated drawing).
   const figure = hero ? `
-      <figure class="cover__figure">
-        <div class="cover__frame">
-          <img class="cover__img${hero.blend === 'none' ? ' cover__img--plain' : ''}" src="${esc(hero.src)}" alt="${esc(hero.alt)}"${dims} loading="eager" fetchpriority="high" decoding="async">
-        </div>
-        ${hasValue(hero.caption) ? `<figcaption class="cover__caption t-code">${esc(hero.caption)}</figcaption>` : ''}
-      </figure>` : `
-      <div class="cover__figure cover__figure--empty" aria-hidden="true">
-        <div class="cover__frame"></div>
-      </div>`;
+        <figure class="cover__figure">
+          <div class="cover__frame">${picture}</div>
+          ${hasValue(hero.caption) ? `<figcaption class="cover__caption t-code">${esc(hero.caption)}</figcaption>` : ''}
+        </figure>` : `
+        <div class="cover__figure cover__figure--empty" aria-hidden="true">
+          <div class="cover__frame"></div>
+        </div>`;
 
+  // Order in the markup = phone order (name, title, hero, degree, about).
+  // From 768px up, CSS places the hero beside or below the text.
   cover.innerHTML = `
     <div class="cover__inner" data-cover-inner>
       <div class="cover__strip">
@@ -69,12 +75,12 @@ function renderCover(site) {
           <span class="cover__name" data-fit-name>${nameLines}</span>
           ${title ? `<span class="cover__title">${title}</span>` : ''}
         </h1>
+        ${figure}
         ${study || about ? `<div class="cover__about">
           ${study ? `<p class="t-label cover__study">${study}</p>` : ''}
           ${about ? `<p class="cover__about-text">${esc(about)}</p>` : ''}
         </div>` : ''}
       </div>
-      ${figure}
     </div>`;
   return cover;
 }
@@ -86,7 +92,7 @@ function renderCover(site) {
 // viewport size actually changes. CSS gives a container-query fallback.
 function setupNameFit() {
   const el = document.querySelector('[data-fit-name]');
-  const box = el && el.parentElement && el.closest('.cover__text');
+  const box = el && el.closest('.cover__h1');
   if (!el || !box) return;
   const words = [...el.querySelectorAll('.cover__name-line')].map((l) => l.textContent);
   if (!words.length) return;
@@ -257,26 +263,30 @@ function setupCoverScroll() {
   const { gsap } = window;
   const cover = document.querySelector('[data-cover]');
   if (!gsap || !window.ScrollTrigger || !cover) return;
-  const text = [...cover.querySelectorAll('.cover__strip, .cover__text')];
+  const text = [...cover.querySelectorAll('.cover__strip, .cover__h1, .cover__about')];
   const art = [...cover.querySelectorAll('.cover__img, .cover__figure--empty .cover__frame')];
   const parts = [...text, ...art];
   if (!parts.length) return;
 
   const mm = gsap.matchMedia();
-  mm.add('(prefers-reduced-motion: no-preference)', () => {
+  mm.add({ motion: '(prefers-reduced-motion: no-preference)', phone: '(max-width: 767px)' }, (ctx) => {
+    if (!ctx.conditions.motion) return;
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: cover,
-        start: 'top top',
-        end: 'bottom 20%',
+        // Phones: the landing is taller than the screen, so the text only
+        // fades as its last lines (the about text) leave the top.
+        start: ctx.conditions.phone ? 'bottom 45%' : 'top top',
+        end: ctx.conditions.phone ? 'bottom 5%' : 'bottom 20%',
         scrub: true,
         invalidateOnRefresh: true,
       },
     });
     if (text.length) tl.fromTo(text, { opacity: 1, scale: 1, yPercent: 0, transformOrigin: '0% 30%' },
       { opacity: 0, scale: 0.94, yPercent: 6 }, 0);
-    if (art.length) tl.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: '100% 30%' },
+    // Phones: the hero sits mid-screen, so it scrolls away unfaded (it must be seen).
+    if (art.length && !ctx.conditions.phone) tl.fromTo(art, { opacity: 1, scale: 1, y: 0, transformOrigin: '100% 30%' },
       { opacity: 0, scale: 0.94, y: () => cover.offsetHeight * 0.06 }, 0);
   });
   // Reduced motion: no scrub, no scale. A plain, untied fade as it leaves.

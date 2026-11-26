@@ -20,8 +20,8 @@
   --font-body: var(--font-display);      /* Archivo at normal width */
   --track-label: .14em;
 
-  --text-2xs: .625rem;   /* 10px  codes */
-  --text-xs: .6875rem;   /* 11px  labels */
+  --text-2xs: .75rem;    /* 12px  codes (12px is the minimum anywhere) */
+  --text-xs: .75rem;     /* 12px  labels */
   --text-sm: .8125rem;   /* 13px */
   --text-md: 1rem;
   --text-lg: clamp(1.125rem, 1rem + .4vw, 1.375rem);
@@ -167,6 +167,9 @@ html.project-open body { overflow: hidden; }
   top: var(--space-2);
   left: var(--space-2);
   z-index: calc(var(--z-grain) + 1);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: var(--space-3) var(--space-4);
   background: var(--ink);
   color: var(--cream);
@@ -247,13 +250,18 @@ html.project-open body { overflow: hidden; }
 .site-nav__list {
   display: flex;
   align-items: center;
-  gap: clamp(var(--space-4), 2.2vw, var(--space-6));
+  /* each link carries 8px of tap padding a side, so the visible gap is gap + 16px */
+  gap: clamp(0px, calc(2.2vw - 16px), 16px);
+  margin-right: -8px;              /* keep the last word on the gutter */
 }
 .site-nav__list a {
   position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+  padding: 0 8px;                  /* 44px tap area without a larger font */
   white-space: nowrap;
   color: var(--muted);
   transition: color .3s var(--ease-out);
@@ -261,7 +269,7 @@ html.project-open body { overflow: hidden; }
 .site-nav__list a::after {
   content: '';
   position: absolute;
-  left: 0; right: 0; bottom: 12px;
+  left: 8px; right: 8px; bottom: 12px;
   height: 1px;
   background: currentColor;
   transform: scaleX(0);
@@ -274,29 +282,33 @@ html.project-open body { overflow: hidden; }
 .site-nav__list a[aria-current]::after { transform: scaleX(1); }
 
 @media (max-width: 719px) {
-  .site-nav { gap: var(--space-3); font-size: var(--text-2xs); letter-spacing: .08em; }
-  .site-nav__list { gap: var(--space-3); }
+  .site-nav { gap: var(--space-2); font-size: var(--text-2xs); letter-spacing: .06em; }
 }
+@media (max-width: 400px) {
+  .site-nav { letter-spacing: .03em; }
+  .site-nav__list a { padding: 0 6px; }
+  .site-nav__list { margin-right: -6px; }
+}
+/* Very narrow phones: the name is huge on the landing, and Home is in the menu */
 @media (max-width: 359px) {
-  .site-nav__list { gap: var(--space-2); letter-spacing: .04em; }
-  .site-nav__mark { letter-spacing: .02em; }
+  .site-nav { justify-content: flex-end; }
+  .site-nav__mark { display: none; }
 }
 
 /* ==========================================================================
    Landing (#home)
-   Desktop: name, title and degree on the left as one block; the hero sheet
-   (or, until there is one, an empty ruled frame) on the right.
+   Markup order is the phone order: name, title, hero, degree, about.
+   Phones (<768): the hands sit right under the title, bleeding off the right.
+   768 to 1023: one column, hero last. Desktop: text left, hero right.
    ========================================================================== */
 .cover {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  padding: calc(var(--nav-h) + var(--space-5)) var(--gutter) var(--space-6);
+  padding: calc(var(--nav-h) + var(--space-5)) var(--gutter) var(--space-4);
 }
 .cover__inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'strip' 'text' 'figure';
+  grid-template-areas: 'strip' 'text';
 }
 
 /* Header strip: the edition line over a rule */
@@ -312,19 +324,20 @@ html.project-open body { overflow: hidden; }
 
 .cover__text {
   grid-area: text;
-  container-type: inline-size;     /* fallback name size below uses cqi */
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--space-5), 4vh, var(--space-7));
-  padding: clamp(var(--space-6), 6vh, var(--space-8)) 0 0;
+  gap: var(--space-5);
+  padding-top: var(--space-5);
   min-width: 0;
 }
 
 /* Title block: her name is the hero */
 .cover__h1 {
+  container-type: inline-size;     /* the name's fallback size below uses cqi */
   display: flex;
   flex-direction: column;
   gap: clamp(var(--space-2), 1.6vh, var(--space-4));
+  min-width: 0;
   font-weight: inherit;
 }
 .cover__name {
@@ -341,6 +354,7 @@ html.project-open body { overflow: hidden; }
   margin-left: -.045em;           /* optical: align the K's stem with the rule */
 }
 .cover__name-line { display: block; width: max-content; white-space: nowrap; }
+.cover__name-line + .cover__name-line { margin-top: .04em; }
 /* Hidden 100px copy of the name that cover.js measures (appended to body).
    Zero-size and clipped, so it never affects layout or scroll width. */
 .cover__name-probe {
@@ -359,7 +373,6 @@ html.project-open body { overflow: hidden; }
   white-space: nowrap;
 }
 .cover__name-probe > span { display: block; width: max-content; }
-.cover__name-line + .cover__name-line { margin-top: .04em; }
 
 /* "ARCHITECTURE Portfolio": wide grotesk + script */
 .cover__title {
@@ -392,14 +405,14 @@ html.project-open body { overflow: hidden; }
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-width: 36rem;
+  max-width: 40rem;
   padding-top: var(--space-3);
   border-top: 1px solid var(--rule);
 }
 .cover__study { color: var(--muted); }
 .cover__study-part { white-space: nowrap; }
 .cover__about-text {
-  font-size: var(--text-lg);
+  font-size: 1.0625rem;
   line-height: 1.5;
   text-wrap: pretty;
 }
@@ -409,14 +422,13 @@ html.project-open body { overflow: hidden; }
    colour. Nothing between the img and the page may create a stacking context
    (no opacity/transform/filter/will-change/isolation on its wrappers), or the
    blend would only see a transparent backdrop. The scroll fade animates the
-   text column and the img itself, never their shared wrapper. */
+   text pieces and the img itself, never a shared wrapper. */
 .cover__figure {
-  grid-area: figure;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: var(--space-2);
   min-height: 0;
-  padding-top: var(--space-7);
   /* the drawing is cut at her page edge: bleed off the right of the viewport */
   margin-right: calc(-1 * var(--gutter));
 }
@@ -424,15 +436,18 @@ html.project-open body { overflow: hidden; }
   position: relative;
   display: flex;
   justify-content: flex-end;
+  width: 100%;
   min-height: 0;
 }
+.cover__picture { display: contents; }
 .cover__img {
   display: block;
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 50vh;
-  max-height: 50svh;
+  /* phones: the square crop, about 85vw wide and at most 40svh tall */
+  max-width: 85vw;
+  max-height: 40vh;
+  max-height: 40svh;
   border-radius: 6px 0 0 6px;      /* square at the bleed edge */
   mix-blend-mode: multiply;
   /* The scan's paper is ~#D8D9D4 (85% white), so plain multiply leaves a grey
@@ -445,27 +460,52 @@ html.project-open body { overflow: hidden; }
 /* No hero yet: a plain ruled frame keeps its place (inside the gutter) */
 .cover__figure--empty { margin-right: 0; }
 .cover__figure--empty .cover__frame {
-  aspect-ratio: 5 / 4;
-  max-height: 50vh;
-  max-height: 50svh;
+  aspect-ratio: 1 / 1;
+  max-height: 40vh;
+  max-height: 40svh;
   border: 1px solid var(--rule-strong);
 }
 
-/* Desktop and iPad landscape */
+/* 768 to 1023: one column, the hero after the text */
+@media (min-width: 768px) {
+  .cover {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-bottom: var(--space-6);
+  }
+  .cover__text {
+    gap: clamp(var(--space-5), 4vh, var(--space-7));
+    padding-top: clamp(var(--space-6), 6vh, var(--space-8));
+  }
+  .cover__figure { order: 3; padding-top: var(--space-5); }
+  .cover__img { max-width: 100%; max-height: 50vh; max-height: 50svh; }
+  .cover__about-text { font-size: var(--text-lg); }
+  .cover__figure--empty .cover__frame { aspect-ratio: 5 / 4; max-height: 50vh; max-height: 50svh; }
+}
+
+/* Desktop and iPad landscape: text centred on the left, hero on the right */
 @media (min-width: 1024px) {
   .cover__inner {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    grid-template-areas:
-      'strip strip'
-      'text  figure';
     grid-template-rows: auto 1fr;
-    column-gap: clamp(var(--space-7), 5vw, var(--space-9));
     min-height: calc(100vh - var(--nav-h) - var(--space-5) - var(--space-6));
     min-height: calc(100svh - var(--nav-h) - var(--space-5) - var(--space-6));
   }
-  /* Title and degree sit together, centred against the frame */
-  .cover__text { align-self: center; padding: var(--space-6) 0; }
-  .cover__figure { padding-top: var(--space-6); }
+  .cover__text {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas:
+      '.     figure'
+      'head  figure'
+      'about figure'
+      '.     figure';
+    column-gap: clamp(var(--space-7), 5vw, var(--space-9));
+    row-gap: 0;
+    padding-top: 0;
+  }
+  .cover__h1 { grid-area: head; padding-top: var(--space-6); }
+  .cover__about { grid-area: about; max-width: 36rem; margin-top: clamp(var(--space-5), 4vh, var(--space-7)); margin-bottom: var(--space-6); }
+  .cover__figure { grid-area: figure; order: 0; padding-top: var(--space-6); }
   /* The drawing fills the column height, right-aligned against the bleed */
   .cover__frame { flex: 1 1 auto; }
   .cover__img {
@@ -473,20 +513,12 @@ html.project-open body { overflow: hidden; }
     top: 0;
     right: 0;
     height: 100%;
+    max-width: 100%;
     max-height: none;
     object-fit: cover;             /* only crops if the column is unusually narrow */
     object-position: right center;
   }
   .cover__figure--empty .cover__frame { aspect-ratio: auto; max-height: none; }
-}
-
-@media (max-width: 1023px) {
-  .cover__about { max-width: 40rem; }
-}
-@media (max-width: 719px) {
-  .cover__about-text { font-size: 1.0625rem; }
-  .cover__figure { padding-top: var(--space-6); }
-  .cover__figure--empty .cover__frame { aspect-ratio: 4 / 5; width: 100%; }
 }
 
 /* ==========================================================================
@@ -577,7 +609,12 @@ html.project-open body { overflow: hidden; }
   padding-bottom: .1em;
 }
 a.contact__email {
+  /* 44px tap area: padding, pulled back with negative margins */
+  padding-block: 12px;
+  margin-block: -12px;
   background: linear-gradient(currentColor, currentColor) 0 100% / 100% 2px no-repeat;
+  background-origin: content-box;
+  background-clip: content-box;
   transition: background-size .5s var(--ease-out);
 }
 a.contact__email:hover { background-size: 0 2px; background-position: 100% 100%; }
@@ -595,9 +632,15 @@ a.contact__phone:hover { text-decoration: underline; text-underline-offset: .2em
 
 .contact__social-list { display: flex; flex-direction: column; gap: var(--space-2); }
 .contact__social-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); }
-.contact__social { font-size: var(--text-lg); }
+.contact__social { font-size: var(--text-lg); overflow-wrap: anywhere; }
 a.contact__social {
+  display: inline-block;
+  padding-block: 9px;
+  margin-block: -9px;
+  min-width: 44px;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  background-origin: content-box;
+  background-clip: content-box;
   transition: background-size .4s var(--ease-out);
 }
 a.contact__social:hover { background-size: 100% 1px; }
@@ -755,7 +798,7 @@ a.contact__social:hover { background-size: 100% 1px; }
   letter-spacing: var(--track-label);
   text-transform: uppercase;
 }
-.site-footer__social { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
+.site-footer__social { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; color: var(--ink); overflow-wrap: anywhere; }
 a.site-footer__social:hover { text-decoration: underline; text-underline-offset: .25em; }
 span.site-footer__social { color: var(--muted); }
 .site-footer .btn-file { margin-left: auto; }

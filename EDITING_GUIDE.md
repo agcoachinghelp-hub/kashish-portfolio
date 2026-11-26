@@ -117,6 +117,7 @@ Tips:
 - A JPG or WebP about **2000px wide** is ideal. Very large photos (over about 3MB) make the site slow; export a smaller copy first.
 - Until you add a hero image, the landing page shows an empty frame with a thin outline in its place. Click **Remove image** to go back to that frame.
 - The hero has no frame: it runs off the right-hand edge of the screen, as if cut from your page, and its paper blends into the background. Use **Look: Drawing on paper** for sketches (the default), or *Photo or dark image* for a photo.
+- **Phone crop** (inside the hero settings) is optional: upload a square crop, about 700 x 700px, of the part of the drawing that matters most (for example the hands). Phones show it right under your name, so the name and the drawing appear together on the first screen. Leave it empty to use the full image on phones.
 
 ---
 
