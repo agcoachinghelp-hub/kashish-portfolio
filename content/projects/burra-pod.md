@@ -1,12 +1,12 @@
 ---
-order: 2
-code: CODE_002
+order: 1
+code: CODE_001
 title: "BURRA POD"
 subtitle: "Community centre · Fleet Street, North Parramatta, NSW"
 status: published
-colour: "#9AA287"
-accent: "#6B3A2A"
-ink: "#22261C"
+colour: "#688CB0"
+accent: "#688CB0"
+ink: "#1C2430"
 meta:
   - { label: "Country", value: "Durug Country" }
 gallery:

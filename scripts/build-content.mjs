@@ -120,6 +120,8 @@ async function main() {
       slug,
       order: Number.isFinite(Number(d.order)) ? Number(d.order) : 999,
       index: d.index === true,
+      // Kashish, 26 Nov: About Me lives in the top bar, not as a folder.
+      tab: d.tab === true,
       status,
       code: str(d.code),
       title: str(d.title) || slug.toUpperCase(),

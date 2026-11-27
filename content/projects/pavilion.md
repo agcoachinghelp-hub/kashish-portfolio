@@ -1,9 +1,9 @@
 ---
-order: 5
-code: CODE_005
+order: 6
+code: CODE_006
 title: "PAVILION"
 status: coming-soon
-colour: "#BBA585"
-accent: "#4E4232"
+colour: "#ECD050"
+accent: "#ECD050"
 ink: "#2A2A26"
 ---

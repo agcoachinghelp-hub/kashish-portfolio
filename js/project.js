@@ -177,7 +177,7 @@ function renderBlocks(p, ctx, skip = new Set()) {
 }
 
 function renderIndex(projects, self) {
-  const rows = projects.filter((q) => q !== self && !isSoon(q)).map((q) => {
+  const rows = projects.filter((q) => q !== self && !q.tab).map((q) => {
     const { code, title } = names(q);
     return `
     <li>
@@ -200,7 +200,7 @@ function renderIndex(projects, self) {
 // coming-soon file) and loops from the last back to the first. CONTENTS's own
 // next file is the first published project.
 function nextFile(p, projects) {
-  const chain = projects.filter((q) => !isSoon(q) && !q.index);
+  const chain = projects.filter((q) => !q.index && !q.tab);
   if (!chain.length) return null;
   if (p.index) return chain[0];
   const i = chain.indexOf(p);
@@ -288,6 +288,8 @@ function renderProject(p, projects, site) {
     ? `<div class="pv-empties" data-pv-rise>${emptyFrame(' pv-empty--wide')}<div class="pv-empty-pair">${emptyFrame()}${emptyFrame()}</div></div>`
     : '';
 
+  const soonNote = isSoon(p) ? '<p class="pv-soon pv-mono" data-pv-rise>Full drawings coming soon</p>' : '';
+
   const html = `
     <header class="pv-bar">
       <span class="pv-bar__file" aria-hidden="true"></span>
@@ -310,7 +312,7 @@ function renderProject(p, projects, site) {
       ${story || `${meta ? `<dl class="pv-meta" data-pv-rise>${meta}</dl>` : ''}${heroInGrid ? '' : hero}`}
       ${p.index ? renderIndex(projects, p) : ''}
       ${blocks || heroInGrid ? `<div class="pv-blocks">${heroInGrid ? hero : ''}${blocks}</div>` : ''}
-      ${empty}
+      ${soonNote}${empty}
 
       <footer class="pv-end">
         <div class="pv-end__nav">
@@ -334,8 +336,9 @@ export function initProjectView(projects, site) {
   if (!view) return;
   const gsap = window.gsap;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Coming-soon projects live in the IN PROGRESS folder and cannot be opened.
-  const bySlug = new Map(projects.filter((p) => !isSoon(p)).map((p) => [p.slug, p]));
+  // Kashish, 26 Nov: every folder opens, including projects whose drawings are
+  // still coming (they show their statement and a short note).
+  const bySlug = new Map(projects.map((p) => [p.slug, p]));
   const root = document.documentElement;
   const themeMeta = document.querySelector('meta[name="theme-color"]');
 

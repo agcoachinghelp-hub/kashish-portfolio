@@ -777,3 +777,12 @@ html.project-open { overflow: hidden; }
   .pv-lb__close kbd { display: none; }
   .pv-lb__btn[data-lb-zoom] { padding: 0 10px; }
 }
+
+/* Kashish, 26 Nov: projects still waiting on drawings open with a short note. */
+.pv-soon {
+  margin: var(--space-6, 2rem) 0 var(--space-4, 1rem);
+  font-size: var(--text-2xs, .75rem);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .75;
+}

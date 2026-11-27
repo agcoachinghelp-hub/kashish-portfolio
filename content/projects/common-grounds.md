@@ -1,12 +1,12 @@
 ---
-order: 6
-code: CODE_006
+order: 4
+code: CODE_004
 title: "COMMON GROUNDS"
 subtitle: "City Centre"
 status: published
-colour: "#E8C76A"
-accent: "#6B5420"
-ink: "#2A2A26"
+colour: "#6C8460"
+accent: "#6C8460"
+ink: "#F4F1E8"
 cover: { image: "assets/projects/common-grounds/01.webp", alt: "Common Grounds aerial site plan showing the site between Kent Street, High Street, High Lane and the Cahill Expressway, with surrounding building heights", width: 864, height: 675 }
 gallery:
   - { type: image, layout: half, align: left, image: "assets/projects/common-grounds/02.webp", alt: "Basement plan with rumpus and lounge", caption: "Basement Plan // 1:100", width: 680, height: 852 }
